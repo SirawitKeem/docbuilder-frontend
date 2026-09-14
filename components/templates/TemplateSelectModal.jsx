@@ -478,13 +478,17 @@ export default function TemplateSelectModal({ category, onClose }) {
                         <h3 className="font-bold text-xs text-gray-900 group-hover:text-[#7C3AED] transition-colors truncate">
                           {item.name}
                         </h3>
-                        {item.tag && (
+                        {(item.badge || item.tag) && (
                           <span
                             className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
-                              item.tagColor || "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              item.badge === "Standard" || item.badge === "มาตรฐาน" || item.tag === "มาตรฐาน"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : item.badge === "Custom" || item.badge === "กำหนดเอง"
+                                ? "bg-purple-50 text-purple-700 border-purple-200"
+                                : item.tagColor || "bg-gray-100 text-gray-700 border-gray-200"
                             }`}
                           >
-                            {item.tag}
+                            {item.badge || item.tag}
                           </span>
                         )}
                       </div>
@@ -526,13 +530,17 @@ export default function TemplateSelectModal({ category, onClose }) {
                     <h3 className="text-sm font-bold text-gray-900">
                       {selectedTemplate.name}
                     </h3>
-                    {selectedTemplate.tag && (
+                    {(selectedTemplate.badge || selectedTemplate.tag) && (
                       <span
                         className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border ${
-                          selectedTemplate.tagColor || "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          selectedTemplate.badge === "Standard" || selectedTemplate.badge === "มาตรฐาน" || selectedTemplate.tag === "มาตรฐาน"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : selectedTemplate.badge === "Custom" || selectedTemplate.badge === "กำหนดเอง"
+                            ? "bg-purple-50 text-purple-700 border-purple-200"
+                            : selectedTemplate.tagColor || "bg-gray-100 text-gray-700 border-gray-200"
                         }`}
                       >
-                        {selectedTemplate.tag}
+                        {selectedTemplate.badge || selectedTemplate.tag}
                       </span>
                     )}
                   </div>

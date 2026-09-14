@@ -9,6 +9,7 @@ import ndaContent from "@/lib/templates/nda/content.js";
 import partnerContent from "@/lib/templates/partner/content.js";
 import distContent from "@/lib/templates/distributor/content.js";
 import notifContent from "@/lib/templates/notification/content.json";
+import NotificationRelocationDocument from "./notification/NotificationRelocationDocument";
 
 /**
  * Universal Dynamic Contract Page Component
@@ -652,85 +653,7 @@ export function DynamicContractPage({ templateId, pageNumber, values: propValues
   // 4. Notification Letter - 1 Page
   // --------------------------------------------------------------------------
   if (normalizedId === "notification" || templateId === "notification") {
-    const c = notifContent;
-    const effectiveDate = values.effective_date || "16 กันยายน 2569";
-    const signatoryName = values.signatory_name || values.our_signatory_name || "นายศรายุทธ โกสิยารักษ์";
-    const signatoryPos = values.signatory_position || values.our_signatory_position || "กรรมการผู้จัดการ / CEO";
-
-    return (
-      <div className="document-body pt-2 text-[13px] leading-relaxed text-left">
-        <div className="text-center mb-4">
-          <h1 className="text-lg font-black text-gray-900 leading-tight">
-            {c.title?.titleTh || "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่"}
-          </h1>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            {c.title?.titleEn || "NOTICE OF HEAD OFFICE RELOCATION"}
-          </p>
-        </div>
-
-        <div className="space-y-1 mb-4 text-xs">
-          <p>
-            <span className="font-semibold text-gray-700">วันที่ / Date:</span>{" "}
-            <Field id="doc_date" placeholder="01 กันยายน 2569" minWidth={16} />
-          </p>
-          <p>
-            <span className="font-semibold text-gray-700">เรียน / Attn:</span>{" "}
-            <Field id="recipient" placeholder="ท่านคู่ค้า ลูกค้า และพันธมิตรทางธุรกิจทุกท่าน" minWidth={35} />
-          </p>
-          <p>
-            <span className="font-semibold text-gray-700">เรื่อง / Subject:</span>{" "}
-            <Field id="subject" placeholder="แจ้งเปลี่ยนแปลงสถานที่ตั้งสำนักงานใหญ่แห่งใหม่" minWidth={35} />
-          </p>
-        </div>
-
-        <p className="indent-8 mb-3 text-justify">
-          {c.bodyParagraphTh || "บริษัท เครสท์ เซนโด จำกัด ขอเรียนแจ้งให้ท่านทราบว่า บริษัทฯ ได้ดำเนินการย้ายสถานที่ตั้งสำนักงานใหญ่แห่งใหม่ เพื่อรองรับการขยายตัวทางธุรกิจและการให้บริการที่มีประสิทธิภาพยิ่งขึ้น โดยมีผลบังคับใช้ตั้งแต่วันที่ 16 กันยายน 2569 เป็นต้นไป"}
-        </p>
-
-        {/* Address Comparison Cards */}
-        <div className="grid grid-cols-2 gap-3.5 my-3">
-          <div className="bg-[#f3f3f4] rounded-xl p-3 border border-gray-200">
-            <p className="text-[11px] font-bold text-gray-700 pb-1 mb-1 border-b border-gray-300">
-              ที่อยู่เดิม / Previous Address:
-            </p>
-            <p className="text-[10px] text-gray-800 font-medium">
-              45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210
-            </p>
-          </div>
-          <div className="bg-gradient-to-br from-[#fff5f5] to-white rounded-xl p-3 border-2 border-[#cb1717]">
-            <div className="flex justify-between items-center pb-1 mb-1 border-b border-[#cb1717]/30">
-              <span className="text-[11px] font-black text-[#af0e0e]">ที่อยู่ใหม่ / New Address:</span>
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#cb1717] text-white">
-                มีผล {effectiveDate}
-              </span>
-            </div>
-            <p className="text-[10px] text-gray-900 font-bold">
-              8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210
-            </p>
-          </div>
-        </div>
-
-        <p className="indent-8 mb-6 text-justify">
-          {c.closingParagraphTh || "จึงเรียนมาเพื่อโปรดทราบและขอขอบพระคุณทุกท่านที่ให้ความไว้วางใจในการดำเนินธุรกิจร่วมกันด้วยดีเสมอมา"}
-        </p>
-
-        {/* Signatory */}
-        <div className="text-right flex flex-col items-end pt-4 pr-6">
-          <p className="mb-1 text-xs">ขอแสดงความนับถือ</p>
-          <div className="h-14 flex items-center justify-end my-1">
-            {values.our_signature_image ? (
-              <img
-                src={values.our_signature_image}
-                alt="ลายเซ็น"
-                className="max-h-12 max-w-[160px] object-contain select-none"
-              />
-            ) : null}
-          </div>
-          <p className="font-bold text-xs">({signatoryName})</p>
-          <p className="text-gray-500 text-[11px]">{signatoryPos}</p>
-        </div>
-      </div>
-    );
+    return <NotificationRelocationDocument data={values} values={values} />;
   }
 
   return null;

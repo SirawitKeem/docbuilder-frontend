@@ -187,7 +187,7 @@ export default function CategoryManagerModal({
 
           {/* Edit Form Section */}
           {editingId && (
-            <form onSubmit={handleSave} className="p-3.5 rounded-[10px] bg-muted/40 border border-border space-y-3 shadow-2xs">
+            <form onSubmit={handleSaveEdit} className="p-3.5 rounded-[10px] bg-muted/40 border border-border space-y-3 shadow-2xs">
               <div className="flex items-center justify-between border-b border-border/60 pb-2">
                 <span className="text-xs font-semibold text-primary flex items-center gap-1.5">
                   <Sparkles size={13} />
@@ -228,6 +228,46 @@ export default function CategoryManagerModal({
                     placeholder="เช่น ใบสั่งซื้อสินค้า (Purchase Order)"
                     className="w-full h-9 px-3 rounded-[8px] border border-border bg-surface text-xs text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all shadow-2xs"
                   />
+                </div>
+
+                {/* Category Type / Badge Selection */}
+                <div className="space-y-1 sm:col-span-2">
+                  <label className="text-xs font-semibold text-foreground">
+                    {t('categoryManager.categoryType') || "ประเภทหมวดหมู่ (Category Type / Badge)"}
+                  </label>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <div className="inline-flex items-center p-1 bg-surface rounded-[8px] border border-border shrink-0 shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, badge: "Standard" })}
+                        className={`h-7 px-3 rounded-[6px] text-xs font-medium transition-all select-none cursor-pointer ${
+                          formData.badge === "Standard" || formData.badge === "มาตรฐาน"
+                            ? "bg-emerald-600 text-white font-semibold shadow-2xs"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        Standard (มาตรฐาน)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, badge: "Custom" })}
+                        className={`h-7 px-3 rounded-[6px] text-xs font-medium transition-all select-none cursor-pointer ${
+                          formData.badge !== "Standard" && formData.badge !== "มาตรฐาน"
+                            ? "bg-primary text-white font-semibold shadow-2xs"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        Custom (กำหนดเอง)
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={formData.badge}
+                      onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                      placeholder="ป้ายกำกับ เช่น Standard, Custom, หมวดใหม่..."
+                      className="flex-1 h-9 px-3 rounded-[8px] border border-border bg-surface text-xs text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all shadow-2xs"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -273,7 +313,8 @@ export default function CategoryManagerModal({
               const IconData = EXTENDED_ICON_MAP[cat.icon];
               const IconComp = IconData ? IconData.icon : (ICON_MAP[cat.icon] || FileText);
               const colorStyle = COLOR_MAP[cat.color] || COLOR_MAP.purple;
-              const isProtected = ["quotation", "nda", "partner", "distributor"].includes(cat.id);
+              const isDefaultSystemCategory = ["quotation", "nda", "partner", "distributor", "notification"].includes(cat.id);
+              const isStandard = cat.badge === "Standard" || cat.badge === "มาตรฐาน" || (isDefaultSystemCategory && !cat.badge);
 
               return (
                 <div
@@ -287,13 +328,13 @@ export default function CategoryManagerModal({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-semibold text-foreground">{cat.name}</span>
-                        {isProtected ? (
+                        {isStandard ? (
                           <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                            {t('categoryManager.standard') || "Standard"}
+                            {cat.badge || "Standard"}
                           </span>
                         ) : (
                           <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                            {cat.badge || t('categoryManager.custom') || "Custom"}
+                            {cat.badge || "Custom"}
                           </span>
                         )}
                         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border border-border bg-muted/60 text-muted-foreground tabular-nums">

@@ -185,6 +185,46 @@ export default function CreateCategoryModal({ isOpen, onClose, onCreated }) {
                 />
               </div>
 
+              {/* Category Type / Badge Selection */}
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  {t('categoryManager.categoryType') || "ประเภทหมวดหมู่ (Category Type / Badge)"}
+                </label>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <div className="inline-flex items-center p-1 bg-surface rounded-[8px] border border-border shrink-0 shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, badge: "Standard" })}
+                      className={`h-7 px-3 rounded-[6px] text-xs font-medium transition-all select-none cursor-pointer ${
+                        formData.badge === "Standard" || formData.badge === "มาตรฐาน"
+                          ? "bg-emerald-600 text-white font-semibold shadow-2xs"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Standard (มาตรฐาน)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, badge: "Custom" })}
+                      className={`h-7 px-3 rounded-[6px] text-xs font-medium transition-all select-none cursor-pointer ${
+                        formData.badge !== "Standard" && formData.badge !== "มาตรฐาน"
+                          ? "bg-primary text-white font-semibold shadow-2xs"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Custom (กำหนดเอง)
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={formData.badge}
+                    onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                    placeholder="ป้ายกำกับ เช่น Standard, กำหนดเอง, เอกสารภายใน"
+                    className="h-8 px-2.5 rounded-[6px] border border-border bg-surface text-xs text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 flex-1 shadow-2xs"
+                  />
+                </div>
+              </div>
+
               {/* Icon Picker */}
               <div>
                 <label className="block text-xs font-semibold text-foreground mb-2">
@@ -264,9 +304,20 @@ export default function CreateCategoryModal({ isOpen, onClose, onCreated }) {
                     <SelectedIconComp size={18} />
                   </div>
 
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-border bg-muted/70 text-muted-foreground tabular-nums">
-                    {t('createCategory.templateCount') || "0 templates"}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {formData.badge && (
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                        formData.badge === "Standard" || formData.badge === "มาตรฐาน"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800"
+                          : "bg-primary/10 text-primary border-primary/20"
+                      }`}>
+                        {formData.badge}
+                      </span>
+                    )}
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-border bg-muted/70 text-muted-foreground tabular-nums">
+                      {t('createCategory.templateCount') || "0 templates"}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Title */}

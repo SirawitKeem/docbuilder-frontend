@@ -29,6 +29,7 @@ import TemplateDetailModal from "@/components/templates/TemplateDetailModal";
 import NewTemplateTypeModal from "@/components/templates/NewTemplateTypeModal";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import MoveCategoryModal from "@/components/templates/MoveCategoryModal";
+import EditTemplateModal from "@/components/templates/EditTemplateModal";
 
 export default function TemplatesHubPage() {
   const router = useRouter();
@@ -44,6 +45,9 @@ export default function TemplatesHubPage() {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isCreateCategoryModalOpen, setIsCreateCategoryModalOpen] = useState(false);
   const [isTypeModalOpen, setIsTypeModalOpen] = useState(false);
+
+  // Edit Template State
+  const [templateToEdit, setTemplateToEdit] = useState(null);
 
   // Renaming Template State
   const [renamingTemplate, setRenamingTemplate] = useState(null);
@@ -311,9 +315,20 @@ export default function TemplatesHubPage() {
                       <div className={`w-9 h-9 rounded-[6px] flex items-center justify-center border ${colorStyle.bg} ${colorStyle.text} ${colorStyle.border} shadow-2xs transition-transform group-hover:scale-105 duration-200`}>
                         <IconComp size={18} />
                       </div>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-border bg-muted/70 text-muted-foreground tabular-nums">
-                        {tmplCount} {tmplCount === 1 ? "template" : "templates"}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {cat.badge && (
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                            cat.badge === "Standard" || cat.badge === "มาตรฐาน"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800"
+                              : "bg-primary/10 text-primary border-primary/20"
+                          }`}>
+                            {cat.badge}
+                          </span>
+                        )}
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border border-border bg-muted/70 text-muted-foreground tabular-nums">
+                          {tmplCount} {tmplCount === 1 ? "template" : "templates"}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Title */}
@@ -454,54 +469,39 @@ export default function TemplatesHubPage() {
                         <div className="w-8 h-8 rounded-[6px] bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0 shadow-2xs">
                           <FormatIcon size={16} />
                         </div>
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border border-border bg-muted/70 text-muted-foreground tabular-nums">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTemplateToEdit(tmpl);
+                          }}
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border transition-all cursor-pointer hover:opacity-80 select-none ${
+                            tmpl.badge === "Standard" || tmpl.badge === "มาตรฐาน"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800"
+                              : tmpl.badge === "Custom" || tmpl.badge === "กำหนดเอง"
+                              ? "bg-primary/10 text-primary border-primary/20"
+                              : "border-border bg-muted/70 text-muted-foreground"
+                          }`}
+                          title="คลิกเพื่อแก้ไขประเภทเทมเพลต (Click to change badge / type)"
+                        >
                           {tmpl.badge || (isSheet ? "Sheet" : isSlide ? "Slide" : "A4")}
-                        </span>
+                        </button>
                       </div>
 
-                      {/* Renaming inline or Title display */}
-                      {renamingTemplate?.id === tmpl.id ? (
-                        <div className="flex items-center gap-1.5 my-1">
-                          <input
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            className="flex-1 text-xs font-semibold text-foreground border border-primary bg-surface rounded-[6px] px-2 py-1 outline-none"
-                            autoFocus
-                          />
-                          <button
-                            type="button"
-                            onClick={handleSaveRename}
-                            disabled={isRenamingLoading}
-                            className="p-1 rounded-[6px] bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
-                            title="Save"
-                          >
-                            <Check size={12} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setRenamingTemplate(null)}
-                            className="p-1 rounded-[6px] bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
-                            title="Cancel"
-                          >
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex items-start justify-between gap-2 my-1">
-                          <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1 font-sans">
-                            {tmpl.name}
-                          </h3>
-                          <button
-                            type="button"
-                            onClick={() => handleStartRename(tmpl)}
-                            className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground hover:text-foreground rounded transition-opacity cursor-pointer"
-                            title="Rename template"
-                          >
-                            <Edit3 size={11} />
-                          </button>
-                        </div>
-                      )}
+                      {/* Title & Edit */}
+                      <div className="flex items-start justify-between gap-2 my-1">
+                        <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1 font-sans">
+                          {tmpl.name}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => setTemplateToEdit(tmpl)}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-[4px] transition-all cursor-pointer"
+                          title="แก้ไขข้อมูลเทมเพลต (Edit template info)"
+                        >
+                          <Edit3 size={12} />
+                        </button>
+                      </div>
 
                       {/* Description */}
                       <p className="text-xs text-muted-foreground/80 mt-1 mb-3 line-clamp-2 leading-relaxed font-normal">
@@ -522,6 +522,15 @@ export default function TemplatesHubPage() {
                       </button>
 
                       <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setTemplateToEdit(tmpl)}
+                          className="size-7 rounded-[6px] hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
+                          title="ตั้งค่า/แก้ไขเทมเพลต (Edit template info & badge)"
+                        >
+                          <Settings size={13} />
+                        </button>
+
                         <button
                           type="button"
                           onClick={() => handleDuplicateTemplate(tmpl)}
@@ -639,6 +648,15 @@ export default function TemplatesHubPage() {
           await loadData();
           setTemplateToMove(null);
         }}
+      />
+
+      {/* Edit Template Modal (Configure Name, Category, Badge: Standard / Custom, Description) */}
+      <EditTemplateModal
+        isOpen={Boolean(templateToEdit)}
+        onClose={() => setTemplateToEdit(null)}
+        template={templateToEdit}
+        categories={categories}
+        onSuccess={loadData}
       />
     </div>
   );
