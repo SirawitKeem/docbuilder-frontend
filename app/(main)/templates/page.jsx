@@ -30,6 +30,7 @@ import NewTemplateTypeModal from "@/components/templates/NewTemplateTypeModal";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import MoveCategoryModal from "@/components/templates/MoveCategoryModal";
 import EditTemplateModal from "@/components/templates/EditTemplateModal";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 export default function TemplatesHubPage() {
   const router = useRouter();
@@ -581,28 +582,32 @@ export default function TemplatesHubPage() {
 
       {/* Category Manager Modal (List, Edit, Delete) */}
       {isCategoryModalOpen && (
-        <CategoryManagerModal
-          isOpen={isCategoryModalOpen}
-          onClose={() => {
-            setIsCategoryModalOpen(false);
-            loadData();
-          }}
-          categories={categories}
-          onCategoriesUpdated={loadData}
-          onOpenCreateModal={() => {
-            setIsCategoryModalOpen(false);
-            setIsCreateCategoryModalOpen(true);
-          }}
-        />
+        <ErrorBoundary title="เกิดข้อผิดพลาดในหน้าต่างจัดการหมวดหมู่">
+          <CategoryManagerModal
+            isOpen={isCategoryModalOpen}
+            onClose={() => {
+              setIsCategoryModalOpen(false);
+              loadData();
+            }}
+            categories={categories}
+            onCategoriesUpdated={loadData}
+            onOpenCreateModal={() => {
+              setIsCategoryModalOpen(false);
+              setIsCreateCategoryModalOpen(true);
+            }}
+          />
+        </ErrorBoundary>
       )}
 
       {/* Dedicated Create Category Modal */}
       {isCreateCategoryModalOpen && (
-        <CreateCategoryModal
-          isOpen={isCreateCategoryModalOpen}
-          onClose={() => setIsCreateCategoryModalOpen(false)}
-          onCreated={loadData}
-        />
+        <ErrorBoundary title="เกิดข้อผิดพลาดในหน้าต่างสร้างหมวดหมู่">
+          <CreateCategoryModal
+            isOpen={isCreateCategoryModalOpen}
+            onClose={() => setIsCreateCategoryModalOpen(false)}
+            onCreated={loadData}
+          />
+        </ErrorBoundary>
       )}
 
       {/* Template Detail / Preview Modal */}

@@ -314,6 +314,7 @@ export default function CategoryManagerModal({
               const IconComp = IconData ? IconData.icon : (ICON_MAP[cat.icon] || FileText);
               const colorStyle = COLOR_MAP[cat.color] || COLOR_MAP.purple;
               const isDefaultSystemCategory = ["quotation", "nda", "partner", "distributor", "notification"].includes(cat.id);
+              const isProtected = isDefaultSystemCategory || Boolean(cat.isSystem);
               const isStandard = cat.badge === "Standard" || cat.badge === "มาตรฐาน" || (isDefaultSystemCategory && !cat.badge);
 
               return (
