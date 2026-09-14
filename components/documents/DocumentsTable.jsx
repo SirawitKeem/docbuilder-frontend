@@ -44,7 +44,7 @@ import EmailScreen from "@/components/document/EmailScreen";
 import { extractDocumentMeta } from "@/lib/data/documentMeta";
 import { useLanguage } from "@/context/LanguageContext";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
-import { getDocumentEditPath } from "@/lib/templates/templateResolver";
+import { getDocumentEditPath, LEGACY_TEMPLATE_ID_MAP } from "@/lib/templates/templateResolver";
 
 const getCounterpartyName = (doc) => {
   if (doc?.values) {
@@ -942,7 +942,8 @@ function PreviewModal({ doc, onClose }) {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("preview"); // "preview" | "timeline"
   const [freshDoc, setFreshDoc] = useState(doc);
-  const entry = templateRegistry[freshDoc.templateId || "nda"];
+  const canonicalId = LEGACY_TEMPLATE_ID_MAP[freshDoc?.templateId] || freshDoc?.templateId;
+  const entry = templateRegistry[canonicalId] || templateRegistry[freshDoc?.templateId] || templateRegistry["nda"];
   const [modalValues, setModalValues] = useState(freshDoc.values || {});
 
   // Fetch freshest document details on mount
@@ -952,8 +953,9 @@ function PreviewModal({ doc, onClose }) {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {
-          setFreshDoc(data);
-          setModalValues(data.values || {});
+          const docData = data.data || data;
+          setFreshDoc(docData);
+          setModalValues(docData.values || {});
         }
       })
       .catch((err) => console.warn("Could not fetch fresh doc details:", err));
@@ -1148,7 +1150,9 @@ function PreviewModal({ doc, onClose }) {
               ))
             ) : DocumentComponent ? (
               <div className="shrink-0 shadow-document">
-                <DocumentComponent data={modalValues} values={modalValues} quotation={modalValues} />
+                <DocumentFieldsProvider initialValues={modalValues} defaultReadOnly>
+                  <DocumentComponent data={modalValues} values={modalValues} quotation={modalValues} />
+                </DocumentFieldsProvider>
               </div>
             ) : pages && pages.length > 0 ? (
               <DocumentFieldsProvider key={JSON.stringify(modalValues)} initialValues={modalValues} defaultReadOnly>

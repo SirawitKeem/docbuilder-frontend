@@ -28,6 +28,8 @@ import { listFieldProfiles } from "@/lib/data/fieldProfiles";
 import { QuotationDataProvider } from "@/context/QuotationDataContext";
 import QuotationDocument from "@/components/document/quotation/QuotationDocument";
 import SaveConfirmModal from "@/components/common/SaveConfirmModal";
+import { DynamicContractPage } from "@/components/document/DynamicContractPage";
+import { DocumentFieldsProvider } from "@/context/DocumentFieldsContext";
 
 const WATERMARK_OPTIONS = [
   { id: "none", label: "ไม่มีลายน้ำ (ต้นฉบับ)", badge: "Original" },
@@ -525,7 +527,11 @@ function UniversalDocumentContent() {
   const renderDocumentPage = () => (
     <div className="origin-top shadow-xl border border-gray-300 rounded-sm overflow-hidden bg-white print-paper-shadow">
       {isNotification ? (
-        <NotificationRelocationDocument values={values} />
+        <DocumentFieldsProvider initialValues={values} defaultReadOnly={true}>
+          <div style={{ width: 794, minHeight: 1123 }} className="bg-white overflow-hidden text-left font-noto-looped">
+            <DynamicContractPage templateId="notification" pageNumber={1} />
+          </div>
+        </DocumentFieldsProvider>
       ) : isQuotation ? (
         <QuotationDataProvider initialQuotation={quotationData} defaultReadOnly={true}>
           <div style={{ width: 794, minHeight: 1123 }} className="bg-white overflow-hidden text-left font-noto-looped">

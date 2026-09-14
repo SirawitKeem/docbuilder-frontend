@@ -15,13 +15,15 @@ import notifContent from "@/lib/templates/notification/content.json";
  * Renders any page of any contract template based on structured data and blocks
  * Eliminates all hardcoded JSX page files while maintaining 100% visual fidelity
  */
-export function DynamicContractPage({ templateId, pageNumber }) {
-  const { values = {} } = useDocumentFields?.() || { values: {} };
+export function DynamicContractPage({ templateId, pageNumber, values: propValues, data: propData }) {
+  const context = useDocumentFields?.() || { values: {} };
+  const values = propValues || propData || context.values || {};
+  const normalizedId = templateId?.replace(/^tmpl-/, "")?.replace(/-standard$/, "") || templateId;
 
   // --------------------------------------------------------------------------
   // 1. NDA (Non-Disclosure Agreement) - 4 Pages
   // --------------------------------------------------------------------------
-  if (templateId === "nda") {
+  if (normalizedId === "nda" || templateId === "nda") {
     const c = ndaContent;
     const disclosingCompany = values.disclosing_party_name || values.our_company_name || "บริษัท เครสท์ เซนโด จำกัด";
     const disclosingName = values.disclosing_signatory_name || values.our_signatory_name || "นายศรายุทธ โกสิยารักษ์";
@@ -222,7 +224,7 @@ export function DynamicContractPage({ templateId, pageNumber }) {
   // --------------------------------------------------------------------------
   // 2. Partner Agreement - 5 Pages
   // --------------------------------------------------------------------------
-  if (templateId === "partner") {
+  if (normalizedId === "partner" || templateId === "partner") {
     const c = partnerContent;
     const ourCompanyName = values.our_company_name || "บริษัท เครสท์ เซนโด จำกัด";
     const ourTaxId = values.our_tax_id || "0105558073755";
@@ -449,7 +451,7 @@ export function DynamicContractPage({ templateId, pageNumber }) {
   // --------------------------------------------------------------------------
   // 3. Distributor Agreement - 5 Pages
   // --------------------------------------------------------------------------
-  if (templateId === "distributor") {
+  if (normalizedId === "distributor" || templateId === "distributor") {
     const c = distContent;
     const ourCompanyName = values.our_company_name || "บริษัท เครสท์ เซนโด จำกัด";
     const ourAddress = values.our_address || "8/40 The Connect 37 ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210";
@@ -649,7 +651,7 @@ export function DynamicContractPage({ templateId, pageNumber }) {
   // --------------------------------------------------------------------------
   // 4. Notification Letter - 1 Page
   // --------------------------------------------------------------------------
-  if (templateId === "notification") {
+  if (normalizedId === "notification" || templateId === "notification") {
     const c = notifContent;
     const effectiveDate = values.effective_date || "16 กันยายน 2569";
     const signatoryName = values.signatory_name || values.our_signatory_name || "นายศรายุทธ โกสิยารักษ์";

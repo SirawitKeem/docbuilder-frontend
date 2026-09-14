@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { DocumentFieldsProvider } from "@/context/DocumentFieldsContext";
 import { templateRegistry } from "@/lib/templates/registry";
+import { LEGACY_TEMPLATE_ID_MAP } from "@/lib/templates/templateResolver";
 import DocumentHeader from "@/components/document/DocumentHeader";
 import DocumentFooter from "@/components/document/DocumentFooter";
 import FabricPrintRenderer from "@/components/document/FabricPrintRenderer";
@@ -53,7 +54,8 @@ function PrintContent() {
 
   const values = injectedData || decodeValues(searchParams.get("data")) || {};
   const activeWatermark = values.watermark || searchParams.get("watermark");
-  const entry = templateRegistry[templateId];
+  const canonicalId = LEGACY_TEMPLATE_ID_MAP[templateId] || templateId;
+  const entry = templateRegistry[templateId] || templateRegistry[canonicalId];
 
   // If not in static registry, fetch custom template from API
   useEffect(() => {
@@ -207,12 +209,12 @@ function PrintContent() {
                 </div>
               </div>
             )}
-            {schema.hasHeader !== false && <DocumentHeader logo={schema.logo} />}
+            {schema?.hasHeader !== false && <DocumentHeader logo={schema?.logo} />}
             <div className="print-page-body">
               <PageContent />
             </div>
-            {schema.hasFooter !== false && (
-              <DocumentFooter title={schema.fullName} pageNumber={i + 1} totalPages={pages.length} />
+            {schema?.hasFooter !== false && (
+              <DocumentFooter title={schema?.fullName} pageNumber={i + 1} totalPages={pages?.length || 1} />
             )}
           </div>
         ))}

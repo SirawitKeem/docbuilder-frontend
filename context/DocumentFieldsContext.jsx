@@ -28,16 +28,29 @@ export function DocumentFieldsProvider({ children, initialValues = {}, defaultRe
 
 export function useDocumentField(id) {
   const ctx = useContext(DocumentFieldsContext);
-  if (!ctx) throw new Error("useDocumentField ต้องอยู่ภายใน DocumentFieldsProvider");
+  if (!ctx) {
+    return {
+      value: "",
+      setValue: () => {},
+      readOnly: true,
+    };
+  }
   return {
-    value: ctx.values[id] || "",
-    setValue: (val) => ctx.setField(id, val),
-    readOnly: ctx.readOnly,
+    value: ctx.values?.[id] || "",
+    setValue: (val) => ctx.setField?.(id, val),
+    readOnly: ctx.readOnly ?? true,
   };
 }
 
 export function useDocumentFields() {
   const ctx = useContext(DocumentFieldsContext);
-  if (!ctx) throw new Error("useDocumentFields ต้องอยู่ภายใน DocumentFieldsProvider");
+  if (!ctx) {
+    return {
+      values: {},
+      setField: () => {},
+      readOnly: true,
+      setReadOnly: () => {},
+    };
+  }
   return ctx;
 }

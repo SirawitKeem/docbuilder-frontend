@@ -230,7 +230,7 @@ function RealTemplatePreview({ categoryId, templateItem = null, scale = 0.151 })
           <div style={{ width: 794, height: 1123 }} className="bg-white text-left font-sans px-14 pt-10 pb-6 flex flex-col justify-between overflow-hidden select-none">
             <DocumentHeader logo="/quotation.png" />
             <div className="flex-1 min-h-0 overflow-hidden text-gray-900 text-sm">
-              <NdaPage1 />
+              <DynamicContractPage templateId="nda" pageNumber={1} />
             </div>
             <DocumentFooter currentPage={1} totalPages={4} />
           </div>
@@ -244,7 +244,7 @@ function RealTemplatePreview({ categoryId, templateItem = null, scale = 0.151 })
           <div style={{ width: 794, height: 1123 }} className="bg-white text-left font-sans px-14 pt-10 pb-6 flex flex-col justify-between overflow-hidden">
             <DocumentHeader logo="/quotation.png" />
             <div className="flex-1 min-h-0 overflow-hidden text-gray-900 text-sm">
-              <PartnerPage1 />
+              <DynamicContractPage templateId="partner" pageNumber={1} />
             </div>
             <DocumentFooter currentPage={1} totalPages={5} />
           </div>
@@ -258,7 +258,7 @@ function RealTemplatePreview({ categoryId, templateItem = null, scale = 0.151 })
           <div style={{ width: 794, height: 1123 }} className="bg-white text-left font-sans px-14 pt-10 pb-6 flex flex-col justify-between overflow-hidden">
             <DocumentHeader logo="/quotation.png" />
             <div className="flex-1 min-h-0 overflow-hidden text-gray-900 text-sm">
-              <DistributorPage1 />
+              <DynamicContractPage templateId="distributor" pageNumber={1} />
             </div>
             <DocumentFooter currentPage={1} totalPages={5} />
           </div>
@@ -268,9 +268,11 @@ function RealTemplatePreview({ categoryId, templateItem = null, scale = 0.151 })
 
     if (effectiveCategory === "notification") {
       return (
-        <div style={{ width: 794, height: 1123 }} className="bg-white overflow-hidden text-left font-sans select-none">
-          <NotificationRelocationDocument data={notificationTemplate.previewData} />
-        </div>
+        <DocumentFieldsProvider initialValues={notificationTemplate?.previewData || {}} defaultReadOnly={true}>
+          <div style={{ width: 794, height: 1123 }} className="bg-white overflow-hidden text-left font-sans select-none">
+            <DynamicContractPage templateId="notification" pageNumber={1} />
+          </div>
+        </DocumentFieldsProvider>
       );
     }
 
