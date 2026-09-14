@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 270" width="470" height="270">
+  <defs>
+    <filter id="cardShadowWide" x="-6%" y="-7%" width="112%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.09" />
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.04" />
+    </filter>
+    <clipPath id="cardClipWide">
+      <rect x="0" y="0" width="470" height="270" rx="22" ry="22" />
+    </clipPath>
+  </defs>
+  <rect x="0" y="0" width="470" height="270" rx="22" ry="22" fill="#FFFFFF" stroke="#F1F5F9" stroke-width="1.5" filter="url(#cardShadowWide)" />
+  <g clip-path="url(#cardClipWide)">
+    <rect x="0" y="260" width="470" height="10" fill="#DC2626" />
+  </g>
+</svg>

@@ -966,13 +966,23 @@ function UniversalDocumentContent() {
                                 {t.rawKey}
                               </span>
                             </div>
-                            <input
-                              type="text"
-                              value={values[t.key] ?? ""}
-                              onChange={(e) => handleFieldChange(t.key, e.target.value)}
-                              placeholder={t.example || `ระบุ ${t.label}...`}
-                              className="w-full h-9 px-3 rounded-lg border border-gray-200 bg-white text-xs outline-none focus:border-[#7C3AED] transition-colors"
-                            />
+                            {t.key.endsWith("_text") || (values[t.key] && values[t.key].length > 40) ? (
+                              <textarea
+                                rows={3}
+                                value={values[t.key] ?? ""}
+                                onChange={(e) => handleFieldChange(t.key, e.target.value)}
+                                placeholder={t.example || `ระบุ ${t.label}...`}
+                                className="w-full p-2.5 rounded-lg border border-gray-200 bg-white text-xs outline-none focus:border-[#7C3AED] transition-colors resize-y leading-relaxed"
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                value={values[t.key] ?? ""}
+                                onChange={(e) => handleFieldChange(t.key, e.target.value)}
+                                placeholder={t.example || `ระบุ ${t.label}...`}
+                                className="w-full h-9 px-3 rounded-lg border border-gray-200 bg-white text-xs outline-none focus:border-[#7C3AED] transition-colors"
+                              />
+                            )}
                           </div>
                         ))}
                       </div>
