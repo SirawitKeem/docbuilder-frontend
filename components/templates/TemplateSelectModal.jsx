@@ -375,14 +375,16 @@ export default function TemplateSelectModal({ category, onClose }) {
     onClose?.();
     const catId = category.id.toLowerCase();
     const standardCategories = ["quotation", "nda", "partner", "distributor", "notification"];
-    const isCustom = Boolean(
-      selectedTemplate.isCustom ||
-      (selectedTemplate.id && String(selectedTemplate.id).startsWith("tmpl-")) ||
-      selectedTemplate.editorType === "slide" ||
-      selectedTemplate.editorType === "sheet" ||
-      !standardCategories.includes(catId)
+    const isSpecialEditor = selectedTemplate.editorType === "slide" || selectedTemplate.editorType === "sheet";
+    const isStandard = standardCategories.includes(catId) && !isSpecialEditor && (
+      selectedTemplate.isSystem ||
+      selectedTemplate.badge === "Standard" ||
+      selectedTemplate.badge === "มาตรฐาน" ||
+      selectedTemplate.tag === "มาตรฐาน" ||
+      !selectedTemplate.isCustom
     );
-    if (!isCustom && standardCategories.includes(catId)) {
+
+    if (isStandard) {
       router.push(`/create/${catId}`);
     } else {
       router.push(`/create/custom?templateId=${selectedTemplate.id}&categoryId=${category.id}`);

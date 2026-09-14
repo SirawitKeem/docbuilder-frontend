@@ -44,6 +44,7 @@ import EmailScreen from "@/components/document/EmailScreen";
 import { extractDocumentMeta } from "@/lib/data/documentMeta";
 import { useLanguage } from "@/context/LanguageContext";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { getDocumentEditPath, LEGACY_TEMPLATE_ID_MAP } from "@/lib/templates/templateResolver";
 
 const getCounterpartyName = (doc) => {
@@ -1141,30 +1142,31 @@ function PreviewModal({ doc, onClose }) {
 
         {/* Modal Body */}
         {activeTab === "preview" ? (
-          <div className="flex-1 overflow-auto bg-muted p-8 flex flex-col items-center gap-8">
-            {isQuotation ? (
-              Array.from({ length: quotationPageCount }, (_, i) => (
-                <div key={i} className="shrink-0">
-                  <QuotationDocument quotation={modalValues} currentPage={i + 1} />
+          <ErrorBoundary title="ไม่สามารถแสดงตัวอย่างเอกสารนี้ได้">
+            <div className="flex-1 overflow-auto bg-muted p-8 flex flex-col items-center gap-8">
+              {isQuotation ? (
+                Array.from({ length: quotationPageCount }, (_, i) => (
+                  <div key={i} className="shrink-0">
+                    <QuotationDocument quotation={modalValues} currentPage={i + 1} />
+                  </div>
+                ))
+              ) : DocumentComponent ? (
+                <div className="shrink-0 shadow-document">
+                  <DocumentFieldsProvider initialValues={modalValues} defaultReadOnly>
+                    <DocumentComponent data={modalValues} values={modalValues} quotation={modalValues} />
+                  </DocumentFieldsProvider>
                 </div>
-              ))
-            ) : DocumentComponent ? (
-              <div className="shrink-0 shadow-document">
-                <DocumentFieldsProvider initialValues={modalValues} defaultReadOnly>
-                  <DocumentComponent data={modalValues} values={modalValues} quotation={modalValues} />
-                </DocumentFieldsProvider>
-              </div>
-            ) : pages && pages.length > 0 ? (
-              <DocumentFieldsProvider key={JSON.stringify(modalValues)} initialValues={modalValues} defaultReadOnly>
-                {pages.map((PageContent, i) => (
-                  <div
-                    key={i}
-                    className="bg-[#FFFFFF] shadow-document w-[794px] min-h-[1123px] flex flex-col justify-between font-noto-looped text-gray-900 rounded-sm shrink-0 overflow-hidden"
-                    style={{
-                      padding: `${schema?.hasHeader !== false ? "28px" : "0px"} 48px ${schema?.hasFooter !== false ? "28px" : "0px"} 48px`,
-                      boxSizing: "border-box",
-                    }}
-                  >
+              ) : pages && pages.length > 0 ? (
+                <DocumentFieldsProvider key={JSON.stringify(modalValues)} initialValues={modalValues} defaultReadOnly>
+                  {pages.map((PageContent, i) => (
+                    <div
+                      key={i}
+                      className="bg-[#FFFFFF] shadow-document w-[794px] min-h-[1123px] flex flex-col justify-between font-noto-looped text-gray-900 rounded-sm shrink-0 overflow-hidden"
+                      style={{
+                        padding: schema?.hasHeader === false ? "0px" : "28px 48px",
+                        boxSizing: "border-box",
+                      }}
+                    >
                     {schema?.hasHeader !== false && <DocumentHeader logo={schema?.logo} />}
                     <div className="flex-1 min-h-0 overflow-hidden text-left">
                       <PageContent />
@@ -1225,6 +1227,7 @@ function PreviewModal({ doc, onClose }) {
               </div>
             )}
           </div>
+        </ErrorBoundary>
         ) : (
           /* Timeline & Activity History Tab */
           <div className="flex-1 overflow-auto bg-surface p-6 sm:p-8 space-y-6">

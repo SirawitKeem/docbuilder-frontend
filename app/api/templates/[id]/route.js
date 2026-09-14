@@ -5,9 +5,12 @@ import { SYSTEM_DEFAULT_TEMPLATES } from "@/lib/templates/catalog";
 
 export async function GET(req, { params }) {
   try {
-    const { id } = await params;
-    let template = await customTemplatesRepo.getById(id);
-    const sysMatch = SYSTEM_DEFAULT_TEMPLATES.find((t) => t.id === id);
+    const { id: rawId } = await params;
+    const effectiveId = rawId === "tmpl-notification-relocation" || rawId === "notification"
+      ? "tmpl-notification-standard"
+      : rawId;
+    let template = await customTemplatesRepo.getById(effectiveId);
+    const sysMatch = SYSTEM_DEFAULT_TEMPLATES.find((t) => t.id === effectiveId || t.id === rawId);
 
     if (!template) {
       if (sysMatch) {
