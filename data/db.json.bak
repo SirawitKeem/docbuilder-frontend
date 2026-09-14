@@ -288,34 +288,6 @@
       "createdAt": "2026-09-01T00:00:00.000Z",
       "updatedAt": "2026-09-01T00:00:00.000Z",
       "createdByUserId": "usr-admin"
-    },
-    {
-      "id": "5616",
-      "name": "5616",
-      "fullName": "56184",
-      "description": "ๆ5ก6ๆห",
-      "icon": "Handshake",
-      "color": "cyan",
-      "badge": "หมวดใหม่",
-      "order": 1,
-      "createdAt": "2026-09-04T02:39:28.275Z",
-      "updatedAt": "2026-09-04T02:39:28.276Z",
-      "createdByUserId": "usr-admin"
-    },
-    {
-      "id": "cat-1788946775522",
-      "name": "ประกาศบริษัท",
-      "fullName": "ประกาศบริษัท",
-      "description": "",
-      "icon": "FileText",
-      "color": "amber",
-      "badge": "หมวดใหม่",
-      "order": 1,
-      "available": true,
-      "href": "/create/custom?categoryId=cat-1788946775522",
-      "createdAt": "2026-09-09T09:39:35.523Z",
-      "updatedAt": "2026-09-09T09:39:35.524Z",
-      "createdByUserId": "usr-admin"
     }
   ],
   "customTemplates": [

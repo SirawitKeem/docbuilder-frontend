@@ -290,19 +290,19 @@
       "createdByUserId": "usr-admin"
     },
     {
-      "id": "cat-1788946775522",
-      "name": "ประกาศบริษัท",
-      "fullName": "ประกาศบริษัท",
+      "id": "company-announcement",
+      "name": "Company Announcement",
+      "fullName": "ประกาศจากบริษัท",
       "description": "",
-      "icon": "FileText",
+      "icon": "Megaphone",
       "color": "amber",
-      "badge": "หมวดใหม่",
+      "badge": "Standard",
       "order": 1,
       "available": true,
-      "href": "/create/custom?categoryId=cat-1788946775522",
-      "createdAt": "2026-09-09T09:39:35.523Z",
-      "updatedAt": "2026-09-09T09:39:35.524Z",
-      "createdByUserId": "usr-admin"
+      "href": "/create/custom?categoryId=company-announcement",
+      "createdByUserId": "usr-admin",
+      "createdAt": "2026-09-14T04:21:52.683Z",
+      "updatedAt": "2026-09-14T04:21:52.683Z"
     }
   ],
   "customTemplates": [
@@ -1114,13 +1114,14 @@
           "title": "หัวกระดาษ",
           "settings": {
             "hasLogo": true,
-            "logoUrl": "/quotation.png",
-            "companyName": "บริษัท เครสท์ เซนโด จำกัด",
-            "companyNameEn": "CREST ZENDO CO., LTD.",
-            "taxId": "0105558073755",
-            "address": "8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
-            "phone": "02-123-4567",
-            "email": "contact@crestzendo.com",
+            "logoUrl": "/header_logo.png",
+            "companyName": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+            "companyNameEn": "THE RECOVERY ADVISOR CO., LTD.",
+            "taxId": "0105554007189",
+            "branch": "สำนักงานใหญ่",
+            "address": "45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+            "phone": "02-1019884",
+            "email": "contact@recoveryadvisor.co.th",
             "align": "split"
           }
         },
@@ -1130,7 +1131,7 @@
           "title": "หัวเรื่อง",
           "settings": {
             "titleText": "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่",
-            "subtitleText": "NOTICE OF HEAD OFFICE RELOCATION",
+            "subtitleText": "Notice of Head Office Relocation",
             "align": "center"
           }
         },
@@ -1139,13 +1140,13 @@
           "type": "info_grid",
           "title": "ข้อมูลหนังสือ",
           "settings": {
-            "billToTitle": "เรียน:",
-            "billToCompany": "ท่านคู่ค้า ลูกค้า และพันธมิตรทางธุรกิจทุกท่าน",
-            "attnName": "ผู้มีอุปการคุณทุกท่าน",
-            "subject": "แจ้งเปลี่ยนแปลงสถานที่ตั้งสำนักงานใหญ่แห่งใหม่",
+            "billToTitle": "เรียน / To:",
+            "billToCompany": "{{recipient}}",
+            "attnName": "ผู้มีอุปการคุณและพันธมิตรทุกท่าน",
+            "subject": "{{subject}}",
             "quotationNo": "TRAC-2609001",
-            "date": "01 กันยายน 2569",
-            "validity": "มีผล 16 กันยายน 2569",
+            "date": "{{doc_date}}",
+            "validity": "มีผล {{effective_date}}",
             "amName": "ฝ่ายบริหารจัดการทั่วไป"
           }
         },
@@ -1154,7 +1155,7 @@
           "type": "text_block",
           "title": "ข้อความหนังสือแจ้ง",
           "settings": {
-            "content": "บริษัท เครสท์ เซนโด จำกัด ขอเรียนแจ้งให้ท่านทราบว่า บริษัทฯ ได้ดำเนินการย้ายสถานที่ตั้งสำนักงานใหญ่แห่งใหม่ เพื่อรองรับการขยายตัวทางธุรกิจและการให้บริการที่มีประสิทธิภาพยิ่งขึ้น โดยมีผลบังคับใช้ตั้งแต่วันที่ 16 กันยายน 2569 เป็นต้นไป"
+            "content": "บริษัทฯ ขอเรียนให้ท่านทราบว่า บริษัทฯ ได้ทำการย้ายและเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่ โดยมีผลบังคับใช้ตั้งแต่วันที่ {{effective_date}} เป็นต้นไป ขอความกรุณาท่านโปรดใช้ที่อยู่ใหม่ในการติดต่อ ออกใบกำกับภาษี ใบเสร็จรับเงิน นิติกรรมสัญญา และการจัดส่งเอกสารต่างๆ โดยมีรายละเอียดที่อยู่ดังต่อไปนี้"
           }
         },
         {
@@ -1164,8 +1165,8 @@
           "settings": {
             "heading": "รายละเอียดสถานที่ตั้งสำนักงานใหญ่:",
             "bullets": [
-              "ที่อยู่เดิม: 45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
-              "ที่อยู่ใหม่ (มีผล 16 ก.ย. 2569): 8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+              "ที่อยู่เดิม: {{old_address_th}}",
+              "ที่อยู่ใหม่ (มีผล {{effective_date}}): {{new_address_th}}",
               "หมายเลขโทรศัพท์และช่องทางการติดต่อทางอิเล็กทรอนิกส์ยังคงใช้งานได้ตามปกติ"
             ]
           }
@@ -1178,17 +1179,23 @@
             "slots": [
               {
                 "id": "s1",
-                "name": "นายศรายุทธ โกสิยารักษ์",
-                "role": "กรรมการผู้จัดการ / CEO"
+                "name": "{{signatory_name}}",
+                "role": "{{signatory_position}}"
               }
             ]
           }
         }
       ],
       "createdAt": "2026-09-01T00:00:00.000Z",
-      "updatedAt": "2026-09-14T03:24:30.936Z",
+      "updatedAt": "2026-09-14T04:28:12.368Z",
       "currentVersionId": "tv-tmpl-notification-standard-v1",
-      "createdByUserId": "usr-admin"
+      "createdByUserId": "usr-admin",
+      "pages": [
+        {
+          "id": "page-1",
+          "json": "{\"version\":\"6.9.1\",\"objects\":[{\"type\":\"image\",\"src\":\"/notification_ribbon_top.svg\",\"left\":0,\"top\":0,\"width\":1000,\"height\":48,\"scaleX\":0.794,\"scaleY\":0.75,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":false,\"evented\":false},{\"type\":\"image\",\"src\":\"/header_logo.png\",\"left\":48,\"top\":42,\"width\":298,\"height\":286,\"scaleX\":0.2080536912751678,\"scaleY\":0.21678321678321677,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":true},{\"type\":\"textbox\",\"left\":124,\"top\":40,\"width\":622,\"text\":\"บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด\",\"fontSize\":15.5,\"fontWeight\":\"bold\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":124,\"top\":63,\"width\":622,\"text\":\"45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210\",\"fontSize\":12,\"fill\":\"#374151\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":124,\"top\":82,\"width\":622,\"text\":\"เลขประจำตัวผู้เสียภาษีอากร 0105554007189 (สำนักงานใหญ่)   |   โทร: 02-1019884\",\"fontSize\":11.5,\"fill\":\"#4B5563\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":116,\"width\":698,\"text\":\"หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่\",\"fontSize\":18,\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":144,\"width\":698,\"text\":\"Notice of Head Office Relocation\",\"fontSize\":14,\"fontWeight\":\"600\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":450,\"top\":178,\"width\":296,\"text\":\"วันที่ / Date: {{doc_date}}\",\"fontSize\":14,\"textAlign\":\"right\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":208,\"width\":698,\"text\":\"เรียน / To:   {{recipient}}\",\"fontSize\":14,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":232,\"width\":698,\"text\":\"เรื่อง / Subject:   {{subject}}\",\"fontSize\":14,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":266,\"width\":698,\"text\":\"        บริษัทฯ ขอเรียนให้ท่านทราบว่า บริษัทฯ ได้ทำการย้ายและเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่ โดยมีผลบังคับใช้ตั้งแต่วันที่ {{effective_date}} เป็นต้นไป ขอความกรุณาท่านโปรดใช้ที่อยู่ใหม่ในการติดต่อ ออกใบกำกับภาษี ใบเสร็จรับเงิน นิติกรรมสัญญา และการจัดส่งเอกสารต่างๆ โดยมีรายละเอียดที่อยู่ดังต่อไปนี้\",\"fontSize\":13.5,\"lineHeight\":1.6,\"fill\":\"#111827\",\"textAlign\":\"justify\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":338,\"width\":698,\"text\":\"        Please be informed that our company will officially relocate its Head Office. This change will be effective from {{effective_date_en}} onwards. We kindly request that you update your records and use the new address for all future correspondence, tax invoices, receipts, and legal contracts. The details of our addresses are as follows:\",\"fontSize\":13,\"lineHeight\":1.55,\"fill\":\"#111827\",\"textAlign\":\"justify\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"rect\",\"left\":48,\"top\":422,\"width\":698,\"height\":84,\"fill\":\"#F1F3F5\",\"rx\":3,\"ry\":3},{\"type\":\"rect\",\"left\":48,\"top\":422,\"width\":5,\"height\":84,\"fill\":\"#6B7280\",\"rx\":2,\"ry\":2},{\"type\":\"textbox\",\"left\":66,\"top\":432,\"width\":664,\"text\":\"ที่อยู่เดิม / Previous Address:\",\"fontSize\":14,\"fontWeight\":\"bold\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":66,\"top\":456,\"width\":664,\"text\":\"{{old_address_th}}\\n{{old_address_en}}\",\"fontSize\":13,\"lineHeight\":1.45,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"rect\",\"left\":48,\"top\":520,\"width\":698,\"height\":94,\"fill\":\"#E2EEFB\",\"rx\":3,\"ry\":3},{\"type\":\"rect\",\"left\":48,\"top\":520,\"width\":5,\"height\":94,\"fill\":\"#1D4ED8\",\"rx\":2,\"ry\":2},{\"type\":\"textbox\",\"left\":66,\"top\":530,\"width\":664,\"text\":\"ที่อยู่ใหม่ / New Address (มีผล {{effective_date}} / Effective {{effective_date_en}}):\",\"fontSize\":14,\"fontWeight\":\"bold\",\"fill\":\"#030712\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":66,\"top\":554,\"width\":664,\"text\":\"{{new_address_th}}\\n{{new_address_en}}\",\"fontSize\":13,\"lineHeight\":1.45,\"fill\":\"#030712\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":660,\"width\":326,\"text\":\"ขอแสดงความนับถือ / Sincerely yours,\",\"fontSize\":14,\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":726,\"width\":326,\"text\":\"( .................................................... )\",\"fontSize\":13,\"textAlign\":\"center\",\"fill\":\"#9CA3AF\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":752,\"width\":326,\"text\":\"{{signatory_name}}\",\"fontSize\":14,\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":774,\"width\":326,\"text\":\"{{signatory_position}}\",\"fontSize\":13,\"textAlign\":\"center\",\"fill\":\"#4B5563\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"image\",\"src\":\"/notification_ribbon_bottom.svg\",\"left\":0,\"top\":1087,\"width\":1000,\"height\":48,\"scaleX\":0.794,\"scaleY\":0.75,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":false,\"evented\":false}]}"
+        }
+      ]
     }
   ],
   "templateVersions": [
@@ -1611,7 +1618,94 @@
       ],
       "pages": [],
       "createdAt": "2026-09-01T00:00:00.000Z",
-      "createdByUserId": "usr-admin"
+      "createdByUserId": "usr-admin",
+      "snapshot": {
+        "blocks": [
+          {
+            "id": "b_header",
+            "type": "header",
+            "title": "หัวกระดาษ",
+            "settings": {
+              "hasLogo": true,
+              "logoUrl": "/header_logo.png",
+              "companyName": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+              "companyNameEn": "THE RECOVERY ADVISOR CO., LTD.",
+              "taxId": "0105554007189",
+              "branch": "สำนักงานใหญ่",
+              "address": "45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+              "phone": "02-1019884",
+              "email": "contact@recoveryadvisor.co.th",
+              "align": "split"
+            }
+          },
+          {
+            "id": "b_title",
+            "type": "doc_title",
+            "title": "หัวเรื่อง",
+            "settings": {
+              "titleText": "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่",
+              "subtitleText": "Notice of Head Office Relocation",
+              "align": "center"
+            }
+          },
+          {
+            "id": "b_info",
+            "type": "info_grid",
+            "title": "ข้อมูลหนังสือ",
+            "settings": {
+              "billToTitle": "เรียน / To:",
+              "billToCompany": "{{recipient}}",
+              "attnName": "ผู้มีอุปการคุณและพันธมิตรทุกท่าน",
+              "subject": "{{subject}}",
+              "quotationNo": "TRAC-2609001",
+              "date": "{{doc_date}}",
+              "validity": "มีผล {{effective_date}}",
+              "amName": "ฝ่ายบริหารจัดการทั่วไป"
+            }
+          },
+          {
+            "id": "b_text",
+            "type": "text_block",
+            "title": "ข้อความหนังสือแจ้ง",
+            "settings": {
+              "content": "บริษัทฯ ขอเรียนให้ท่านทราบว่า บริษัทฯ ได้ทำการย้ายและเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่ โดยมีผลบังคับใช้ตั้งแต่วันที่ {{effective_date}} เป็นต้นไป ขอความกรุณาท่านโปรดใช้ที่อยู่ใหม่ในการติดต่อ ออกใบกำกับภาษี ใบเสร็จรับเงิน นิติกรรมสัญญา และการจัดส่งเอกสารต่างๆ โดยมีรายละเอียดที่อยู่ดังต่อไปนี้"
+            }
+          },
+          {
+            "id": "b_terms",
+            "type": "terms",
+            "title": "เปรียบเทียบที่อยู่เดิมและใหม่",
+            "settings": {
+              "heading": "รายละเอียดสถานที่ตั้งสำนักงานใหญ่:",
+              "bullets": [
+                "ที่อยู่เดิม: {{old_address_th}}",
+                "ที่อยู่ใหม่ (มีผล {{effective_date}}): {{new_address_th}}",
+                "หมายเลขโทรศัพท์และช่องทางการติดต่อทางอิเล็กทรอนิกส์ยังคงใช้งานได้ตามปกติ"
+              ]
+            }
+          },
+          {
+            "id": "b_signatures",
+            "type": "signatures",
+            "title": "ผู้มีอำนาจลงนาม",
+            "settings": {
+              "slots": [
+                {
+                  "id": "s1",
+                  "name": "{{signatory_name}}",
+                  "role": "{{signatory_position}}"
+                }
+              ]
+            }
+          }
+        ],
+        "pages": [
+          {
+            "id": "page-1",
+            "json": "{\"version\":\"6.9.1\",\"objects\":[{\"type\":\"image\",\"src\":\"/notification_ribbon_top.svg\",\"left\":0,\"top\":0,\"width\":1000,\"height\":48,\"scaleX\":0.794,\"scaleY\":0.75,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":false,\"evented\":false},{\"type\":\"image\",\"src\":\"/header_logo.png\",\"left\":48,\"top\":42,\"width\":298,\"height\":286,\"scaleX\":0.2080536912751678,\"scaleY\":0.21678321678321677,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":true},{\"type\":\"textbox\",\"left\":124,\"top\":40,\"width\":622,\"text\":\"บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด\",\"fontSize\":15.5,\"fontWeight\":\"bold\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":124,\"top\":63,\"width\":622,\"text\":\"45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210\",\"fontSize\":12,\"fill\":\"#374151\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":124,\"top\":82,\"width\":622,\"text\":\"เลขประจำตัวผู้เสียภาษีอากร 0105554007189 (สำนักงานใหญ่)   |   โทร: 02-1019884\",\"fontSize\":11.5,\"fill\":\"#4B5563\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":116,\"width\":698,\"text\":\"หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่\",\"fontSize\":18,\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":144,\"width\":698,\"text\":\"Notice of Head Office Relocation\",\"fontSize\":14,\"fontWeight\":\"600\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":450,\"top\":178,\"width\":296,\"text\":\"วันที่ / Date: {{doc_date}}\",\"fontSize\":14,\"textAlign\":\"right\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":208,\"width\":698,\"text\":\"เรียน / To:   {{recipient}}\",\"fontSize\":14,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":232,\"width\":698,\"text\":\"เรื่อง / Subject:   {{subject}}\",\"fontSize\":14,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":266,\"width\":698,\"text\":\"        บริษัทฯ ขอเรียนให้ท่านทราบว่า บริษัทฯ ได้ทำการย้ายและเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่ โดยมีผลบังคับใช้ตั้งแต่วันที่ {{effective_date}} เป็นต้นไป ขอความกรุณาท่านโปรดใช้ที่อยู่ใหม่ในการติดต่อ ออกใบกำกับภาษี ใบเสร็จรับเงิน นิติกรรมสัญญา และการจัดส่งเอกสารต่างๆ โดยมีรายละเอียดที่อยู่ดังต่อไปนี้\",\"fontSize\":13.5,\"lineHeight\":1.6,\"fill\":\"#111827\",\"textAlign\":\"justify\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":338,\"width\":698,\"text\":\"        Please be informed that our company will officially relocate its Head Office. This change will be effective from {{effective_date_en}} onwards. We kindly request that you update your records and use the new address for all future correspondence, tax invoices, receipts, and legal contracts. The details of our addresses are as follows:\",\"fontSize\":13,\"lineHeight\":1.55,\"fill\":\"#111827\",\"textAlign\":\"justify\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"rect\",\"left\":48,\"top\":422,\"width\":698,\"height\":84,\"fill\":\"#F1F3F5\",\"rx\":3,\"ry\":3},{\"type\":\"rect\",\"left\":48,\"top\":422,\"width\":5,\"height\":84,\"fill\":\"#6B7280\",\"rx\":2,\"ry\":2},{\"type\":\"textbox\",\"left\":66,\"top\":432,\"width\":664,\"text\":\"ที่อยู่เดิม / Previous Address:\",\"fontSize\":14,\"fontWeight\":\"bold\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":66,\"top\":456,\"width\":664,\"text\":\"{{old_address_th}}\\n{{old_address_en}}\",\"fontSize\":13,\"lineHeight\":1.45,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"rect\",\"left\":48,\"top\":520,\"width\":698,\"height\":94,\"fill\":\"#E2EEFB\",\"rx\":3,\"ry\":3},{\"type\":\"rect\",\"left\":48,\"top\":520,\"width\":5,\"height\":94,\"fill\":\"#1D4ED8\",\"rx\":2,\"ry\":2},{\"type\":\"textbox\",\"left\":66,\"top\":530,\"width\":664,\"text\":\"ที่อยู่ใหม่ / New Address (มีผล {{effective_date}} / Effective {{effective_date_en}}):\",\"fontSize\":14,\"fontWeight\":\"bold\",\"fill\":\"#030712\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":66,\"top\":554,\"width\":664,\"text\":\"{{new_address_th}}\\n{{new_address_en}}\",\"fontSize\":13,\"lineHeight\":1.45,\"fill\":\"#030712\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":660,\"width\":326,\"text\":\"ขอแสดงความนับถือ / Sincerely yours,\",\"fontSize\":14,\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":726,\"width\":326,\"text\":\"( .................................................... )\",\"fontSize\":13,\"textAlign\":\"center\",\"fill\":\"#9CA3AF\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":752,\"width\":326,\"text\":\"{{signatory_name}}\",\"fontSize\":14,\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":774,\"width\":326,\"text\":\"{{signatory_position}}\",\"fontSize\":13,\"textAlign\":\"center\",\"fill\":\"#4B5563\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"image\",\"src\":\"/notification_ribbon_bottom.svg\",\"left\":0,\"top\":1087,\"width\":1000,\"height\":48,\"scaleX\":0.794,\"scaleY\":0.75,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":false,\"evented\":false}]}"
+          }
+        ]
+      }
     },
     {
       "id": "tmpl-quotation-standard-v1",
@@ -2430,7 +2524,94 @@
           }
         }
       ],
-      "createdAt": "2026-09-01T00:00:00.000Z"
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "snapshot": {
+        "blocks": [
+          {
+            "id": "b_header",
+            "type": "header",
+            "title": "หัวกระดาษ",
+            "settings": {
+              "hasLogo": true,
+              "logoUrl": "/header_logo.png",
+              "companyName": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+              "companyNameEn": "THE RECOVERY ADVISOR CO., LTD.",
+              "taxId": "0105554007189",
+              "branch": "สำนักงานใหญ่",
+              "address": "45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+              "phone": "02-1019884",
+              "email": "contact@recoveryadvisor.co.th",
+              "align": "split"
+            }
+          },
+          {
+            "id": "b_title",
+            "type": "doc_title",
+            "title": "หัวเรื่อง",
+            "settings": {
+              "titleText": "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่",
+              "subtitleText": "Notice of Head Office Relocation",
+              "align": "center"
+            }
+          },
+          {
+            "id": "b_info",
+            "type": "info_grid",
+            "title": "ข้อมูลหนังสือ",
+            "settings": {
+              "billToTitle": "เรียน / To:",
+              "billToCompany": "{{recipient}}",
+              "attnName": "ผู้มีอุปการคุณและพันธมิตรทุกท่าน",
+              "subject": "{{subject}}",
+              "quotationNo": "TRAC-2609001",
+              "date": "{{doc_date}}",
+              "validity": "มีผล {{effective_date}}",
+              "amName": "ฝ่ายบริหารจัดการทั่วไป"
+            }
+          },
+          {
+            "id": "b_text",
+            "type": "text_block",
+            "title": "ข้อความหนังสือแจ้ง",
+            "settings": {
+              "content": "บริษัทฯ ขอเรียนให้ท่านทราบว่า บริษัทฯ ได้ทำการย้ายและเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่ โดยมีผลบังคับใช้ตั้งแต่วันที่ {{effective_date}} เป็นต้นไป ขอความกรุณาท่านโปรดใช้ที่อยู่ใหม่ในการติดต่อ ออกใบกำกับภาษี ใบเสร็จรับเงิน นิติกรรมสัญญา และการจัดส่งเอกสารต่างๆ โดยมีรายละเอียดที่อยู่ดังต่อไปนี้"
+            }
+          },
+          {
+            "id": "b_terms",
+            "type": "terms",
+            "title": "เปรียบเทียบที่อยู่เดิมและใหม่",
+            "settings": {
+              "heading": "รายละเอียดสถานที่ตั้งสำนักงานใหญ่:",
+              "bullets": [
+                "ที่อยู่เดิม: {{old_address_th}}",
+                "ที่อยู่ใหม่ (มีผล {{effective_date}}): {{new_address_th}}",
+                "หมายเลขโทรศัพท์และช่องทางการติดต่อทางอิเล็กทรอนิกส์ยังคงใช้งานได้ตามปกติ"
+              ]
+            }
+          },
+          {
+            "id": "b_signatures",
+            "type": "signatures",
+            "title": "ผู้มีอำนาจลงนาม",
+            "settings": {
+              "slots": [
+                {
+                  "id": "s1",
+                  "name": "{{signatory_name}}",
+                  "role": "{{signatory_position}}"
+                }
+              ]
+            }
+          }
+        ],
+        "pages": [
+          {
+            "id": "page-1",
+            "json": "{\"version\":\"6.9.1\",\"objects\":[{\"type\":\"image\",\"src\":\"/notification_ribbon_top.svg\",\"left\":0,\"top\":0,\"width\":1000,\"height\":48,\"scaleX\":0.794,\"scaleY\":0.75,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":false,\"evented\":false},{\"type\":\"image\",\"src\":\"/header_logo.png\",\"left\":48,\"top\":42,\"width\":298,\"height\":286,\"scaleX\":0.2080536912751678,\"scaleY\":0.21678321678321677,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":true},{\"type\":\"textbox\",\"left\":124,\"top\":40,\"width\":622,\"text\":\"บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด\",\"fontSize\":15.5,\"fontWeight\":\"bold\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":124,\"top\":63,\"width\":622,\"text\":\"45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210\",\"fontSize\":12,\"fill\":\"#374151\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":124,\"top\":82,\"width\":622,\"text\":\"เลขประจำตัวผู้เสียภาษีอากร 0105554007189 (สำนักงานใหญ่)   |   โทร: 02-1019884\",\"fontSize\":11.5,\"fill\":\"#4B5563\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":116,\"width\":698,\"text\":\"หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่\",\"fontSize\":18,\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":144,\"width\":698,\"text\":\"Notice of Head Office Relocation\",\"fontSize\":14,\"fontWeight\":\"600\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":450,\"top\":178,\"width\":296,\"text\":\"วันที่ / Date: {{doc_date}}\",\"fontSize\":14,\"textAlign\":\"right\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":208,\"width\":698,\"text\":\"เรียน / To:   {{recipient}}\",\"fontSize\":14,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":232,\"width\":698,\"text\":\"เรื่อง / Subject:   {{subject}}\",\"fontSize\":14,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":266,\"width\":698,\"text\":\"        บริษัทฯ ขอเรียนให้ท่านทราบว่า บริษัทฯ ได้ทำการย้ายและเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่ โดยมีผลบังคับใช้ตั้งแต่วันที่ {{effective_date}} เป็นต้นไป ขอความกรุณาท่านโปรดใช้ที่อยู่ใหม่ในการติดต่อ ออกใบกำกับภาษี ใบเสร็จรับเงิน นิติกรรมสัญญา และการจัดส่งเอกสารต่างๆ โดยมีรายละเอียดที่อยู่ดังต่อไปนี้\",\"fontSize\":13.5,\"lineHeight\":1.6,\"fill\":\"#111827\",\"textAlign\":\"justify\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":48,\"top\":338,\"width\":698,\"text\":\"        Please be informed that our company will officially relocate its Head Office. This change will be effective from {{effective_date_en}} onwards. We kindly request that you update your records and use the new address for all future correspondence, tax invoices, receipts, and legal contracts. The details of our addresses are as follows:\",\"fontSize\":13,\"lineHeight\":1.55,\"fill\":\"#111827\",\"textAlign\":\"justify\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"rect\",\"left\":48,\"top\":422,\"width\":698,\"height\":84,\"fill\":\"#F1F3F5\",\"rx\":3,\"ry\":3},{\"type\":\"rect\",\"left\":48,\"top\":422,\"width\":5,\"height\":84,\"fill\":\"#6B7280\",\"rx\":2,\"ry\":2},{\"type\":\"textbox\",\"left\":66,\"top\":432,\"width\":664,\"text\":\"ที่อยู่เดิม / Previous Address:\",\"fontSize\":14,\"fontWeight\":\"bold\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":66,\"top\":456,\"width\":664,\"text\":\"{{old_address_th}}\\n{{old_address_en}}\",\"fontSize\":13,\"lineHeight\":1.45,\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"rect\",\"left\":48,\"top\":520,\"width\":698,\"height\":94,\"fill\":\"#E2EEFB\",\"rx\":3,\"ry\":3},{\"type\":\"rect\",\"left\":48,\"top\":520,\"width\":5,\"height\":94,\"fill\":\"#1D4ED8\",\"rx\":2,\"ry\":2},{\"type\":\"textbox\",\"left\":66,\"top\":530,\"width\":664,\"text\":\"ที่อยู่ใหม่ / New Address (มีผล {{effective_date}} / Effective {{effective_date_en}}):\",\"fontSize\":14,\"fontWeight\":\"bold\",\"fill\":\"#030712\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":66,\"top\":554,\"width\":664,\"text\":\"{{new_address_th}}\\n{{new_address_en}}\",\"fontSize\":13,\"lineHeight\":1.45,\"fill\":\"#030712\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":660,\"width\":326,\"text\":\"ขอแสดงความนับถือ / Sincerely yours,\",\"fontSize\":14,\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":726,\"width\":326,\"text\":\"( .................................................... )\",\"fontSize\":13,\"textAlign\":\"center\",\"fill\":\"#9CA3AF\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":752,\"width\":326,\"text\":\"{{signatory_name}}\",\"fontSize\":14,\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"fill\":\"#111827\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"textbox\",\"left\":420,\"top\":774,\"width\":326,\"text\":\"{{signatory_position}}\",\"fontSize\":13,\"textAlign\":\"center\",\"fill\":\"#4B5563\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\"},{\"type\":\"image\",\"src\":\"/notification_ribbon_bottom.svg\",\"left\":0,\"top\":1087,\"width\":1000,\"height\":48,\"scaleX\":0.794,\"scaleY\":0.75,\"originX\":\"left\",\"originY\":\"top\",\"selectable\":false,\"evented\":false}]}"
+          }
+        ]
+      }
     }
   ],
   "templateBlocks": [
@@ -3418,13 +3599,14 @@
       "isRequired": true,
       "settings": {
         "hasLogo": true,
-        "logoUrl": "/quotation.png",
-        "companyName": "บริษัท เครสท์ เซนโด จำกัด",
-        "companyNameEn": "CREST ZENDO CO., LTD.",
-        "taxId": "0105558073755",
-        "address": "8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
-        "phone": "02-123-4567",
-        "email": "contact@crestzendo.com",
+        "logoUrl": "/header_logo.png",
+        "companyName": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+        "companyNameEn": "THE RECOVERY ADVISOR CO., LTD.",
+        "taxId": "0105554007189",
+        "branch": "สำนักงานใหญ่",
+        "address": "45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+        "phone": "02-1019884",
+        "email": "contact@recoveryadvisor.co.th",
         "align": "split"
       },
       "createdAt": "2026-09-11T03:45:35.079Z"
@@ -3438,7 +3620,7 @@
       "isRequired": true,
       "settings": {
         "titleText": "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่",
-        "subtitleText": "NOTICE OF HEAD OFFICE RELOCATION",
+        "subtitleText": "Notice of Head Office Relocation",
         "align": "center"
       },
       "createdAt": "2026-09-11T03:45:35.079Z"
@@ -3451,13 +3633,13 @@
       "sortOrder": 3,
       "isRequired": true,
       "settings": {
-        "billToTitle": "เรียน:",
-        "billToCompany": "ท่านคู่ค้า ลูกค้า และพันธมิตรทางธุรกิจทุกท่าน",
-        "attnName": "ผู้มีอุปการคุณทุกท่าน",
-        "subject": "แจ้งเปลี่ยนแปลงสถานที่ตั้งสำนักงานใหญ่แห่งใหม่",
+        "billToTitle": "เรียน / To:",
+        "billToCompany": "{{recipient}}",
+        "attnName": "ผู้มีอุปการคุณและพันธมิตรทุกท่าน",
+        "subject": "{{subject}}",
         "quotationNo": "TRAC-2609001",
-        "date": "01 กันยายน 2569",
-        "validity": "มีผล 16 กันยายน 2569",
+        "date": "{{doc_date}}",
+        "validity": "มีผล {{effective_date}}",
         "amName": "ฝ่ายบริหารจัดการทั่วไป"
       },
       "createdAt": "2026-09-11T03:45:35.079Z"
@@ -3470,7 +3652,7 @@
       "sortOrder": 4,
       "isRequired": true,
       "settings": {
-        "content": "บริษัท เครสท์ เซนโด จำกัด ขอเรียนแจ้งให้ท่านทราบว่า บริษัทฯ ได้ดำเนินการย้ายสถานที่ตั้งสำนักงานใหญ่แห่งใหม่ เพื่อรองรับการขยายตัวทางธุรกิจและการให้บริการที่มีประสิทธิภาพยิ่งขึ้น โดยมีผลบังคับใช้ตั้งแต่วันที่ 16 กันยายน 2569 เป็นต้นไป"
+        "content": "บริษัทฯ ขอเรียนให้ท่านทราบว่า บริษัทฯ ได้ทำการย้ายและเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่ โดยมีผลบังคับใช้ตั้งแต่วันที่ {{effective_date}} เป็นต้นไป ขอความกรุณาท่านโปรดใช้ที่อยู่ใหม่ในการติดต่อ ออกใบกำกับภาษี ใบเสร็จรับเงิน นิติกรรมสัญญา และการจัดส่งเอกสารต่างๆ โดยมีรายละเอียดที่อยู่ดังต่อไปนี้"
       },
       "createdAt": "2026-09-11T03:45:35.079Z"
     },
@@ -3484,8 +3666,8 @@
       "settings": {
         "heading": "รายละเอียดสถานที่ตั้งสำนักงานใหญ่:",
         "bullets": [
-          "ที่อยู่เดิม: 45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
-          "ที่อยู่ใหม่ (มีผล 16 ก.ย. 2569): 8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+          "ที่อยู่เดิม: {{old_address_th}}",
+          "ที่อยู่ใหม่ (มีผล {{effective_date}}): {{new_address_th}}",
           "หมายเลขโทรศัพท์และช่องทางการติดต่อทางอิเล็กทรอนิกส์ยังคงใช้งานได้ตามปกติ"
         ]
       },
@@ -3502,8 +3684,8 @@
         "slots": [
           {
             "id": "s1",
-            "name": "นายศรายุทธ โกสิยารักษ์",
-            "role": "กรรมการผู้จัดการ / CEO"
+            "name": "{{signatory_name}}",
+            "role": "{{signatory_position}}"
           }
         ]
       },
