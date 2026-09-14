@@ -1,0 +1,115 @@
+{
+  "create": {
+    "title": "สร้างเอกสาร",
+    "description": "เลือกหมวดหมู่เทมเพลตเพื่อเริ่มร่างสัญญา ข้อตกลง หรือจดหมายราชการ",
+    "standardTemplates": "เทมเพลตมาตรฐาน",
+    "standardDesc": "เลือกจากเทมเพลตองค์กรที่ได้รับอนุมัติแล้ว พร้อมการเชื่อมต่อฟิลด์อัตโนมัติ",
+    "selectTemplate": "เลือกเทมเพลต",
+    "backToTemplates": "กลับไปเลือกเทมเพลต"
+  },
+  "profileGate": {
+    "title": "เลือกชุดข้อมูลที่จะใช้",
+    "description": "ระบบจะนำข้อมูลบริษัท ลูกค้า หรือคู่สัญญาที่บันทึกไว้มากรอกลงในสัญญาให้อัตโนมัติ เพื่อประหยัดเวลาและลดข้อผิดพลาด",
+    "backToTemplates": "ย้อนกลับไปเลือกเทมเพลต",
+    "startNow": "เริ่มสร้างเอกสารทันที",
+    "addPreset": "เพิ่มชุดข้อมูลกลาง",
+    "searchPresets": "ค้นหาชุดข้อมูล...",
+    "presetName": "ชื่อชุดข้อมูล",
+    "complete": "ข้อมูลครบสมบูรณ์",
+    "missingFields": "ขาด {count} ฟิลด์ที่จำเป็น",
+    "blankDocument": "เริ่มจากเอกสารเปล่า",
+    "blankDesc": "เลือกเอกสารเปล่า (ไม่ใช้ชุดข้อมูล)"
+  },
+  "customDoc": {
+    "missingId": "ไม่พบรหัสเทมเพลต (Template ID is missing)",
+    "newDocument": "เอกสารใหม่",
+    "loadingTemplate": "กำลังโหลดเทมเพลต...",
+    "notFound": "ไม่พบเทมเพลตที่ระบุ หรือเทมเพลตอาจถูกลบไปแล้ว",
+    "backToList": "กลับไปหน้ารายการเทมเพลต",
+    "saveDraft": "บันทึกฉบับร่าง",
+    "complete": "เสร็จสมบูรณ์",
+    "printPdf": "พิมพ์ / PDF",
+    "sendEmail": "ส่งอีเมล",
+    "fillData": "กรอกและปรับแต่งข้อมูลเอกสาร",
+    "detectedVars": "ตัวแปรไดนามิกที่ตรวจพบในเทมเพลต",
+    "a4Preview": "พรีวิวกระดาษ A4 เสมือนจริง (Print Preview)",
+    "slidePreview": "พรีวิวกระดาษสไลด์ 16:9 เสมือนจริง (Slide Preview)",
+    "saveSuccess": "บันทึกเอกสารสำเร็จเรียบร้อยแล้ว!",
+    "saveError": "เกิดข้อผิดพลาดในการบันทึกเอกสาร",
+    "a4Document": "เอกสาร A4",
+    "slide169": "สไลด์ 16:9",
+    "autoVars": "ตัวแปรอัตโนมัติ"
+  },
+  "watermark": {
+    "none": "ไม่มี",
+    "draft": "ฉบับร่าง (DRAFT)",
+    "copy": "สำเนาถูกต้อง (COPY)",
+    "confidential": "ลับเฉพาะ (CONFIDENTIAL)"
+  },
+  "contractForm": {
+    "title": "กรอกข้อมูลสัญญา",
+    "section1": "1. วันที่และสถานที่ทำสัญญา",
+    "section2": "2. ข้อมูลตัวแทนจำหน่าย (Reseller)",
+    "section3": "3. ผู้ลงนาม",
+    "section4": "4. ฝ่ายเรา (เครสท์ เซนโด)",
+    "section5": "5. ลายน้ำบน PDF",
+    "todayDate": "ใส่วันที่วันนี้",
+    "companySeal": "ประทับตราสำคัญบริษัท (Red Seal)",
+    "selectWatermark": "เลือกลายน้ำ"
+  },
+  "notificationForm": {
+    "title": "กรอกข้อมูลหนังสือแจ้ง",
+    "section1": "1. ข้อมูลหนังสือและวันที่ออกเอกสาร",
+    "section2": "2. วันที่มีผลบังคับใช้",
+    "section3": "3. ข้อมูลที่อยู่ใหม่และเดิม",
+    "section4": "4. ผู้มีอำนาจลงนาม",
+    "effectiveDateTH": "วันที่มีผล (ภาษาไทย)",
+    "effectiveDateEN": "Effective Date (English)",
+    "prevAddressTH": "ที่อยู่เดิม (ภาษาไทย)",
+    "prevAddressEN": "Previous Address (English)",
+    "newAddressTH": "ที่อยู่ใหม่ (ภาษาไทย)",
+    "newAddressEN": "New Office Address (English)"
+  },
+  "editor": {
+    "savedDocument": "บันทึกเอกสารลง 'เอกสารของฉัน' เรียบร้อยแล้ว",
+    "pdfError": "สร้าง PDF ไม่สำเร็จ",
+    "loadingDoc": "กำลังโหลดเอกสาร..."
+  },
+  "toolbar": {
+    "clickToRename": "คลิกเพื่อแก้ไขชื่อเอกสาร",
+    "savedAt": "บันทึกเมื่อ {time}",
+    "hideForm": "ซ่อนฟอร์ม",
+    "showForm": "แสดงฟอร์ม",
+    "saveDocument": "บันทึกเอกสาร",
+    "allFieldsFilled": "กรอกข้อมูลครบแล้ว"
+  },
+  "review": {
+    "title": "ตรวจสอบเอกสารก่อนส่ง",
+    "allFilled": "✓ กรอกข้อมูลครบแล้ว",
+    "selectExport": "เลือกรูปแบบการ Export"
+  },
+  "success": {
+    "title": "ส่งเอกสารเรียบร้อยแล้ว!",
+    "sentTo": "ส่งไปยัง",
+    "createNew": "สร้างเอกสารใหม่",
+    "backToHome": "กลับหน้าหลัก"
+  },
+  "email": {
+    "recipientLabel": "1. ผู้รับ (Recipient Email) *",
+    "subjectLabel": "2. หัวข้ออีเมล (Subject) *",
+    "messageLabel": "3. ข้อความในอีเมล (Email Message)",
+    "attachmentLabel": "4. ไฟล์แนบ (Attachment)",
+    "defaultMessage": "เรียนผู้รับ\n\nกรุณาตรวจสอบเอกสารแนบท้าย...",
+    "pdfBadge": "PDF Document • พร้อมแนบส่ง",
+    "confirmSend": "ยืนยันการส่งอีเมล",
+    "sending": "กำลังส่งอีเมล..."
+  },
+  "signature": {
+    "title": "ลงลายมือชื่อดิจิทัล",
+    "drawLive": "วาดลายมือชื่อสด",
+    "uploadImage": "อัปโหลดรูปภาพ",
+    "placeholder": "ลงลายมือชื่อที่นี่...",
+    "clear": "ล้างลายเซ็น",
+    "apply": "ประทับลายเซ็นนี้"
+  }
+}

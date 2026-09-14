@@ -1,0 +1,1515 @@
+{
+  "fieldProfiles": [
+    {
+      "id": "profile-1787103435257",
+      "name": "บริษัท เครสท์ เซนโด จำกัด",
+      "values": {
+        "counterparty_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "counterparty_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "counterparty_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "counterparty_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท",
+        "counterparty_signature_text": "นายวิทวัส อัครเดชากุล",
+        "our_signature_text": "นายศรายุทธ โกสิยารักษ์",
+        "our_signatory_position": "CEO/Founder",
+        "our_signatory_name": "นายศรายุทธ โกสิยารักษ์",
+        "our_company_name": "บริษัท เครสท์ เซนโด จำกัด",
+        "contract_location": "บริษัท เครสท์ เซนโด จำกัด",
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "counterparty_registration_number": "0107544000108"
+      },
+      "createdAt": "2026-08-19T01:37:15.258Z",
+      "updatedAt": "2026-08-20T01:39:02.771Z"
+    },
+    {
+      "id": "profile-1787103657141",
+      "name": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+      "values": {
+        "counterparty_signatory_name": "นายศรายุทธ โกสิยารักษ์",
+        "counterparty_address": "45 ซอย โกสุมรวมใจ 37 แขวงดอนเมือง ดอนเมือง กรุงเทพมหานคร 10210",
+        "counterparty_name": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+        "contract_location": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+        "our_signatory_name": "นายศรายุทธ โกสิยารักษ์",
+        "our_signatory_position": "CEO/Founder",
+        "our_company_name": "บริษัท เครสท์ เซนโด จำกัด",
+        "our_signature_text": "นายศรายุทธ โกสิยารักษ์",
+        "counterparty_signature_text": "นายศรายุทธ โกสิยารักษ์",
+        "counterparty_signatory_position": "CEO/Founder",
+        "contract_date_day": "20",
+        "contract_date_month": "สิงหาคม",
+        "contract_date_year": "2566"
+      },
+      "createdAt": "2026-08-19T01:40:57.141Z",
+      "updatedAt": "2026-08-19T02:21:04.407Z"
+    },
+    {
+      "id": "profile-1787275130685",
+      "name": "CS LoxInfo Public Company Limited.",
+      "profileType": "quotation",
+      "values": {
+        "bill_to_company": "CS LoxInfo Public Company Limited.",
+        "attn_name": "Sarun Phongpodchanan",
+        "end_user": " P.R. Foodland Co., Ltd.",
+        "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+        "am_name": " Narin Rattanavijai / Channel Manager ",
+        "am_phone": "+6682-44-666-95"
+      },
+      "createdAt": "2026-08-21T01:18:50.686Z",
+      "updatedAt": "2026-08-21T01:18:50.686Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-1787812462153",
+      "name": "CZ26080001.pdf",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-27T06:34:22.153Z",
+      "updatedAt": "2026-08-27T06:34:22.153Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "id": "qt-1787638573675",
+        "quotationNo": "CZ26080001",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavijai(PoP)",
+        "senderPhone": "082 44 666 95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T06:16:13.675Z",
+        "updatedAt": "2026-08-27T02:05:21.118Z",
+        "status": "draft",
+        "sentTo": null,
+        "issuer": {
+          "address": "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Donmueang, Bangkok 10210",
+          "tagline": "",
+          "phone": "082-446-6695"
+        },
+        "remarksList": [
+          "Payment: Annually"
+        ],
+        "specialDiscount": 0,
+        "senderPosition": "Executive Assistant - Technology & Governance",
+        "senderEmail": "narin@crestzendo.com"
+      }
+    },
+    {
+      "id": "qt-1787638573675",
+      "name": "ใบเสนอราคา CZ2608063",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-25T06:16:13.675Z",
+      "updatedAt": "2026-08-27T02:05:21.118Z",
+      "status": "draft",
+      "sentTo": null,
+      "values": {
+        "id": "qt-1787638573675",
+        "quotationNo": "CZ26080001",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavijai(PoP)",
+        "senderPhone": "082 44 666 95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T06:16:13.675Z",
+        "updatedAt": "2026-08-27T02:05:21.118Z",
+        "status": "draft",
+        "sentTo": null,
+        "issuer": {
+          "address": "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Donmueang, Bangkok 10210",
+          "tagline": "",
+          "phone": "082-446-6695"
+        },
+        "remarksList": [
+          "Payment: Annually"
+        ],
+        "specialDiscount": 0,
+        "senderPosition": "Executive Assistant - Technology & Governance",
+        "senderEmail": "narin@crestzendo.com"
+      }
+    },
+    {
+      "id": "qt-1787631227758",
+      "name": "ใบเสนอราคา CZ2608063",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-25T04:13:47.758Z",
+      "updatedAt": "2026-08-25T04:13:47.758Z",
+      "status": "draft",
+      "sentTo": null,
+      "values": {
+        "id": "qt-1787631227758",
+        "quotationNo": "CZ2608063",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-2",
+            "title": "Application Shield Including Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-2-1",
+                "heading": "Onboarding Assistance & Advanced Customer Support",
+                "bullets": [
+                  {
+                    "id": "b2-1",
+                    "text": "New domain onboarding assistance",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-2",
+                    "text": "Security configuration assistance and customization",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-3",
+                    "text": "Security policies analysis",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-4",
+                    "text": "24/7/365 email/Group Chat and phone hotline support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-5",
+                    "text": "Advanced 100% SLA Guarantee",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-2",
+                "heading": "Web Application Firewall (WAF)",
+                "bullets": [
+                  {
+                    "id": "b3-1",
+                    "text": "Advanced Access Control",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-2",
+                    "text": "Advanced Rate Limiting",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-3",
+                    "text": "IP Repeated Violations",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-4",
+                    "text": "HTTP Protocol Validation",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-5",
+                    "text": "Built-In WAF Rules",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-6",
+                    "text": "OWASP Core Rulesets",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-7",
+                    "text": "Zero Day Protection",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-8",
+                    "text": "Flexible Response Actions",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-9",
+                    "text": "Rule tempate Management",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-10",
+                    "text": "Log & Incident investigation tools_Baisc",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-11",
+                    "text": "Custom Block Page",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-12",
+                    "text": "WAF Dashboard",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-3",
+                "heading": "DDoS Protection",
+                "bullets": [
+                  {
+                    "id": "b4-1",
+                    "text": "Advance Access Control",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-2",
+                    "text": "Advance Rate Limiting",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-3",
+                    "text": "L3/L4 DDoS Mitigation",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-4",
+                    "text": "L7 DDoS Dashboard",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-5",
+                    "text": "Present Protection Policies",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-6",
+                    "text": "Log & Incident Investigation Tools Basic",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-7",
+                    "text": "Deploy History",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-4",
+                "heading": "BOT Management",
+                "bullets": [
+                  {
+                    "id": "b5-1",
+                    "text": "Transparent Challenges",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-2",
+                    "text": "Human Behavior Detection",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-3",
+                    "text": "Customized Actions",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-4",
+                    "text": "Advanced Rate Limiting",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-5",
+                    "text": "Visual Dashboard",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-5",
+                "heading": "General Features",
+                "bullets": [
+                  {
+                    "id": "b6-1",
+                    "text": "Multiple Protocol support [HTTP/HTTPS/Websocket/HTTP2]",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b6-2",
+                    "text": "Email Notification of Attack Event",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b6-3",
+                    "text": "Security Analysis and Basic Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavajij (PoP)",
+        "senderPhone": "+6682-44-666-95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T04:13:47.758Z",
+        "updatedAt": "2026-08-25T04:13:47.758Z",
+        "status": "draft",
+        "sentTo": null
+      }
+    },
+    {
+      "id": "doc-1787207517799",
+      "name": "PartnerAgreement_20-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-20T06:31:57.799Z",
+      "updatedAt": "2026-08-20T06:31:57.799Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "doc-1787192788708",
+      "name": "PartnerAgreement_20-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-20T02:26:28.708Z",
+      "updatedAt": "2026-08-20T02:26:28.709Z",
+      "status": "draft",
+      "sentTo": null,
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "doc-1787128888165",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T08:41:28.165Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    }
+  ],
+  "sentHistory": [
+    {
+      "id": "history-1787812462439",
+      "name": "CZ26080001.pdf",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-27T06:34:22.439Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "id": "qt-1787638573675",
+        "quotationNo": "CZ26080001",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavijai(PoP)",
+        "senderPhone": "082 44 666 95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T06:16:13.675Z",
+        "updatedAt": "2026-08-27T02:05:21.118Z",
+        "status": "draft",
+        "sentTo": null,
+        "issuer": {
+          "address": "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Donmueang, Bangkok 10210",
+          "tagline": "",
+          "phone": "082-446-6695"
+        },
+        "remarksList": [
+          "Payment: Annually"
+        ],
+        "specialDiscount": 0,
+        "senderPosition": "Executive Assistant - Technology & Governance",
+        "senderEmail": "narin@crestzendo.com"
+      }
+    },
+    {
+      "id": "history-1787207517811",
+      "name": "PartnerAgreement_20-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-20T06:31:57.811Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787128888176",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T08:41:28.176Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787128342315",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T08:32:22.315Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787125902243",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T07:51:42.243Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787125495740",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T07:44:55.740Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787122422801",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T06:53:42.801Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787120846132",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T06:27:26.132Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    }
+  ],
+  "quotations": [
+    {
+      "id": "qt-1787638573675",
+      "quotationNo": "CZ26080001",
+      "name": "ใบเสนอราคา CZ2608063",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "quotationDate": "25 Aug 2026",
+      "priceValidity": "24 Sept 2026",
+      "deliveryTerm": "7 days",
+      "creditTerm": "30 days",
+      "billTo": {
+        "companyName": "CS LoxInfo Public Company Limited.",
+        "attn": "Sarun Phongpodchanan",
+        "endUser": " P.R. Foodland Co., Ltd.",
+        "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+        "am": " Narin Rattanavijai / Channel Manager "
+      },
+      "lineItems": [
+        {
+          "id": "item-1",
+          "title": "CDNetworks Annual Services",
+          "qty": "",
+          "unitPrice": "",
+          "groups": [
+            {
+              "id": "group-1-1",
+              "heading": "Application Shield Services",
+              "qty": 1,
+              "unitPrice": 204000,
+              "bullets": [
+                {
+                  "id": "b1-1",
+                  "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-2",
+                  "text": "Dynamic Web Acceleration Platform Fee/month",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-3",
+                  "text": "Application Shield Platform Fee/month",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-4",
+                  "text": "Commit traffic up to 500Gbps/month",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-5",
+                  "text": "Cloud Security 2.0 Fee/month",
+                  "subBullets": [
+                    {
+                      "id": "sb1-1",
+                      "text": "Web Application Firewall (WAF)"
+                    },
+                    {
+                      "id": "sb1-2",
+                      "text": "DDoS Protection"
+                    },
+                    {
+                      "id": "sb1-3",
+                      "text": "BOT Management"
+                    }
+                  ]
+                },
+                {
+                  "id": "b1-6",
+                  "text": "Contract Term: One (1) Year",
+                  "subBullets": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "item-3",
+          "title": "Managed Service",
+          "qty": "",
+          "unitPrice": "",
+          "groups": [
+            {
+              "id": "group-3-1",
+              "heading": "",
+              "bullets": [
+                {
+                  "id": "b7-1",
+                  "text": "Service Level Agreement (SLA) 24x7x4",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-2",
+                  "text": "Level 2 Support",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-3",
+                  "text": "Unlimited Phone, email support",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-4",
+                  "text": "Implementation Service",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-5",
+                  "text": "Monthly Report",
+                  "subBullets": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vatRate": 7,
+      "remarks": "Payment: Annually",
+      "senderName": "Narin Rattanavijai(PoP)",
+      "senderPhone": "082 44 666 95",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-25T06:16:13.675Z",
+      "updatedAt": "2026-08-27T02:05:21.118Z",
+      "status": "draft",
+      "sentTo": null,
+      "issuer": {
+        "address": "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Donmueang, Bangkok 10210",
+        "tagline": "",
+        "phone": "082-446-6695"
+      },
+      "remarksList": [
+        "Payment: Annually"
+      ],
+      "specialDiscount": 0,
+      "senderPosition": "Executive Assistant - Technology & Governance",
+      "senderEmail": "narin@crestzendo.com"
+    },
+    {
+      "id": "qt-1787631227758",
+      "quotationNo": "CZ2608063",
+      "name": "ใบเสนอราคา CZ2608063",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "quotationDate": "25 Aug 2026",
+      "priceValidity": "24 Sept 2026",
+      "deliveryTerm": "7 days",
+      "creditTerm": "30 days",
+      "billTo": {
+        "companyName": "CS LoxInfo Public Company Limited.",
+        "attn": "Sarun Phongpodchanan",
+        "endUser": " P.R. Foodland Co., Ltd.",
+        "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+        "am": " Narin Rattanavijai / Channel Manager "
+      },
+      "lineItems": [
+        {
+          "id": "item-1",
+          "title": "CDNetworks Annual Services",
+          "qty": "",
+          "unitPrice": "",
+          "groups": [
+            {
+              "id": "group-1-1",
+              "heading": "Application Shield Services",
+              "qty": 1,
+              "unitPrice": 204000,
+              "bullets": [
+                {
+                  "id": "b1-1",
+                  "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-2",
+                  "text": "Dynamic Web Acceleration Platform Fee/month",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-3",
+                  "text": "Application Shield Platform Fee/month",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-4",
+                  "text": "Commit traffic up to 500Gbps/month",
+                  "subBullets": []
+                },
+                {
+                  "id": "b1-5",
+                  "text": "Cloud Security 2.0 Fee/month",
+                  "subBullets": [
+                    {
+                      "id": "sb1-1",
+                      "text": "Web Application Firewall (WAF)"
+                    },
+                    {
+                      "id": "sb1-2",
+                      "text": "DDoS Protection"
+                    },
+                    {
+                      "id": "sb1-3",
+                      "text": "BOT Management"
+                    }
+                  ]
+                },
+                {
+                  "id": "b1-6",
+                  "text": "Contract Term: One (1) Year",
+                  "subBullets": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "item-2",
+          "title": "Application Shield Including Services",
+          "qty": "",
+          "unitPrice": "",
+          "groups": [
+            {
+              "id": "group-2-1",
+              "heading": "Onboarding Assistance & Advanced Customer Support",
+              "bullets": [
+                {
+                  "id": "b2-1",
+                  "text": "New domain onboarding assistance",
+                  "subBullets": []
+                },
+                {
+                  "id": "b2-2",
+                  "text": "Security configuration assistance and customization",
+                  "subBullets": []
+                },
+                {
+                  "id": "b2-3",
+                  "text": "Security policies analysis",
+                  "subBullets": []
+                },
+                {
+                  "id": "b2-4",
+                  "text": "24/7/365 email/Group Chat and phone hotline support",
+                  "subBullets": []
+                },
+                {
+                  "id": "b2-5",
+                  "text": "Advanced 100% SLA Guarantee",
+                  "subBullets": []
+                }
+              ]
+            },
+            {
+              "id": "group-2-2",
+              "heading": "Web Application Firewall (WAF)",
+              "bullets": [
+                {
+                  "id": "b3-1",
+                  "text": "Advanced Access Control",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-2",
+                  "text": "Advanced Rate Limiting",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-3",
+                  "text": "IP Repeated Violations",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-4",
+                  "text": "HTTP Protocol Validation",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-5",
+                  "text": "Built-In WAF Rules",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-6",
+                  "text": "OWASP Core Rulesets",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-7",
+                  "text": "Zero Day Protection",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-8",
+                  "text": "Flexible Response Actions",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-9",
+                  "text": "Rule tempate Management",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-10",
+                  "text": "Log & Incident investigation tools_Baisc",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-11",
+                  "text": "Custom Block Page",
+                  "subBullets": []
+                },
+                {
+                  "id": "b3-12",
+                  "text": "WAF Dashboard",
+                  "subBullets": []
+                }
+              ]
+            },
+            {
+              "id": "group-2-3",
+              "heading": "DDoS Protection",
+              "bullets": [
+                {
+                  "id": "b4-1",
+                  "text": "Advance Access Control",
+                  "subBullets": []
+                },
+                {
+                  "id": "b4-2",
+                  "text": "Advance Rate Limiting",
+                  "subBullets": []
+                },
+                {
+                  "id": "b4-3",
+                  "text": "L3/L4 DDoS Mitigation",
+                  "subBullets": []
+                },
+                {
+                  "id": "b4-4",
+                  "text": "L7 DDoS Dashboard",
+                  "subBullets": []
+                },
+                {
+                  "id": "b4-5",
+                  "text": "Present Protection Policies",
+                  "subBullets": []
+                },
+                {
+                  "id": "b4-6",
+                  "text": "Log & Incident Investigation Tools Basic",
+                  "subBullets": []
+                },
+                {
+                  "id": "b4-7",
+                  "text": "Deploy History",
+                  "subBullets": []
+                }
+              ]
+            },
+            {
+              "id": "group-2-4",
+              "heading": "BOT Management",
+              "bullets": [
+                {
+                  "id": "b5-1",
+                  "text": "Transparent Challenges",
+                  "subBullets": []
+                },
+                {
+                  "id": "b5-2",
+                  "text": "Human Behavior Detection",
+                  "subBullets": []
+                },
+                {
+                  "id": "b5-3",
+                  "text": "Customized Actions",
+                  "subBullets": []
+                },
+                {
+                  "id": "b5-4",
+                  "text": "Advanced Rate Limiting",
+                  "subBullets": []
+                },
+                {
+                  "id": "b5-5",
+                  "text": "Visual Dashboard",
+                  "subBullets": []
+                }
+              ]
+            },
+            {
+              "id": "group-2-5",
+              "heading": "General Features",
+              "bullets": [
+                {
+                  "id": "b6-1",
+                  "text": "Multiple Protocol support [HTTP/HTTPS/Websocket/HTTP2]",
+                  "subBullets": []
+                },
+                {
+                  "id": "b6-2",
+                  "text": "Email Notification of Attack Event",
+                  "subBullets": []
+                },
+                {
+                  "id": "b6-3",
+                  "text": "Security Analysis and Basic Report",
+                  "subBullets": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "item-3",
+          "title": "Managed Service",
+          "qty": "",
+          "unitPrice": "",
+          "groups": [
+            {
+              "id": "group-3-1",
+              "heading": "",
+              "bullets": [
+                {
+                  "id": "b7-1",
+                  "text": "Service Level Agreement (SLA) 24x7x4",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-2",
+                  "text": "Level 2 Support",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-3",
+                  "text": "Unlimited Phone, email support",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-4",
+                  "text": "Implementation Service",
+                  "subBullets": []
+                },
+                {
+                  "id": "b7-5",
+                  "text": "Monthly Report",
+                  "subBullets": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "vatRate": 7,
+      "remarks": "Payment: Annually",
+      "senderName": "Narin Rattanavajij (PoP)",
+      "senderPhone": "+6682-44-666-95",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-25T04:13:47.758Z",
+      "updatedAt": "2026-08-25T04:13:47.758Z",
+      "status": "draft",
+      "sentTo": null
+    }
+  ]
+}

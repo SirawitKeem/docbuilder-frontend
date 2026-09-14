@@ -1,0 +1,58 @@
+{
+  "documents": {
+    "title": "My Documents",
+    "description": "View, filter, and manage all your generated agreements and official documents.",
+    "exportHistory": "Export History",
+    "newDocument": "New Document",
+    "searchPlaceholder": "Search documents by title, recipient, or reference...",
+    "allTemplates": "All Templates",
+    "templateFilter": "Template: All"
+  },
+  "table": {
+    "documentName": "Document Name",
+    "sentTo": "Sent To",
+    "counterparty": "Counterparty",
+    "template": "Template",
+    "lastModified": "Last Modified",
+    "actions": "Actions",
+    "noDocuments": "No documents found",
+    "noDocumentsDesc": "Create your first document to get started."
+  },
+  "actions": {
+    "duplicateDocument": "Duplicate Document",
+    "renameDocument": "Rename Document",
+    "sendEmail": "Send Email",
+    "editDocument": "Edit Document",
+    "exportPdfPrint": "Export PDF / Print",
+    "deleteDocument": "Delete Document"
+  },
+  "deleteModal": {
+    "title": "Delete document?",
+    "message": "Are you sure you want to delete this document? This action cannot be undone."
+  },
+  "detail": {
+    "notFound": "Document not found",
+    "backToList": "Back to documents",
+    "loading": "Opening document for editing...",
+    "editDocument": "Edit document"
+  },
+  "history": {
+    "title": "Sent & Activity History",
+    "description": "Track and review all documents created, exported, and sent from the system.",
+    "searchPlaceholder": "Search by document name or recipient...",
+    "noResults": "No history matches your search.",
+    "allChannels": "All Channels",
+    "channelEmail": "Email Dispatches",
+    "channelExport": "Exports & Downloads",
+    "activityTimeline": "Activity & Export Timeline",
+    "previewTab": "Document Preview",
+    "historyTab": "Timeline & Activities",
+    "noActivity": "No activity history recorded for this document yet.",
+    "createdDoc": "Created Document",
+    "editedDoc": "Updated Document",
+    "exportedDoc": "Exported Document",
+    "sentEmailDoc": "Sent Email",
+    "performedBy": "Performed by",
+    "format": "Format"
+  }
+}

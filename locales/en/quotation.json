@@ -1,0 +1,22 @@
+{
+  "quotation": {
+    "title": "Quotation",
+    "formTitle": "Quotation Form",
+    "addItem": "Add new product / service item",
+    "addSubCategory": "Add sub-category",
+    "addBullet": "Add bullet (•)",
+    "deleteMainItem": "Delete this main item",
+    "mainItemPlaceholder": "Main item name...",
+    "detailPlaceholder": "Additional details...",
+    "taxId": "Tax ID:",
+    "headOffice": "(Head Office)",
+    "priceSummary": "PRICE SUMMARY",
+    "subtotal": "SUBTOTAL",
+    "specialDiscount": "Special Discount",
+    "totalAfterDisc": "TOTAL (After Disc.)",
+    "vat": "VAT",
+    "grandTotal": "GRAND TOTAL",
+    "discountTooltip": "Special discount (THB)",
+    "vatTooltip": "Adjust VAT %"
+  }
+}

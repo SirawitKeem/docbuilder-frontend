@@ -1,0 +1,80 @@
+{
+  "settings": {
+    "title": "Settings",
+    "searchPlaceholder": "Search settings..."
+  },
+  "groups": {
+    "account": "Account",
+    "organization": "Organization",
+    "system": "System"
+  },
+  "items": {
+    "accountSecurity": "Account & Security",
+    "preferences": "Preferences",
+    "general": "General",
+    "emailIntegration": "Email Integration"
+  },
+  "account": {
+    "title": "Account & Security",
+    "description": "Personal profile and workspace sign-in credentials.",
+    "profileInfo": "Profile Information",
+    "updatePhoto": "Update photo",
+    "fullName": "Full Name",
+    "emailAddress": "Email Address",
+    "roleTitle": "Role / Title",
+    "saveChanges": "Save Changes",
+    "signInCredentials": "Sign-in Credentials",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "twoFactor": "Two-Factor Authentication",
+    "enable2FA": "Enable 2FA",
+    "activeSessions": "Active Sessions",
+    "signOutAll": "Sign out of all sessions"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "description": "Customize your interface appearance, display theme, and workspace defaults.",
+    "appearanceTheme": "Appearance theme",
+    "themeDescription": "Select how the DocBuilder workspace looks to you.",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "workspaceDefaults": "Workspace defaults",
+    "workspaceDefaultsDesc": "Set default regional currency and language formats.",
+    "defaultCurrency": "Default currency",
+    "displayLanguage": "Display language",
+    "savePreferences": "Save preferences",
+    "savedSuccess": "Preferences updated successfully.",
+    "languageTH": "ไทย (Thai)",
+    "languageEN": "English"
+  },
+  "general": {
+    "title": "General",
+    "description": "Organization identity and default contract signatory metadata.",
+    "companyDetails": "Company Details",
+    "companyNameTH": "Company Name (Thai)",
+    "companyNameEN": "Company Name (English)",
+    "taxId": "Tax ID",
+    "headOffice": "Head Office / Branch",
+    "addressTH": "Address (Thai)",
+    "addressEN": "Address (English)",
+    "authorizedSignatory": "Authorized Signatory",
+    "signatoryName": "Signatory Name",
+    "signatoryTitle": "Signatory Title"
+  },
+  "email": {
+    "title": "Email Integration",
+    "description": "Service status and credentials for outbound contract dispatches.",
+    "smtpConfig": "SMTP Configuration",
+    "senderName": "Sender Display Name",
+    "senderEmail": "Sender Email Address",
+    "host": "Host",
+    "port": "Port",
+    "encryption": "Encryption",
+    "notConfigured": "SMTP server not configured",
+    "testConnection": "Test Connection",
+    "saveConfiguration": "Save Configuration"
+  }
+}

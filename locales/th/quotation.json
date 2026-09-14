@@ -1,0 +1,22 @@
+{
+  "quotation": {
+    "title": "ใบเสนอราคา (Quotation)",
+    "formTitle": "กรอกข้อมูลใบเสนอราคา",
+    "addItem": "เพิ่มรายการสินค้า / บริการใหม่",
+    "addSubCategory": "เพิ่มหมวดหมู่ย่อย",
+    "addBullet": "เพิ่ม bullet (•)",
+    "deleteMainItem": "ลบรายการหลักนี้",
+    "mainItemPlaceholder": "ชื่อรายการหลัก...",
+    "detailPlaceholder": "รายละเอียดเพิ่มเติม...",
+    "taxId": "เลขประจำตัวผู้เสียภาษีอากร:",
+    "headOffice": "(สำนักงานใหญ่)",
+    "priceSummary": "สรุปราคา",
+    "subtotal": "ยอดรวม",
+    "specialDiscount": "ส่วนลดพิเศษ",
+    "totalAfterDisc": "ยอดรวมหลังหักส่วนลด",
+    "vat": "ภาษีมูลค่าเพิ่ม",
+    "grandTotal": "ยอดรวมสุทธิ",
+    "discountTooltip": "ส่วนลดพิเศษ (THB)",
+    "vatTooltip": "ปรับ % ภาษีมูลค่าเพิ่ม"
+  }
+}

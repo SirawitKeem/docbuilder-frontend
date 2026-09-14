@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: white;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  font-family: 'Inter', var(--font-inter), 'Noto Sans Thai', var(--font-noto-thai), sans-serif;
+}
+
+.print-page {
+  font-family: 'Inter', var(--font-inter), 'Noto Sans Thai', var(--font-noto-thai), sans-serif;
+  width: 210mm;
+  height: 297mm;
+  max-height: 297mm;
+  padding: 24px 48px 24px 48px;
+  box-sizing: border-box;
+  page-break-after: always;
+  page-break-inside: avoid;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.font-noto-looped,
+.template-notification,
+.notification-document-wrapper,
+#print-root .font-noto-looped {
+  font-family: 'Inter', var(--font-inter), 'Noto Sans Thai', var(--font-noto-thai), sans-serif !important;
+}
+
+.print-page:last-child {
+  page-break-after: auto;
+}
+
+.print-page-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* กฎเพิ่มสำหรับ quotation-type โดยเฉพาะ */
+@media print {
+  .line-item-block,
+  .group-block {
+    break-inside: avoid;
+  }
+}

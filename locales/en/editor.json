@@ -1,0 +1,115 @@
+{
+  "create": {
+    "title": "Create Document",
+    "description": "Select a template category to begin drafting contracts, agreements, or official company letters.",
+    "standardTemplates": "Standard Templates",
+    "standardDesc": "Choose from pre-approved enterprise templates with automated field binding.",
+    "selectTemplate": "Select Template",
+    "backToTemplates": "Back to Templates"
+  },
+  "profileGate": {
+    "title": "Select data preset",
+    "description": "The system will auto-fill contract fields with saved company, customer, or counterparty data to save time and reduce errors.",
+    "backToTemplates": "Back to template selection",
+    "startNow": "Start creating document",
+    "addPreset": "Add central data preset",
+    "searchPresets": "Search presets...",
+    "presetName": "Preset name",
+    "complete": "Data complete",
+    "missingFields": "Missing {count} required fields",
+    "blankDocument": "Start from blank document",
+    "blankDesc": "Use blank document (no preset data)"
+  },
+  "customDoc": {
+    "missingId": "Template ID is missing",
+    "newDocument": "New document",
+    "loadingTemplate": "Loading template...",
+    "notFound": "Template not found or may have been deleted",
+    "backToList": "Back to templates list",
+    "saveDraft": "Save draft",
+    "complete": "Complete",
+    "printPdf": "Print / PDF",
+    "sendEmail": "Send email",
+    "fillData": "Fill and customize document data",
+    "detectedVars": "Dynamic variables detected in template",
+    "a4Preview": "A4 paper print preview",
+    "slidePreview": "16:9 slide preview",
+    "saveSuccess": "Document saved successfully!",
+    "saveError": "Error saving document",
+    "a4Document": "A4 Document",
+    "slide169": "Slide 16:9",
+    "autoVars": "Auto-detected Variables"
+  },
+  "watermark": {
+    "none": "None",
+    "draft": "DRAFT",
+    "copy": "COPY",
+    "confidential": "CONFIDENTIAL"
+  },
+  "contractForm": {
+    "title": "Fill contract data",
+    "section1": "1. Contract date and location",
+    "section2": "2. Reseller information",
+    "section3": "3. Signatories",
+    "section4": "4. Our company (Crest Zendo)",
+    "section5": "5. PDF watermark",
+    "todayDate": "Set today's date",
+    "companySeal": "Company seal (Red Seal)",
+    "selectWatermark": "Select watermark"
+  },
+  "notificationForm": {
+    "title": "Fill notification letter data",
+    "section1": "1. Document info and issue date",
+    "section2": "2. Effective date",
+    "section3": "3. New and previous address",
+    "section4": "4. Authorized signatory",
+    "effectiveDateTH": "Effective date (Thai)",
+    "effectiveDateEN": "Effective Date (English)",
+    "prevAddressTH": "Previous address (Thai)",
+    "prevAddressEN": "Previous Address (English)",
+    "newAddressTH": "New address (Thai)",
+    "newAddressEN": "New Office Address (English)"
+  },
+  "editor": {
+    "savedDocument": "Document saved to 'My Documents' successfully",
+    "pdfError": "Failed to create PDF",
+    "loadingDoc": "Loading document..."
+  },
+  "toolbar": {
+    "clickToRename": "Click to rename document",
+    "savedAt": "Saved at {time}",
+    "hideForm": "Hide form",
+    "showForm": "Show form",
+    "saveDocument": "Save document",
+    "allFieldsFilled": "All fields filled"
+  },
+  "review": {
+    "title": "Review document before sending",
+    "allFilled": "✓ All fields filled",
+    "selectExport": "Select export format"
+  },
+  "success": {
+    "title": "Document sent successfully!",
+    "sentTo": "Sent to",
+    "createNew": "Create new document",
+    "backToHome": "Back to home"
+  },
+  "email": {
+    "recipientLabel": "1. Recipient Email *",
+    "subjectLabel": "2. Email Subject *",
+    "messageLabel": "3. Email Message",
+    "attachmentLabel": "4. Attachment",
+    "defaultMessage": "Dear recipient,\n\nPlease review the attached document...",
+    "pdfBadge": "PDF Document • Ready to attach",
+    "confirmSend": "Confirm send email",
+    "sending": "Sending email..."
+  },
+  "signature": {
+    "title": "Digital Signature",
+    "drawLive": "Draw live signature",
+    "uploadImage": "Upload image",
+    "placeholder": "Sign here...",
+    "clear": "Clear signature",
+    "apply": "Apply this signature"
+  }
+}

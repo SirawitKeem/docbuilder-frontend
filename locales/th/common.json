@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "workspace": "เวิร์คสเปซ",
+    "dashboard": "แดชบอร์ด",
+    "createDocument": "สร้างเอกสาร",
+    "myDocuments": "เอกสารของฉัน",
+    "templates": "เทมเพลต",
+    "dataPresets": "ชุดข้อมูล",
+    "settings": "ตั้งค่า",
+    "dataAndAssets": "ข้อมูลและสินทรัพย์",
+    "system": "ระบบ",
+    "signOut": "ออกจากระบบ",
+    "backToWorkspace": "กลับสู่เวิร์คสเปซ",
+    "collapseSidebar": "ซ่อนแถบด้านข้าง",
+    "expandSidebar": "ขยายแถบด้านข้าง"
+  },
+  "actions": {
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "preview": "ดูตัวอย่าง",
+    "duplicate": "ทำซ้ำ",
+    "create": "สร้าง",
+    "search": "ค้นหา",
+    "export": "ส่งออก",
+    "exportPdf": "ส่งออก PDF",
+    "print": "พิมพ์",
+    "loading": "กำลังโหลด...",
+    "saving": "กำลังบันทึก...",
+    "confirm": "ยืนยัน",
+    "back": "กลับ",
+    "close": "ปิด",
+    "rename": "เปลี่ยนชื่อ",
+    "sendEmail": "ส่งอีเมล",
+    "selectAll": "เลือกทั้งหมด",
+    "deselectAll": "ยกเลิกการเลือกทั้งหมด",
+    "browse": "เรียกดู"
+  },
+  "status": {
+    "draft": "ฉบับร่าง",
+    "sent": "ส่งแล้ว",
+    "all": "ทั้งหมด",
+    "active": "ใช้งาน",
+    "standard": "มาตรฐาน",
+    "custom": "กำหนดเอง",
+    "comingSoon": "เร็วๆ นี้",
+    "readyToUse": "พร้อมใช้งาน"
+  },
+  "time": {
+    "justNow": "เมื่อสักครู่",
+    "minuteAgo": "1 นาทีที่แล้ว",
+    "minutesAgo": "{count} นาทีที่แล้ว",
+    "hourAgo": "1 ชั่วโมงที่แล้ว",
+    "hoursAgo": "{count} ชั่วโมงที่แล้ว",
+    "yesterday": "เมื่อวาน",
+    "daysAgo": "{count} วันที่แล้ว"
+  },
+  "pagination": {
+    "showing": "แสดง {start} - {end} จาก {total} รายการ",
+    "perPage": "{count} / หน้า"
+  },
+  "greetings": {
+    "morning": "สวัสดีตอนเช้า",
+    "afternoon": "สวัสดีตอนบ่าย",
+    "evening": "สวัสดีตอนเย็น",
+    "welcomeBack": "ยินดีต้อนรับกลับมา"
+  },
+  "home": {
+    "headline": "{name} 👋",
+    "description": "ระบบสร้างจัดการเอกสาร",
+    "createDocument": "สร้างเอกสาร",
+    "templatesCatalog": "แคตตาล็อกเทมเพลต",
+    "quickStartTemplates": "เทมเพลตเริ่มต้นเร็ว",
+    "quickStartDesc": "เลือกเทมเพลตสำเร็จรูปเพื่อสร้างข้อตกลงหรือใบเสนอราคาอย่างรวดเร็ว",
+    "viewAllTemplates": "ดูเทมเพลตทั้งหมด",
+    "recentDocuments": "เอกสารที่อัปเดตล่าสุด",
+    "recentDocumentsDesc": "เอกสารและสัญญาที่สร้างหรือแก้ไขล่าสุดในเวิร์คสเปซ",
+    "viewAllDocuments": "ดูเอกสารทั้งหมด"
+  },
+  "profileData": {
+    "title": "ชุดข้อมูล",
+    "description": "ชุดข้อมูลลูกค้าและคู่สัญญาส่วนกลาง สำหรับกรอกเอกสารอัตโนมัติด้วยคลิกเดียว",
+    "newPreset": "เพิ่มชุดข้อมูล",
+    "totalProfiles": "จำนวนโปรไฟล์",
+    "fieldsConfigured": "ฟิลด์ที่กำหนดค่า",
+    "searchPlaceholder": "ค้นหาชุดข้อมูลตามชื่อหรือบริษัท...",
+    "noPresetsFound": "ไม่พบชุดข้อมูล",
+    "createPreset": "สร้างชุดข้อมูล",
+    "viewDetails": "ดูรายละเอียด",
+    "deleteConfirm": "คุณต้องการลบชุดข้อมูล \"{name}\" ใช่หรือไม่?",
+    "newPresetTitle": "เพิ่มชุดข้อมูลใหม่",
+    "newPresetDesc": "กำหนดค่าชุดข้อมูลใหม่เพื่อกรอกฟิลด์สัญญาและใบแจ้งหนี้ทั่วไปอัตโนมัติ",
+    "editPresetTitle": "แก้ไขชุดข้อมูล",
+    "editPresetDesc": "อัปเดตชุดข้อมูลนี้เพื่อรักษาข้อมูลกรอกอัตโนมัติให้เป็นปัจจุบัน"
+  },
+  "profileForm": {
+    "backToPresets": "กลับไปชุดข้อมูล",
+    "presetName": "ชื่อชุดข้อมูล",
+    "compatibleTemplates": "เทมเพลตที่ใช้ร่วมกันได้",
+    "noTemplates": "ยังไม่ได้เลือกเทมเพลต",
+    "noTemplatesDesc": "เลือกเทมเพลตข้างบนเพื่อแสดงฟิลด์ที่ต้องกรอก",
+    "savePreset": "บันทึกชุดข้อมูล",
+    "savedSuccess": "บันทึกสำเร็จ"
+  },
+  "errors": {
+    "createFailed": "สร้างข้อมูลไม่สำเร็จ",
+    "saveFailed": "บันทึกข้อมูลไม่สำเร็จ",
+    "deleteFailed": "ลบข้อมูลไม่สำเร็จ",
+    "createQuotationFailed": "สร้างใบเสนอราคาไม่สำเร็จ",
+    "saveQuotationFailed": "บันทึกใบเสนอราคาไม่สำเร็จ",
+    "createRevisionFailed": "สร้างฉบับปรับปรุงไม่สำเร็จ"
+  },
+  "topbar": {
+    "searchPlaceholder": "ค้นหาเอกสาร เทมเพลต ชุดข้อมูล... (กด ⌘K)",
+    "notifications": "การแจ้งเตือน",
+    "markAllRead": "ทำเครื่องหมายอ่านทั้งหมด",
+    "viewAllNotifications": "ดูการแจ้งเตือนทั้งหมด",
+    "accountSettings": "ตั้งค่าบัญชี",
+    "preferences": "การตั้งค่า"
+  },
+  "pageTitles": {
+    "overview": "ภาพรวม",
+    "createDocument": "สร้างเอกสาร",
+    "customStudio": "เอกสาร Studio กำหนดเอง",
+    "selectPreset": "เลือกชุดข้อมูล",
+    "dataPresets": "ชุดข้อมูล",
+    "newPreset": "เพิ่มชุดข้อมูลใหม่",
+    "editPreset": "แก้ไขชุดข้อมูล",
+    "myDocuments": "เอกสารของฉัน",
+    "documentDetails": "รายละเอียดเอกสาร",
+    "sentHistory": "ประวัติการส่ง",
+    "templates": "เทมเพลต",
+    "newTemplate": "เทมเพลตใหม่",
+    "settings": "ตั้งค่า"
+  }
+}

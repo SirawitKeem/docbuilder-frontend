@@ -1,0 +1,58 @@
+{
+  "documents": {
+    "title": "เอกสารของฉัน",
+    "description": "ดู กรอง และจัดการเอกสารข้อตกลงและเอกสารทางการทั้งหมดของคุณ",
+    "exportHistory": "ประวัติการส่งออก",
+    "newDocument": "เอกสารใหม่",
+    "searchPlaceholder": "ค้นหาเอกสารตามชื่อ ผู้รับ หรือเลขอ้างอิง...",
+    "allTemplates": "ทุกเทมเพลต",
+    "templateFilter": "เทมเพลต: ทั้งหมด"
+  },
+  "table": {
+    "documentName": "ชื่อเอกสาร",
+    "sentTo": "ส่งถึง",
+    "counterparty": "คู่สัญญา",
+    "template": "เทมเพลต",
+    "lastModified": "แก้ไขล่าสุด",
+    "actions": "การกระทำ",
+    "noDocuments": "ไม่พบเอกสาร",
+    "noDocumentsDesc": "สร้างเอกสารแรกของคุณเพื่อเริ่มต้น"
+  },
+  "actions": {
+    "duplicateDocument": "ทำซ้ำเอกสาร",
+    "renameDocument": "เปลี่ยนชื่อเอกสาร",
+    "sendEmail": "ส่งอีเมล",
+    "editDocument": "แก้ไขเอกสาร",
+    "exportPdfPrint": "ส่งออก PDF / พิมพ์",
+    "deleteDocument": "ลบเอกสาร"
+  },
+  "deleteModal": {
+    "title": "ลบเอกสาร?",
+    "message": "คุณแน่ใจหรือไม่ว่าต้องการลบเอกสารนี้? การกระทำนี้ไม่สามารถย้อนกลับได้"
+  },
+  "detail": {
+    "notFound": "ไม่พบเอกสารนี้ในระบบ",
+    "backToList": "กลับไปหน้ารายการเอกสาร",
+    "loading": "กำลังเปิดเอกสารเพื่อแก้ไข...",
+    "editDocument": "แก้ไขเอกสาร"
+  },
+  "history": {
+    "title": "ประวัติการส่ง & กิจกรรม",
+    "description": "ตรวจสอบและติดตามเอกสารทั้งหมดที่เคยสร้าง ส่งออก และส่งออกจากระบบ",
+    "searchPlaceholder": "ค้นหาตามชื่อเอกสาร หรือ ผู้รับ...",
+    "noResults": "ไม่พบประวัติการส่งเอกสารที่ตรงกับการค้นหา",
+    "allChannels": "ทุกช่องทาง",
+    "channelEmail": "ส่งอีเมล (Email)",
+    "channelExport": "ส่งออก / ดาวน์โหลด",
+    "activityTimeline": "ประวัติกิจกรรม & การส่งออก",
+    "previewTab": "ตัวอย่างเอกสาร",
+    "historyTab": "ประวัติและกิจกรรม",
+    "noActivity": "ยังไม่มีประวัติกิจกรรมสำหรับเอกสารนี้",
+    "createdDoc": "สร้างเอกสาร",
+    "editedDoc": "แก้ไขเอกสาร",
+    "exportedDoc": "ส่งออกเอกสาร",
+    "sentEmailDoc": "ส่งอีเมล",
+    "performedBy": "ผู้ดำเนินการ",
+    "format": "รูปแบบ"
+  }
+}

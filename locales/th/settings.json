@@ -1,0 +1,80 @@
+{
+  "settings": {
+    "title": "ตั้งค่า",
+    "searchPlaceholder": "ค้นหาการตั้งค่า..."
+  },
+  "groups": {
+    "account": "บัญชี",
+    "organization": "องค์กร",
+    "system": "ระบบ"
+  },
+  "items": {
+    "accountSecurity": "บัญชีและความปลอดภัย",
+    "preferences": "การตั้งค่า",
+    "general": "ทั่วไป",
+    "emailIntegration": "การเชื่อมต่ออีเมล"
+  },
+  "account": {
+    "title": "บัญชีและความปลอดภัย",
+    "description": "โปรไฟล์ส่วนตัวและข้อมูลการเข้าสู่ระบบ",
+    "profileInfo": "ข้อมูลโปรไฟล์",
+    "updatePhoto": "อัปเดตรูปภาพ",
+    "fullName": "ชื่อ-นามสกุล",
+    "emailAddress": "อีเมล",
+    "roleTitle": "ตำแหน่ง",
+    "saveChanges": "บันทึกการเปลี่ยนแปลง",
+    "signInCredentials": "ข้อมูลการเข้าสู่ระบบ",
+    "changePassword": "เปลี่ยนรหัสผ่าน",
+    "currentPassword": "รหัสผ่านปัจจุบัน",
+    "newPassword": "รหัสผ่านใหม่",
+    "confirmPassword": "ยืนยันรหัสผ่านใหม่",
+    "twoFactor": "การยืนยันตัวตนสองขั้นตอน",
+    "enable2FA": "เปิดใช้ 2FA",
+    "activeSessions": "เซสชันที่ใช้งาน",
+    "signOutAll": "ออกจากระบบทุกเซสชัน"
+  },
+  "preferences": {
+    "title": "การตั้งค่า",
+    "description": "ปรับแต่งรูปลักษณ์ ธีม และค่าเริ่มต้นของเวิร์คสเปซ",
+    "appearanceTheme": "ธีมหน้าตา",
+    "themeDescription": "เลือกรูปแบบการแสดงผลของ DocBuilder",
+    "light": "สว่าง",
+    "dark": "มืด",
+    "system": "ตามระบบ",
+    "workspaceDefaults": "ค่าเริ่มต้นเวิร์คสเปซ",
+    "workspaceDefaultsDesc": "ตั้งค่าสกุลเงินและรูปแบบภาษาเริ่มต้น",
+    "defaultCurrency": "สกุลเงินเริ่มต้น",
+    "displayLanguage": "ภาษาที่แสดง",
+    "savePreferences": "บันึกการตั้งค่า",
+    "savedSuccess": "บันทึกการตั้งค่าเรียบร้อยแล้ว",
+    "languageTH": "Thai (ไทย)",
+    "languageEN": "English"
+  },
+  "general": {
+    "title": "ทั่วไป",
+    "description": "ข้อมูลองค์กรและผู้ลงนามในสัญญาเริ่มต้น",
+    "companyDetails": "ข้อมูลบริษัท",
+    "companyNameTH": "ชื่อบริษัท (ไทย)",
+    "companyNameEN": "ชื่อบริษัท (อังกฤษ)",
+    "taxId": "เลขประจำตัวผู้เสียภาษี",
+    "headOffice": "สำนักงานใหญ่ / สาขา",
+    "addressTH": "ที่อยู่ (ไทย)",
+    "addressEN": "ที่อยู่ (อังกฤษ)",
+    "authorizedSignatory": "ผู้มีอำนาจลงนาม",
+    "signatoryName": "ชื่อผู้ลงนาม",
+    "signatoryTitle": "ตำแหน่งผู้ลงนาม"
+  },
+  "email": {
+    "title": "การเชื่อมต่ออีเมล",
+    "description": "สถานะบริการและข้อมูลรับรองสำหรับการส่งเอกสารออก",
+    "smtpConfig": "การกำหนดค่า SMTP",
+    "senderName": "ชื่อผู้ส่งที่แสดง",
+    "senderEmail": "อีเมลผู้ส่ง",
+    "host": "โฮสต์",
+    "port": "พอร์ต",
+    "encryption": "การเข้ารหัส",
+    "notConfigured": "ยังไม่ได้กำหนดค่าเซิร์ฟเวอร์ SMTP",
+    "testConnection": "ทดสอบการเชื่อมต่อ",
+    "saveConfiguration": "บันทึกการกำหนดค่า"
+  }
+}

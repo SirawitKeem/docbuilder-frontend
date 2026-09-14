@@ -1,0 +1,31 @@
+
+  "title": {
+    "titleTh": "ใบเสนอราคา",
+    "titleEn": "QUOTATION",
+    "originalSubtitle": "ต้นฉบับ / Original"
+  },
+  "columns": {
+    "no": "ITEM",
+    "description": "DESCRIPTION",
+    "qty": "QTY",
+    "unitPrice": "UNIT PRICE (THB)",
+    "amount": "AMOUNT (THB)"
+  },
+  "summary": {
+    "subtotalLabel": "SUBTOTAL / รวมเป็นเงิน",
+    "specialDiscountLabel": "SPECIAL DISCOUNT / ส่วนลดพิเศษ",
+    "vatLabel": "VALUE ADDED TAX 7% / ภาษีมูลค่าเพิ่ม 7%",
+    "grandTotalLabel": "GRAND TOTAL / จำนวนเงินรวมทั้งสิ้น"
+  },
+  "defaultTerms": [
+    "ราคาข้างต้นยังไม่รวมภาษีมูลค่าเพิ่ม 7% (Prices are exclusive of VAT 7%)",
+    "กำหนดชำระเงินตามเงื่อนไขที่ตกลง (Payment Terms as agreed)",
+    "ใบเสนอราคานี้มีผลบังคับใช้ตามระยะเวลาที่ระบุ (Validity as specified)"
+  ],
+  "signatures": {
+    "customerAcceptanceTitle": "การตอบรับและอนุมัติสั่งซื้อ / Customer Acceptance",
+    "customerSignaturePlaceholder": "ลงนามผู้มีอำนาจสั่งซื้อ (Authorized Signature)",
+    "issuerTitle": "บริษัท เครสท์ เซนโด จำกัด / CREST ZENDO CO., LTD.",
+    "issuerSignaturePlaceholder": "ผู้มีอำนาจลงนาม (Authorized Signature)"
+  }
+}

@@ -1,0 +1,1734 @@
+{
+  "fieldProfiles": [
+    {
+      "id": "profile-1787103435257",
+      "name": "บริษัท เครสท์ เซนโด จำกัด",
+      "values": {
+        "counterparty_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "counterparty_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "counterparty_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "counterparty_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท",
+        "counterparty_signature_text": "นายวิทวัส อัครเดชากุล",
+        "our_signature_text": "นายศรายุทธ โกสิยารักษ์",
+        "our_signatory_position": "CEO/Founder",
+        "our_signatory_name": "นายศรายุทธ โกสิยารักษ์",
+        "our_company_name": "บริษัท เครสท์ เซนโด จำกัด",
+        "contract_location": "บริษัท เครสท์ เซนโด จำกัด",
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "counterparty_registration_number": "0107544000108"
+      },
+      "createdAt": "2026-08-19T01:37:15.258Z",
+      "updatedAt": "2026-08-20T01:39:02.771Z"
+    },
+    {
+      "id": "profile-1787103657141",
+      "name": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+      "values": {
+        "counterparty_signatory_name": "นายศรายุทธ โกสิยารักษ์",
+        "counterparty_address": "45 ซอย โกสุมรวมใจ 37 แขวงดอนเมือง ดอนเมือง กรุงเทพมหานคร 10210",
+        "counterparty_name": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+        "contract_location": "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
+        "our_signatory_name": "นายศรายุทธ โกสิยารักษ์",
+        "our_signatory_position": "CEO/Founder",
+        "our_company_name": "บริษัท เครสท์ เซนโด จำกัด",
+        "our_signature_text": "นายศรายุทธ โกสิยารักษ์",
+        "counterparty_signature_text": "นายศรายุทธ โกสิยารักษ์",
+        "counterparty_signatory_position": "CEO/Founder",
+        "contract_date_day": "20",
+        "contract_date_month": "สิงหาคม",
+        "contract_date_year": "2566"
+      },
+      "createdAt": "2026-08-19T01:40:57.141Z",
+      "updatedAt": "2026-08-19T02:21:04.407Z"
+    },
+    {
+      "id": "profile-1787275130685",
+      "name": "CS LoxInfo Public Company Limited.",
+      "profileType": "quotation",
+      "values": {
+        "bill_to_company": "CS LoxInfo Public Company Limited.",
+        "attn_name": "Sarun Phongpodchanan",
+        "end_user": " P.R. Foodland Co., Ltd.",
+        "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+        "am_name": " Narin Rattanavijai / Channel Manager ",
+        "am_phone": "+6682-44-666-95"
+      },
+      "createdAt": "2026-08-21T01:18:50.686Z",
+      "updatedAt": "2026-08-21T01:18:50.686Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-1788331547618",
+      "verificationToken": "VRF-MTJQFHEQ-T2D3O",
+      "name": "NotificationLetter_02-09-2569.pdf",
+      "templateId": "notification",
+      "templateName": "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่",
+      "createdBy": "นายสมชาย ใจดี (ผู้จัดทำ)",
+      "createdAt": "2026-09-02T06:45:47.617Z",
+      "updatedAt": "2026-09-02T06:45:47.617Z",
+      "status": "draft",
+      "sentTo": null,
+      "values": {
+        "doc_no": "TRAC-2609001",
+        "doc_date": "01 กันยายน 2569 / September 01, 2026",
+        "recipient": "ท่านคู่ค้าและลูกค้าผู้มีอุปการคุณ / Valued Business Partners",
+        "subject": "แจ้งเปลี่ยนแปลงที่อยู่สำนักงานใหญ่ / Change of Head Office Address",
+        "effective_date": "16 กันยายน 2569",
+        "old_address_th": "45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+        "old_address_en": "45 Soi Kosum Ruam Chai 37, Don Mueang, Don Mueang, Bangkok 10210, Thailand",
+        "new_address_th": "18 ซอยโกสุมรวมใจ 35 แยก 4 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+        "new_address_en": "18 Soi Kosum Ruam Chai 35 Yaek 4, Don Mueang, Don Mueang, Bangkok 10210, Thailand",
+        "signatory_name": "นายศรายุทธ  โกสิยารักษ์",
+        "signatory_position": "กรรมการผู้จัดการ / CEO",
+        "effective_date_en": "September 16, 2026",
+        "effective_date_badge": "(มีผล 16 ก.ย. 2569 / Effective Sept 16, 2026):"
+      },
+      "activityLogs": [
+        {
+          "id": "act-1788331547618",
+          "action": "create",
+          "performedBy": "นายสมชาย ใจดี (ผู้จัดทำ)",
+          "timestamp": "2026-09-02T06:45:47.617Z",
+          "details": "สร้างเอกสารฉบับร่าง"
+        }
+      ],
+      "approvalChain": [
+        {
+          "id": "step-1",
+          "stepName": "ผู้จัดทำ / ผู้ยื่นเอกสาร",
+          "assignedRole": "ผู้จัดทำ",
+          "assignedUser": "นายสมชาย ใจดี (ผู้จัดทำ)",
+          "status": "approved",
+          "signedAt": "2026-09-02T06:45:47.617Z"
+        },
+        {
+          "id": "step-2",
+          "stepName": "ผู้มีอำนาจอนุมัติ / กรรมการ",
+          "assignedRole": "กรรมการผู้จัดการ",
+          "assignedUser": "นายศรายุทธ โกสิยารักษ์",
+          "status": "pending",
+          "signedAt": null
+        }
+      ]
+    },
+    {
+      "id": "doc-1787812462153",
+      "name": "CZ26080001.pdf",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-27T06:34:22.153Z",
+      "updatedAt": "2026-08-27T06:34:22.153Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "id": "qt-1787638573675",
+        "quotationNo": "CZ26080001",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavijai(PoP)",
+        "senderPhone": "082 44 666 95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T06:16:13.675Z",
+        "updatedAt": "2026-08-27T02:05:21.118Z",
+        "status": "draft",
+        "sentTo": null,
+        "issuer": {
+          "address": "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Donmueang, Bangkok 10210",
+          "tagline": "",
+          "phone": "082-446-6695"
+        },
+        "remarksList": [
+          "Payment: Annually"
+        ],
+        "specialDiscount": 0,
+        "senderPosition": "Executive Assistant - Technology & Governance",
+        "senderEmail": "narin@crestzendo.com"
+      }
+    },
+    {
+      "id": "qt-1787638573675",
+      "name": "ใบเสนอราคา CZ2608063",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-25T06:16:13.675Z",
+      "updatedAt": "2026-08-27T02:05:21.118Z",
+      "status": "draft",
+      "sentTo": null,
+      "values": {
+        "id": "qt-1787638573675",
+        "quotationNo": "CZ26080001",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavijai(PoP)",
+        "senderPhone": "082 44 666 95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T06:16:13.675Z",
+        "updatedAt": "2026-08-27T02:05:21.118Z",
+        "status": "draft",
+        "sentTo": null,
+        "issuer": {
+          "address": "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Donmueang, Bangkok 10210",
+          "tagline": "",
+          "phone": "082-446-6695"
+        },
+        "remarksList": [
+          "Payment: Annually"
+        ],
+        "specialDiscount": 0,
+        "senderPosition": "Executive Assistant - Technology & Governance",
+        "senderEmail": "narin@crestzendo.com"
+      }
+    },
+    {
+      "id": "qt-1787631227758",
+      "name": "ใบเสนอราคา CZ2608063",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-25T04:13:47.758Z",
+      "updatedAt": "2026-08-25T04:13:47.758Z",
+      "status": "draft",
+      "sentTo": null,
+      "values": {
+        "id": "qt-1787631227758",
+        "quotationNo": "CZ2608063",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-2",
+            "title": "Application Shield Including Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-2-1",
+                "heading": "Onboarding Assistance & Advanced Customer Support",
+                "bullets": [
+                  {
+                    "id": "b2-1",
+                    "text": "New domain onboarding assistance",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-2",
+                    "text": "Security configuration assistance and customization",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-3",
+                    "text": "Security policies analysis",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-4",
+                    "text": "24/7/365 email/Group Chat and phone hotline support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b2-5",
+                    "text": "Advanced 100% SLA Guarantee",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-2",
+                "heading": "Web Application Firewall (WAF)",
+                "bullets": [
+                  {
+                    "id": "b3-1",
+                    "text": "Advanced Access Control",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-2",
+                    "text": "Advanced Rate Limiting",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-3",
+                    "text": "IP Repeated Violations",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-4",
+                    "text": "HTTP Protocol Validation",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-5",
+                    "text": "Built-In WAF Rules",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-6",
+                    "text": "OWASP Core Rulesets",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-7",
+                    "text": "Zero Day Protection",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-8",
+                    "text": "Flexible Response Actions",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-9",
+                    "text": "Rule tempate Management",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-10",
+                    "text": "Log & Incident investigation tools_Baisc",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-11",
+                    "text": "Custom Block Page",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b3-12",
+                    "text": "WAF Dashboard",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-3",
+                "heading": "DDoS Protection",
+                "bullets": [
+                  {
+                    "id": "b4-1",
+                    "text": "Advance Access Control",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-2",
+                    "text": "Advance Rate Limiting",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-3",
+                    "text": "L3/L4 DDoS Mitigation",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-4",
+                    "text": "L7 DDoS Dashboard",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-5",
+                    "text": "Present Protection Policies",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-6",
+                    "text": "Log & Incident Investigation Tools Basic",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b4-7",
+                    "text": "Deploy History",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-4",
+                "heading": "BOT Management",
+                "bullets": [
+                  {
+                    "id": "b5-1",
+                    "text": "Transparent Challenges",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-2",
+                    "text": "Human Behavior Detection",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-3",
+                    "text": "Customized Actions",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-4",
+                    "text": "Advanced Rate Limiting",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b5-5",
+                    "text": "Visual Dashboard",
+                    "subBullets": []
+                  }
+                ]
+              },
+              {
+                "id": "group-2-5",
+                "heading": "General Features",
+                "bullets": [
+                  {
+                    "id": "b6-1",
+                    "text": "Multiple Protocol support [HTTP/HTTPS/Websocket/HTTP2]",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b6-2",
+                    "text": "Email Notification of Attack Event",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b6-3",
+                    "text": "Security Analysis and Basic Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavajij (PoP)",
+        "senderPhone": "+6682-44-666-95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T04:13:47.758Z",
+        "updatedAt": "2026-08-25T04:13:47.758Z",
+        "status": "draft",
+        "sentTo": null
+      }
+    },
+    {
+      "id": "doc-1787207517799",
+      "name": "PartnerAgreement_20-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-20T06:31:57.799Z",
+      "updatedAt": "2026-08-20T06:31:57.799Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "doc-1787192788708",
+      "name": "PartnerAgreement_20-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-20T02:26:28.708Z",
+      "updatedAt": "2026-08-20T02:26:28.709Z",
+      "status": "draft",
+      "sentTo": null,
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "doc-1787128888165",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T08:41:28.165Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    }
+  ],
+  "sentHistory": [
+    {
+      "id": "history-1787812462439",
+      "name": "CZ26080001.pdf",
+      "templateId": "quotation",
+      "templateName": "ใบเสนอราคา (Quotation)",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-27T06:34:22.439Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "id": "qt-1787638573675",
+        "quotationNo": "CZ26080001",
+        "name": "ใบเสนอราคา CZ2608063",
+        "templateId": "quotation",
+        "templateName": "ใบเสนอราคา (Quotation)",
+        "quotationDate": "25 Aug 2026",
+        "priceValidity": "24 Sept 2026",
+        "deliveryTerm": "7 days",
+        "creditTerm": "30 days",
+        "billTo": {
+          "companyName": "CS LoxInfo Public Company Limited.",
+          "attn": "Sarun Phongpodchanan",
+          "endUser": " P.R. Foodland Co., Ltd.",
+          "subject": "CDNetworks Annual Services (WAF+DDoS+BOT)",
+          "am": " Narin Rattanavijai / Channel Manager "
+        },
+        "lineItems": [
+          {
+            "id": "item-1",
+            "title": "CDNetworks Annual Services",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-1-1",
+                "heading": "Application Shield Services",
+                "qty": 1,
+                "unitPrice": 204000,
+                "bullets": [
+                  {
+                    "id": "b1-1",
+                    "text": "Protected Top-Level-Domain up to 5, and Unlimited Sub-Domain",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-2",
+                    "text": "Dynamic Web Acceleration Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-3",
+                    "text": "Application Shield Platform Fee/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-4",
+                    "text": "Commit traffic up to 500Gbps/month",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b1-5",
+                    "text": "Cloud Security 2.0 Fee/month",
+                    "subBullets": [
+                      {
+                        "id": "sb1-1",
+                        "text": "Web Application Firewall (WAF)"
+                      },
+                      {
+                        "id": "sb1-2",
+                        "text": "DDoS Protection"
+                      },
+                      {
+                        "id": "sb1-3",
+                        "text": "BOT Management"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "b1-6",
+                    "text": "Contract Term: One (1) Year",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "item-3",
+            "title": "Managed Service",
+            "qty": "",
+            "unitPrice": "",
+            "groups": [
+              {
+                "id": "group-3-1",
+                "heading": "",
+                "bullets": [
+                  {
+                    "id": "b7-1",
+                    "text": "Service Level Agreement (SLA) 24x7x4",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-2",
+                    "text": "Level 2 Support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-3",
+                    "text": "Unlimited Phone, email support",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-4",
+                    "text": "Implementation Service",
+                    "subBullets": []
+                  },
+                  {
+                    "id": "b7-5",
+                    "text": "Monthly Report",
+                    "subBullets": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "vatRate": 7,
+        "remarks": "Payment: Annually",
+        "senderName": "Narin Rattanavijai(PoP)",
+        "senderPhone": "082 44 666 95",
+        "createdBy": "Admin",
+        "createdAt": "2026-08-25T06:16:13.675Z",
+        "updatedAt": "2026-08-27T02:05:21.118Z",
+        "status": "draft",
+        "sentTo": null,
+        "issuer": {
+          "address": "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Donmueang, Bangkok 10210",
+          "tagline": "",
+          "phone": "082-446-6695"
+        },
+        "remarksList": [
+          "Payment: Annually"
+        ],
+        "specialDiscount": 0,
+        "senderPosition": "Executive Assistant - Technology & Governance",
+        "senderEmail": "narin@crestzendo.com"
+      }
+    },
+    {
+      "id": "history-1787207517811",
+      "name": "PartnerAgreement_20-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-20T06:31:57.811Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787128888176",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T08:41:28.176Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787128342315",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T08:32:22.315Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787125902243",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T07:51:42.243Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787125495740",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T07:44:55.740Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787122422801",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T06:53:42.801Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    },
+    {
+      "id": "history-1787120846132",
+      "name": "PartnerAgreement_19-08-2569.pdf",
+      "templateId": "partner",
+      "templateName": "Partner Agreement",
+      "createdBy": "Admin",
+      "createdAt": "2026-08-19T06:27:26.132Z",
+      "status": "sent",
+      "sentTo": "sirawit.pec@gmail.com",
+      "values": {
+        "contract_date_day": "16",
+        "contract_date_month": "กันยายน",
+        "contract_date_year": "2564",
+        "reseller_name": "บริษัท เน็กซ์เจน เทคโนโลยี แอนด์ ดิจิทัล โซลูชันส์ จำกัด",
+        "reseller_registration_number": "0107544000108",
+        "reseller_address": "เลขที่ 888 อาคารเอ็มไพร์ ทาวเวอร์ ชั้น 21 ถนนสาทรใต้ แขวงยานนาวา เขตสาทร กรุงเทพมหานคร 10120",
+        "reseller_signatory_name": "นายวิทวัส อัครเดชากุล",
+        "reseller_signatory_position": "กรรมการผู้มีอำนาจลงนามผูกพันบริษัท"
+      }
+    }
+  ],
+  "categories": [
+    {
+      "id": "quotation",
+      "name": "Quotation",
+      "fullName": "ใบเสนอราคา",
+      "description": "ใบเสนอราคาพร้อมรายการสินค้า/บริการ คำนวณภาษี VAT 7% และยอดรวมอัตโนมัติ",
+      "icon": "Receipt",
+      "color": "purple",
+      "badge": "มาตรฐาน",
+      "order": 1,
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "nda",
+      "name": "NDA",
+      "fullName": "หนังสือสัญญาไม่เปิดเผยข้อมูล",
+      "description": "Non-Disclosure Agreement สัญญามาตรฐานสำหรับการรักษาความลับทางการค้า",
+      "icon": "FileSignature",
+      "color": "blue",
+      "badge": "มาตรฐาน",
+      "order": 2,
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "partner",
+      "name": "Partner Agreement",
+      "fullName": "สัญญาแต่งตั้งพันธมิตรตัวแทนจำหน่าย",
+      "description": "สัญญาแต่งตั้งพันธมิตร พร้อมเงื่อนไข Deal Registration และอัตราแลกเปลี่ยน",
+      "icon": "Handshake",
+      "color": "emerald",
+      "badge": "มาตรฐาน",
+      "order": 3,
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "distributor",
+      "name": "Distributor Agreement",
+      "fullName": "สัญญาแต่งตั้งและจัดจำหน่ายซอฟต์แวร์",
+      "description": "สัญญาแต่งตั้งตัวแทนจำหน่ายและจัดจำหน่ายซอฟต์แวร์",
+      "icon": "Building2",
+      "color": "indigo",
+      "badge": "มาตรฐาน",
+      "order": 4,
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "notification",
+      "name": "Notification Letter",
+      "fullName": "หนังสือแจ้งและประกาศทางการ",
+      "description": "หนังสือแจ้งการ, จดหมายแจ้งเปลี่ยนแปลงข้อมูลองค์กร และประกาศทางการ",
+      "icon": "Megaphone",
+      "color": "rose",
+      "badge": "มาตรฐาน",
+      "order": 5,
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "5616",
+      "name": "5616",
+      "fullName": "56184",
+      "description": "ๆ5ก6ๆห",
+      "icon": "Handshake",
+      "color": "cyan",
+      "badge": "หมวดใหม่",
+      "order": 1,
+      "createdAt": "2026-09-04T02:39:28.275Z",
+      "updatedAt": "2026-09-04T02:39:28.276Z"
+    },
+    {
+      "id": "cat-1788946775522",
+      "name": "ประกาศบริษัท",
+      "fullName": "ประกาศบริษัท",
+      "description": "",
+      "icon": "FileText",
+      "color": "amber",
+      "badge": "หมวดใหม่",
+      "order": 1,
+      "available": true,
+      "href": "/create/custom?categoryId=cat-1788946775522",
+      "createdAt": "2026-09-09T09:39:35.523Z",
+      "updatedAt": "2026-09-09T09:39:35.524Z"
+    }
+  ],
+  "customTemplates": [
+    {
+      "id": "tmpl-quotation-standard",
+      "categoryId": "quotation",
+      "version": 1,
+      "name": "ใบเสนอราคามาตรฐาน",
+      "englishName": "Quotation Standard Template",
+      "description": "โครงสร้างเทมเพลตใบเสนอราคามาตรฐาน พร้อมระบบคำนวณภาษี VAT 7% และส่วนลด",
+      "icon": "Receipt",
+      "badge": "มาตรฐาน",
+      "pageCount": "1 หน้า A4",
+      "status": "published",
+      "orientation": "portrait",
+      "theme": {
+        "primaryColor": "#5542F6",
+        "backgroundColor": "#FFFFFF",
+        "hasWatermark": false
+      },
+      "blocks": [
+        {
+          "id": "b_header",
+          "type": "header",
+          "title": "หัวกระดาษบริษัท",
+          "settings": {
+            "hasLogo": true,
+            "logoUrl": "/quotation.png",
+            "companyName": "[ ชื่อบริษัท / ผู้เสนอราคา ]",
+            "companyNameEn": "[ Company Name (EN) ]",
+            "taxId": "0-0000-00000-00-0",
+            "address": "[ ที่อยู่สำนักงานใหญ่ / สถานประกอบการ ]",
+            "phone": "02-XXX-XXXX",
+            "email": "contact@company.com",
+            "align": "split"
+          }
+        },
+        {
+          "id": "b_title",
+          "type": "doc_title",
+          "title": "หัวเรื่องเอกสาร",
+          "settings": {
+            "titleText": "ใบเสนอราคา (QUOTATION)",
+            "subtitleText": "ต้นฉบับ / Original",
+            "align": "center"
+          }
+        },
+        {
+          "id": "b_info",
+          "type": "info_grid",
+          "title": "ข้อมูลลูกค้าและเอกสาร",
+          "settings": {
+            "billToTitle": "Bill To:",
+            "billToCompany": "[ ชื่อบริษัทลูกค้า / ผู้รับบริการ ]",
+            "attnName": "[ ชื่อผู้ติดต่อ ]",
+            "subject": "[ ระบุเรื่อง / โครงการ ]",
+            "quotationNo": "QT-YYYYMM-XXXX",
+            "date": "[ ว/ด/ป ที่ออกเอกสาร ]",
+            "validity": "30 วัน",
+            "amName": "[ ชื่อผู้จัดทำ / Account Manager ]"
+          }
+        },
+        {
+          "id": "b_table",
+          "type": "quotation_table",
+          "title": "ตารางรายการสินค้า/บริการ",
+          "settings": {
+            "vatRate": 7,
+            "items": []
+          }
+        },
+        {
+          "id": "b_terms",
+          "type": "terms",
+          "title": "เงื่อนไขและข้อกำหนด",
+          "settings": {
+            "heading": "เงื่อนไขการชำระเงินและส่งมอบ:",
+            "bullets": [
+              "ราคานี้ยังไม่รวมภาษีมูลค่าเพิ่ม (VAT 7%)",
+              "กำหนดยืนราคา 30 วันนับจากวันที่ในเอกสาร",
+              "เงื่อนไขการชำระเงิน: ภายใน 30 วันนับจากวันส่งมอบงาน"
+            ]
+          }
+        },
+        {
+          "id": "b_signatures",
+          "type": "signatures",
+          "title": "ส่วนลงนามอนุมัติ",
+          "settings": {
+            "slots": [
+              {
+                "id": "s1",
+                "name": "[ ผู้มีอำนาจลงนาม / ผู้เสนอราคา ]",
+                "role": "ผู้เสนอราคา"
+              },
+              {
+                "id": "s2",
+                "name": "............................................",
+                "role": "ผู้อนุมัติสั่งซื้อ / ลูกค้า"
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "tmpl-nda-standard",
+      "categoryId": "nda",
+      "version": 1,
+      "name": "หนังสือสัญญาไม่เปิดเผยข้อมูล",
+      "englishName": "Non-Disclosure Agreement (NDA)",
+      "description": "โครงสร้างสัญญามาตรฐานสำหรับการรักษาความลับทางการค้าและทรัพย์สินทางปัญญา",
+      "icon": "FileSignature",
+      "badge": "มาตรฐาน",
+      "pageCount": "2 หน้า A4",
+      "status": "published",
+      "orientation": "portrait",
+      "theme": {
+        "primaryColor": "#5542F6",
+        "backgroundColor": "#FFFFFF",
+        "hasWatermark": false
+      },
+      "blocks": [
+        {
+          "id": "b_header",
+          "type": "header",
+          "title": "หัวกระดาษ",
+          "settings": {
+            "hasLogo": true,
+            "logoUrl": "/quotation.png",
+            "companyName": "[ ชื่อบริษัท / องค์กร ]",
+            "companyNameEn": "[ Company Name (EN) ]",
+            "taxId": "0-0000-00000-00-0",
+            "address": "[ ที่อยู่สำนักงานใหญ่ ]",
+            "phone": "02-XXX-XXXX",
+            "email": "legal@company.com",
+            "align": "split"
+          }
+        },
+        {
+          "id": "b_title",
+          "type": "doc_title",
+          "title": "หัวเรื่อง",
+          "settings": {
+            "titleText": "หนังสือสัญญาไม่เปิดเผยข้อมูล",
+            "subtitleText": "Non-Disclosure Agreement (NDA)",
+            "align": "center"
+          }
+        },
+        {
+          "id": "b_text",
+          "type": "text_block",
+          "title": "โครงสร้างข้อสัญญา",
+          "settings": {
+            "content": "สัญญาฉบับนี้ทำขึ้นระหว่าง [ ชื่อคู่สัญญาฝ่ายเปิดเผยข้อมูล ] และ [ ชื่อคู่สัญญาฝ่ายรับข้อมูล ] โดยทั้งสองฝ่ายตกลงรักษาความลับของข้อมูลตามขอบเขตและระยะเวลาที่ระบุในสัญญานี้"
+          }
+        },
+        {
+          "id": "b_terms",
+          "type": "terms",
+          "title": "ข้อกำหนดความลับ",
+          "settings": {
+            "heading": "ข้อกำหนดและขอบเขตความลับ:",
+            "bullets": [
+              "ห้ามเปิดเผยข้อมูลความลับแก่บุคคลภายนอกโดยไม่ได้รับความยินยอมเป็นลายลักษณ์อักษร",
+              "ใช้ข้อมูลความลับเพื่อวัตถุประสงค์ตามที่ตกลงกันไว้เท่านั้น",
+              "สัญญานี้มีผลบังคับใช้ตามระยะเวลาที่กำหนดในสัญญา"
+            ]
+          }
+        },
+        {
+          "id": "b_signatures",
+          "type": "signatures",
+          "title": "ลงนามทั้งสองฝ่าย",
+          "settings": {
+            "slots": [
+              {
+                "id": "s1",
+                "name": "[ ผู้มีอำนาจลงนามฝ่ายเปิดเผยข้อมูล ]",
+                "role": "ฝ่ายเปิดเผยข้อมูล"
+              },
+              {
+                "id": "s2",
+                "name": "............................................",
+                "role": "ฝ่ายรับข้อมูล"
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "tmpl-partner-standard",
+      "categoryId": "partner",
+      "version": 1,
+      "name": "สัญญาแต่งตั้งพันธมิตรตัวแทนจำหน่าย",
+      "englishName": "Partner Agreement",
+      "description": "โครงสร้างสัญญาแต่งตั้งพันธมิตรทางธุรกิจ พร้อมเงื่อนไข Deal Registration",
+      "icon": "Handshake",
+      "badge": "มาตรฐาน",
+      "pageCount": "2 หน้า A4",
+      "status": "published",
+      "orientation": "portrait",
+      "theme": {
+        "primaryColor": "#5542F6",
+        "backgroundColor": "#FFFFFF",
+        "hasWatermark": false
+      },
+      "blocks": [
+        {
+          "id": "b_header",
+          "type": "header",
+          "title": "หัวกระดาษ",
+          "settings": {
+            "hasLogo": true,
+            "logoUrl": "/quotation.png",
+            "companyName": "[ ชื่อบริษัทผู้แต่งตั้ง ]",
+            "companyNameEn": "[ Company Name (EN) ]",
+            "taxId": "0-0000-00000-00-0",
+            "address": "[ ที่อยู่สำนักงานใหญ่ ]",
+            "phone": "02-XXX-XXXX",
+            "email": "partner@company.com",
+            "align": "split"
+          }
+        },
+        {
+          "id": "b_title",
+          "type": "doc_title",
+          "title": "หัวเรื่อง",
+          "settings": {
+            "titleText": "สัญญาแต่งตั้งพันธมิตรตัวแทนจำหน่าย",
+            "subtitleText": "Partner Agreement",
+            "align": "center"
+          }
+        },
+        {
+          "id": "b_text",
+          "type": "text_block",
+          "title": "รายละเอียดข้อตกลง",
+          "settings": {
+            "content": "สัญญานี้จัดทำขึ้นระหว่าง [ ชื่อบริษัทผู้แต่งตั้ง ] และ [ ชื่อตัวแทนพันธมิตร ] เพื่อแต่งตั้งให้เป็นตัวแทนพันธมิตรในการจำหน่ายและให้บริการผลิตภัณฑ์ตามเงื่อนไขที่ตกลงกัน"
+          }
+        },
+        {
+          "id": "b_terms",
+          "type": "terms",
+          "title": "เงื่อนไขพันธมิตร",
+          "settings": {
+            "heading": "เงื่อนไขและสิทธิประโยชน์พันธมิตร:",
+            "bullets": [
+              "ส่วนแบ่งผลประโยชน์ทางการค้าตามระดับพันธมิตรที่กำหนด",
+              "การลงทะเบียนโครงการผ่านระบบ Deal Registration",
+              "ระยะเวลาสัญญาและเงื่อนไขการต่ออายุสัญญา"
+            ]
+          }
+        },
+        {
+          "id": "b_signatures",
+          "type": "signatures",
+          "title": "ลงนามแต่งตั้ง",
+          "settings": {
+            "slots": [
+              {
+                "id": "s1",
+                "name": "[ ผู้มีอำนาจลงนามผู้แต่งตั้ง ]",
+                "role": "ผู้แต่งตั้ง"
+              },
+              {
+                "id": "s2",
+                "name": "............................................",
+                "role": "ผู้รับการแต่งตั้ง (พันธมิตร)"
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "tmpl-distributor-standard",
+      "categoryId": "distributor",
+      "version": 1,
+      "name": "สัญญาแต่งตั้งและจัดจำหน่ายซอฟต์แวร์",
+      "englishName": "Distributor Agreement",
+      "description": "โครงสร้างสัญญาแต่งตั้งตัวแทนจำหน่ายและจัดจำหน่ายซอฟต์แวร์",
+      "icon": "Building2",
+      "badge": "มาตรฐาน",
+      "pageCount": "2 หน้า A4",
+      "status": "published",
+      "orientation": "portrait",
+      "theme": {
+        "primaryColor": "#5542F6",
+        "backgroundColor": "#FFFFFF",
+        "hasWatermark": false
+      },
+      "blocks": [
+        {
+          "id": "b_header",
+          "type": "header",
+          "title": "หัวกระดาษ",
+          "settings": {
+            "hasLogo": true,
+            "logoUrl": "/quotation.png",
+            "companyName": "[ ชื่อบริษัทผู้จัดจำหน่ายหลัก ]",
+            "companyNameEn": "[ Principal Company (EN) ]",
+            "taxId": "0-0000-00000-00-0",
+            "address": "[ ที่อยู่สำนักงานใหญ่ ]",
+            "phone": "02-XXX-XXXX",
+            "email": "distributor@company.com",
+            "align": "split"
+          }
+        },
+        {
+          "id": "b_title",
+          "type": "doc_title",
+          "title": "หัวเรื่อง",
+          "settings": {
+            "titleText": "สัญญาแต่งตั้งและจัดจำหน่ายซอฟต์แวร์",
+            "subtitleText": "Distributor Agreement",
+            "align": "center"
+          }
+        },
+        {
+          "id": "b_text",
+          "type": "text_block",
+          "title": "รายละเอียดข้อสัญญา",
+          "settings": {
+            "content": "สัญญานี้จัดทำขึ้นระหว่าง [ ชื่อบริษัทผู้จัดจำหน่ายหลัก ] และ [ ชื่อบริษัทตัวแทนจำหน่าย ] เพื่อกำหนดสิทธิและหน้าที่ในการจำหน่ายผลิตภัณฑ์ซอฟต์แวร์ในเขตพื้นที่ที่กำหนด"
+          }
+        },
+        {
+          "id": "b_terms",
+          "type": "terms",
+          "title": "ข้อกำหนดการจำหน่าย",
+          "settings": {
+            "heading": "เงื่อนไขการจำหน่ายและเป้าหมาย:",
+            "bullets": [
+              "กำหนดเป้าหมายยอดจำหน่ายและอัตราส่วนลดตามระดับตัวแทน",
+              "ขอบเขตพื้นที่และสิทธิการจัดจำหน่ายในอาณาเขตที่ตกลง",
+              "การสนับสนุนด้านการตลาดและการฝึกอบรมผลิตภัณฑ์"
+            ]
+          }
+        },
+        {
+          "id": "b_signatures",
+          "type": "signatures",
+          "title": "ลงนามคู่สัญญา",
+          "settings": {
+            "slots": [
+              {
+                "id": "s1",
+                "name": "[ ผู้มีอำนาจลงนามผู้จัดจำหน่ายหลัก ]",
+                "role": "ผู้จัดจำหน่ายหลัก"
+              },
+              {
+                "id": "s2",
+                "name": "............................................",
+                "role": "ตัวแทนจำหน่าย"
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "tmpl-notification-standard",
+      "categoryId": "notification",
+      "version": 1,
+      "name": "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่",
+      "englishName": "Notice of Head Office Relocation",
+      "description": "หนังสือแจ้งการเปลี่ยนแปลงที่อยู่และสถานที่ตั้งสำนักงานใหญ่ทางการ (ไทย-อังกฤษ)",
+      "icon": "Megaphone",
+      "badge": "มาตรฐาน",
+      "pageCount": "1 หน้า A4",
+      "status": "published",
+      "orientation": "portrait",
+      "theme": {
+        "primaryColor": "#5542F6",
+        "backgroundColor": "#FFFFFF",
+        "hasWatermark": false
+      },
+      "blocks": [
+        {
+          "id": "b_header",
+          "type": "header",
+          "title": "หัวกระดาษ",
+          "settings": {
+            "hasLogo": true,
+            "logoUrl": "/quotation.png",
+            "companyName": "บริษัท เครสท์ เซนโด จำกัด",
+            "companyNameEn": "CREST ZENDO CO., LTD.",
+            "taxId": "0105558073755",
+            "address": "8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+            "phone": "02-123-4567",
+            "email": "contact@crestzendo.com",
+            "align": "split"
+          }
+        },
+        {
+          "id": "b_title",
+          "type": "doc_title",
+          "title": "หัวเรื่อง",
+          "settings": {
+            "titleText": "หนังสือแจ้งเปลี่ยนแปลงที่ตั้งสำนักงานใหญ่",
+            "subtitleText": "NOTICE OF HEAD OFFICE RELOCATION",
+            "align": "center"
+          }
+        },
+        {
+          "id": "b_info",
+          "type": "info_grid",
+          "title": "ข้อมูลหนังสือ",
+          "settings": {
+            "billToTitle": "เรียน:",
+            "billToCompany": "ท่านคู่ค้า ลูกค้า และพันธมิตรทางธุรกิจทุกท่าน",
+            "attnName": "ผู้มีอุปการคุณทุกท่าน",
+            "subject": "แจ้งเปลี่ยนแปลงสถานที่ตั้งสำนักงานใหญ่แห่งใหม่",
+            "quotationNo": "TRAC-2609001",
+            "date": "01 กันยายน 2569",
+            "validity": "มีผล 16 กันยายน 2569",
+            "amName": "ฝ่ายบริหารจัดการทั่วไป"
+          }
+        },
+        {
+          "id": "b_text",
+          "type": "text_block",
+          "title": "ข้อความหนังสือแจ้ง",
+          "settings": {
+            "content": "บริษัท เครสท์ เซนโด จำกัด ขอเรียนแจ้งให้ท่านทราบว่า บริษัทฯ ได้ดำเนินการย้ายสถานที่ตั้งสำนักงานใหญ่แห่งใหม่ เพื่อรองรับการขยายตัวทางธุรกิจและการให้บริการที่มีประสิทธิภาพยิ่งขึ้น โดยมีผลบังคับใช้ตั้งแต่วันที่ 16 กันยายน 2569 เป็นต้นไป"
+          }
+        },
+        {
+          "id": "b_terms",
+          "type": "terms",
+          "title": "เปรียบเทียบที่อยู่เดิมและใหม่",
+          "settings": {
+            "heading": "รายละเอียดสถานที่ตั้งสำนักงานใหญ่:",
+            "bullets": [
+              "ที่อยู่เดิม: 45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+              "ที่อยู่ใหม่ (มีผล 16 ก.ย. 2569): 8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+              "หมายเลขโทรศัพท์และช่องทางการติดต่อทางอิเล็กทรอนิกส์ยังคงใช้งานได้ตามปกติ"
+            ]
+          }
+        },
+        {
+          "id": "b_signatures",
+          "type": "signatures",
+          "title": "ผู้มีอำนาจลงนาม",
+          "settings": {
+            "slots": [
+              {
+                "id": "s1",
+                "name": "นายศรายุทธ โกสิยารักษ์",
+                "role": "กรรมการผู้จัดการ / CEO"
+              }
+            ]
+          }
+        }
+      ],
+      "createdAt": "2026-09-01T00:00:00.000Z",
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    }
+  ],
+  "customTokens": [
+    {
+      "id": "ctok-1788946550440",
+      "key": "url",
+      "label": "URL",
+      "example": "www.@",
+      "scope": "entity",
+      "category": "custom",
+      "createdAt": "2026-09-09T09:35:50.441Z",
+      "updatedAt": "2026-09-09T09:35:50.442Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-1788947060461-mr6o8u",
+      "type": "document_exported",
+      "title": "ส่งออกเอกสารสำเร็จ",
+      "description": "ส่งออกไฟล์ \"NotificationLetter_02-09-2569.pdf\" เป็น .HTML เรียบร้อยแล้ว",
+      "timestamp": "2026-09-09T09:44:20.462Z",
+      "unread": true,
+      "link": "/documents",
+      "metadata": {
+        "format": "html",
+        "docName": "NotificationLetter_02-09-2569.pdf"
+      }
+    }
+  ],
+  "settings": {
+    "account": {
+      "fullName": "สิรวิทย์ เพชรจำรัส",
+      "email": "keem@crestzendo.com",
+      "role": "Owner / Admin",
+      "avatar": "",
+      "twoFactorEnabled": true
+    },
+    "preferences": {
+      "theme": "light",
+      "language": "en",
+      "dateFormat": "buddhist",
+      "defaultExportFormat": "pdf"
+    },
+    "organization": {
+      "name": "บริษัท เครสท์ เซนโด จำกัด",
+      "nameEn": "Crest Zendo Co., Ltd.",
+      "taxId": "0105558073755",
+      "branch": "สำนักงานใหญ่",
+      "address": "8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
+      "phone": "02-123-4567",
+      "email": "contact@crestzendo.com",
+      "website": "https://crestzendo.com",
+      "logo": ""
+    },
+    "sessions": [
+      {
+        "id": "sess-current",
+        "device": "Chrome บน Windows 11",
+        "ip": "127.0.0.1",
+        "location": "Bangkok, Thailand",
+        "current": true,
+        "lastActive": "Active now"
+      },
+      {
+        "id": "sess-mobile",
+        "device": "Safari บน iPhone 15 Pro",
+        "ip": "182.52.41.22",
+        "location": "Bangkok, Thailand",
+        "current": false,
+        "lastActive": "2 ชั่วโมงที่แล้ว"
+      }
+    ],
+    "language": "en",
+    "currency": "THB",
+    "theme": "light"
+  }
+}

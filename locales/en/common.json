@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "workspace": "Workspace",
+    "dashboard": "Dashboard",
+    "createDocument": "Create Document",
+    "myDocuments": "My Documents",
+    "templates": "Templates",
+    "dataPresets": "Data Presets",
+    "settings": "Settings",
+    "dataAndAssets": "Data & Assets",
+    "system": "System",
+    "signOut": "Sign Out",
+    "backToWorkspace": "Back to Workspace",
+    "collapseSidebar": "Collapse Sidebar",
+    "expandSidebar": "Expand Sidebar"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "preview": "Preview",
+    "duplicate": "Duplicate",
+    "create": "Create",
+    "search": "Search",
+    "export": "Export",
+    "exportPdf": "Export PDF",
+    "print": "Print",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "confirm": "Confirm",
+    "back": "Back",
+    "close": "Close",
+    "rename": "Rename",
+    "sendEmail": "Send Email",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "browse": "Browse"
+  },
+  "status": {
+    "draft": "Draft",
+    "sent": "Sent",
+    "all": "All",
+    "active": "Active",
+    "standard": "Standard",
+    "custom": "Custom",
+    "comingSoon": "Coming Soon",
+    "readyToUse": "Ready to Use"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minuteAgo": "1 minute ago",
+    "minutesAgo": "{count} minutes ago",
+    "hourAgo": "1 hour ago",
+    "hoursAgo": "{count} hours ago",
+    "yesterday": "Yesterday",
+    "daysAgo": "{count} days ago"
+  },
+  "pagination": {
+    "showing": "Showing {start} - {end} of {total} documents",
+    "perPage": "{count} / page"
+  },
+  "greetings": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening",
+    "welcomeBack": "Welcome back"
+  },
+  "home": {
+    "headline": "{name} 👋",
+    "description": "Document generation and management system",
+    "createDocument": "Create Document",
+    "templatesCatalog": "Templates Catalog",
+    "quickStartTemplates": "Quick Start Templates",
+    "quickStartDesc": "Select a pre-built template to quickly create agreements or quotations",
+    "viewAllTemplates": "View all templates",
+    "recentDocuments": "Recently Updated Documents",
+    "recentDocumentsDesc": "Documents and contracts recently created or modified in workspace",
+    "viewAllDocuments": "View all documents"
+  },
+  "profileData": {
+    "title": "Data Presets",
+    "description": "Centralized customer and counterparty data profiles for one-click document autofill.",
+    "newPreset": "New Preset",
+    "totalProfiles": "Total Profiles",
+    "fieldsConfigured": "Fields Configured",
+    "searchPlaceholder": "Search presets by name or company...",
+    "noPresetsFound": "No data presets found",
+    "createPreset": "Create Preset",
+    "viewDetails": "View Details",
+    "deleteConfirm": "Do you want to delete preset \"{name}\"?",
+    "newPresetTitle": "New Data Preset",
+    "newPresetDesc": "Configure a new preset profile to auto-fill common contract and invoice fields.",
+    "editPresetTitle": "Edit Data Preset",
+    "editPresetDesc": "Update this preset profile to keep auto-fill details up to date."
+  },
+  "profileForm": {
+    "backToPresets": "Back to Data Presets",
+    "presetName": "Preset Name",
+    "compatibleTemplates": "Compatible Templates",
+    "noTemplates": "No templates selected",
+    "noTemplatesDesc": "Select one or more templates above to show the required fields to fill.",
+    "savePreset": "Save Preset",
+    "savedSuccess": "Saved successfully"
+  },
+  "errors": {
+    "createFailed": "Failed to create",
+    "saveFailed": "Failed to save",
+    "deleteFailed": "Failed to delete",
+    "createQuotationFailed": "Failed to create quotation",
+    "saveQuotationFailed": "Failed to save quotation",
+    "createRevisionFailed": "Failed to create revision"
+  },
+  "topbar": {
+    "searchPlaceholder": "Search documents, templates, presets... (Press ⌘K)",
+    "notifications": "Notifications",
+    "markAllRead": "Mark all as read",
+    "viewAllNotifications": "View all notifications",
+    "accountSettings": "Account Settings",
+    "preferences": "Preferences"
+  },
+  "pageTitles": {
+    "overview": "Overview",
+    "createDocument": "Create Document",
+    "customStudio": "Custom Studio Document",
+    "selectPreset": "Select Preset",
+    "dataPresets": "Data Presets",
+    "newPreset": "New Data Preset",
+    "editPreset": "Edit Data Preset",
+    "myDocuments": "My Documents",
+    "documentDetails": "Document Details",
+    "sentHistory": "Sent History",
+    "templates": "Templates",
+    "newTemplate": "New Template",
+    "settings": "Settings"
+  }
+}

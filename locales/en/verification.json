@@ -1,0 +1,17 @@
+{
+  "verification": {
+    "title": "Document Verification System",
+    "portalTitle": "Crest Zendo Document Verification Portal",
+    "enterSystem": "Go to main system",
+    "checking": "Verifying document authenticity...",
+    "cannotVerify": "Cannot verify this document",
+    "verified": "Verified Authenticity",
+    "documentName": "Issued document name",
+    "issuingEntity": "Issuing legal entity",
+    "authorizedSignatory": "Authorized approver and signatory",
+    "approvedAt": "Approved at: ",
+    "token": "Verification Token",
+    "activeValid": "Active Valid",
+    "disclaimer": "This document was issued by the central document management system of Crest Zendo Co., Ltd. and has been electronically signed in accordance with the Electronic Transactions Act."
+  }
+}
