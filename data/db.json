@@ -292,8 +292,8 @@
     {
       "id": "company-announcement",
       "name": "Company Announcement",
-      "fullName": "ประกาศจากบริษัท",
-      "description": "",
+      "fullName": "ประกาศบริษัท (Company Announcement)",
+      "description": "สร้างและจัดการประกาศ ข้อกำหนด และระเบียบปฏิบัติองค์กร",
       "icon": "Megaphone",
       "color": "amber",
       "badge": "Standard",
@@ -306,6 +306,95 @@
     }
   ],
   "customTemplates": [
+    {
+      "id": "tmpl-1789367352607",
+      "name": "ข้อกำหนดด้านประสิทธิภาพและความรับผิดชอบในการปฏิบัติงาน",
+      "categoryId": "company-announcement",
+      "editorType": "document",
+      "canvasPreset": "custom_317.5_317.5_mm",
+      "version": 1,
+      "currentVersionId": "tv-tmpl-1789367352607-v1",
+      "description": "ประกาศบริษัท: ข้อกำหนดด้านประสิทธิภาพและความรับผิดชอบในการปฏิบัติงาน (1200 × 1200 px)",
+      "icon": "Megaphone",
+      "badge": "มาตรฐาน",
+      "status": "published",
+      "orientation": "portrait",
+      "theme": {
+        "primaryColor": "#DC2626",
+        "backgroundColor": "#FCFDFE",
+        "hasWatermark": false,
+        "marginMm": 15,
+        "marginPx": 57
+      },
+      "margin": {
+        "mm": 15,
+        "px": 57
+      },
+      "pageCount": 1,
+      "pages": [
+        {
+          "id": "page-1",
+          "json": "{\"version\":\"6.9.1\",\"objects\":[{\"type\":\"image\",\"src\":\"/assets/announcements/bg_announcement.svg\",\"left\":0,\"top\":0,\"width\":1200,\"height\":1200,\"selectable\":false,\"evented\":false},{\"type\":\"image\",\"src\":\"/assets/announcements/badge_ribbon.svg\",\"left\":95,\"top\":45,\"width\":600,\"height\":150,\"selectable\":true},{\"type\":\"textbox\",\"left\":175,\"top\":64,\"width\":440,\"text\":\"{{header_badge}}\",\"fontSize\":54,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"angle\":-2,\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/megaphone_3d.png\",\"left\":820,\"top\":35,\"width\":320,\"height\":275,\"scaleX\":1.05,\"scaleY\":1.05,\"selectable\":true},{\"type\":\"textbox\",\"left\":100,\"top\":188,\"width\":780,\"text\":\"{{doc_title_1}}\",\"fontSize\":50,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#111827\",\"lineHeight\":1.15,\"selectable\":true},{\"type\":\"textbox\",\"left\":100,\"top\":250,\"width\":780,\"text\":\"{{doc_title_2}}\",\"fontSize\":50,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#DC2626\",\"lineHeight\":1.15,\"selectable\":true},{\"type\":\"rect\",\"left\":180,\"top\":332,\"width\":840,\"height\":72,\"fill\":\"#B91C1C\",\"rx\":36,\"ry\":36,\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_target.svg\",\"left\":205,\"top\":344,\"width\":80,\"height\":80,\"scaleX\":0.6,\"scaleY\":0.6,\"selectable\":true},{\"type\":\"line\",\"left\":272,\"top\":346,\"x1\":0,\"y1\":0,\"x2\":0,\"y2\":44,\"stroke\":\"rgba(255, 255, 255, 0.45)\",\"strokeWidth\":2,\"selectable\":false},{\"type\":\"textbox\",\"left\":290,\"top\":348,\"width\":700,\"text\":\"{{section_title}}\",\"fontSize\":30,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":425,\"width\":350,\"height\":320,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":739,\"width\":350,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":70,\"top\":440,\"width\":140,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":80,\"top\":446,\"width\":120,\"text\":\"{{rule_1_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_calendar_clock.svg\",\"left\":320,\"top\":440,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":75,\"top\":520,\"width\":310,\"text\":\"{{rule_1_text}}\",\"fontSize\":17.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":425,\"top\":425,\"width\":350,\"height\":320,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":425,\"top\":739,\"width\":350,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":440,\"top\":440,\"width\":140,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":450,\"top\":446,\"width\":120,\"text\":\"{{rule_2_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_clipboard.svg\",\"left\":690,\"top\":440,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":445,\"top\":520,\"width\":310,\"text\":\"{{rule_2_text}}\",\"fontSize\":17.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":795,\"top\":425,\"width\":350,\"height\":320,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":795,\"top\":739,\"width\":350,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":810,\"top\":440,\"width\":140,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":820,\"top\":446,\"width\":120,\"text\":\"{{rule_3_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_growth.svg\",\"left\":1060,\"top\":440,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":815,\"top\":520,\"width\":310,\"text\":\"{{rule_3_text}}\",\"fontSize\":17.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":770,\"width\":535,\"height\":265,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":1029,\"width\":535,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":73,\"top\":785,\"width\":150,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":85,\"top\":791,\"width\":126,\"text\":\"{{rule_4_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_shield.svg\",\"left\":503,\"top\":785,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":79,\"top\":865,\"width\":485,\"text\":\"{{rule_4_text}}\",\"fontSize\":18.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":610,\"top\":770,\"width\":535,\"height\":265,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":610,\"top\":1029,\"width\":535,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":628,\"top\":785,\"width\":150,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":640,\"top\":791,\"width\":126,\"text\":\"{{rule_5_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_warning.svg\",\"left\":1058,\"top\":785,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":634,\"top\":865,\"width\":485,\"text\":\"{{rule_5_text}}\",\"fontSize\":18.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"textbox\",\"left\":100,\"top\":1132,\"width\":1000,\"text\":\"{{footer_slogan}}\",\"fontSize\":27,\"fontStyle\":\"italic\",\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true}]}"
+        }
+      ],
+      "sheetData": [],
+      "blocks": [
+        {
+          "id": "b_badge",
+          "type": "header_badge",
+          "title": "ป้ายหัวข้อประกาศ",
+          "settings": {
+            "header_badge": "ประกาศบริษัท"
+          }
+        },
+        {
+          "id": "b_title",
+          "type": "doc_title",
+          "title": "ชื่อประกาศ",
+          "settings": {
+            "doc_title_1": "ข้อกำหนดด้านประสิทธิภาพ",
+            "doc_title_2": "และความรับผิดชอบในการปฏิบัติงาน"
+          }
+        },
+        {
+          "id": "b_section",
+          "type": "section_title",
+          "title": "หมวดหมู่ข้อกำหนด",
+          "settings": {
+            "section_title": "1. การบริหารจัดการและติดตามงาน"
+          }
+        },
+        {
+          "id": "b_rules",
+          "type": "rules_list",
+          "title": "ข้อกำหนดการปฏิบัติงาน (1.1 - 1.5)",
+          "settings": {
+            "rule_1_no": "1.1",
+            "rule_1_text": "ต้องบริหารจัดการงานที่ได้รับมอบหมายให้มีความต่อเนื่อง มีความคืบหน้า และดำเนินการให้แล้วเสร็จภายในระยะเวลาที่กำหนด",
+            "rule_2_no": "1.2",
+            "rule_2_text": "ต้องวางแผนงาน จัดลำดับความสำคัญ และพิจารณาขั้นตอนที่เกี่ยวข้อง รวมถึงผลกระทบที่อาจเกิดขึ้น ก่อนทีจะดำเนินการ",
+            "rule_3_no": "1.3",
+            "rule_3_text": "ต้องติดตามและผลักดันงานที่อยู่ในความรับผิดชอบด้วยตนเองอย่างต่อเนื่อง โดยไม่ต้องรอให้หัวหน้างานหรือบุคคลอื่นติดตามหรือแจ้งเตือน",
+            "rule_4_no": "1.4",
+            "rule_4_text": "ต้องดำเนินงานให้ครบถ้วนและมีคุณภาพ โดยต้องตรวจสอบความถูกต้องและรายละเอียดที่เกี่ยวข้องก่อนส่งมอบทุกครั้ง",
+            "rule_5_no": "1.5",
+            "rule_5_text": "ห้ามปล่อยให้งานที่ได้รับมอบหมายค้าง หยุดชะงัก หรือขาดความคืบหน้าโดยไม่มีการดำเนินการหรือแจ้งเหตุผลให้ผู้บังคับบัญชาทราบ"
+          }
+        },
+        {
+          "id": "b_footer",
+          "type": "footer_slogan",
+          "title": "สโลแกนท้ายประกาศ",
+          "settings": {
+            "footer_slogan": "ร่วมมือกัน สร้างผลงานที่ดี เพื่อองค์กรของเรา"
+          }
+        }
+      ],
+      "createdByUserId": "usr-admin",
+      "createdAt": "2026-09-14T06:29:12.607Z",
+      "updatedAt": "2026-09-14T06:51:50.067Z",
+      "englishName": "Performance and Responsibility Requirements"
+    },
     {
       "id": "tmpl-quotation-standard",
       "categoryId": "quotation",
@@ -2612,6 +2701,153 @@
           }
         ]
       }
+    },
+    {
+      "id": "tv-tmpl-1789367352607-v1",
+      "templateId": "tmpl-1789367352607",
+      "version": 1,
+      "name": "ข้อกำหนดด้านประสิทธิภาพและความรับผิดชอบในการปฏิบัติงาน",
+      "description": "เทมเพลตกำหนดขนาดเอง Company Announcement (1200 × 1200 px)",
+      "categoryId": "company-announcement",
+      "blocks": [],
+      "pages": [
+        {
+          "id": "page-1",
+          "json": {
+            "version": "6.9.1",
+            "objects": [
+              {
+                "name": "pageFooterNumber",
+                "isPageFooterNumber": true,
+                "lockMovementX": false,
+                "lockMovementY": false,
+                "lockRotation": false,
+                "lockScalingX": false,
+                "lockScalingY": false,
+                "hasControls": false,
+                "selectable": true,
+                "opacity": 1,
+                "visible": true,
+                "originX": "left",
+                "originY": "top",
+                "fontSize": 10,
+                "fontWeight": "normal",
+                "fontFamily": "'Noto Sans Thai', 'Noto Sans', sans-serif",
+                "fontStyle": "normal",
+                "lineHeight": 1.16,
+                "text": "หน้า 1 จาก 1",
+                "charSpacing": 0,
+                "textAlign": "right",
+                "styles": [],
+                "pathStartOffset": 0,
+                "pathSide": "left",
+                "pathAlign": "baseline",
+                "underline": false,
+                "overline": false,
+                "linethrough": false,
+                "textBackgroundColor": "",
+                "direction": "ltr",
+                "textDecorationThickness": 66.667,
+                "minWidth": 20,
+                "splitByGrapheme": false,
+                "type": "Textbox",
+                "version": "6.9.1",
+                "left": 1032,
+                "top": 1168,
+                "width": 120,
+                "height": 11.3,
+                "fill": "#94A3B8",
+                "stroke": null,
+                "strokeWidth": 1,
+                "strokeDashArray": null,
+                "strokeLineCap": "butt",
+                "strokeDashOffset": 0,
+                "strokeLineJoin": "miter",
+                "strokeUniform": false,
+                "strokeMiterLimit": 4,
+                "scaleX": 1,
+                "scaleY": 1,
+                "angle": 0,
+                "flipX": false,
+                "flipY": false,
+                "shadow": null,
+                "backgroundColor": "",
+                "fillRule": "nonzero",
+                "paintFirst": "fill",
+                "globalCompositeOperation": "source-over",
+                "skewX": 0,
+                "skewY": 0
+              }
+            ],
+            "background": "#FFFFFF"
+          }
+        }
+      ],
+      "createdAt": "2026-09-14T06:29:12.607Z",
+      "createdByUserId": "usr-admin",
+      "snapshot": {
+        "name": "ข้อกำหนดด้านประสิทธิภาพและความรับผิดชอบในการปฏิบัติงาน",
+        "canvasPreset": "custom_317.5_317.5_mm",
+        "blocks": [
+          {
+            "id": "b_badge",
+            "type": "header_badge",
+            "title": "ป้ายหัวข้อประกาศ",
+            "settings": {
+              "header_badge": "ประกาศบริษัท"
+            }
+          },
+          {
+            "id": "b_title",
+            "type": "doc_title",
+            "title": "ชื่อประกาศ",
+            "settings": {
+              "doc_title_1": "ข้อกำหนดด้านประสิทธิภาพ",
+              "doc_title_2": "และความรับผิดชอบในการปฏิบัติงาน"
+            }
+          },
+          {
+            "id": "b_section",
+            "type": "section_title",
+            "title": "หมวดหมู่ข้อกำหนด",
+            "settings": {
+              "section_title": "1. การบริหารจัดการและติดตามงาน"
+            }
+          },
+          {
+            "id": "b_rules",
+            "type": "rules_list",
+            "title": "ข้อกำหนดการปฏิบัติงาน (1.1 - 1.5)",
+            "settings": {
+              "rule_1_no": "1.1",
+              "rule_1_text": "ต้องบริหารจัดการงานที่ได้รับมอบหมายให้มีความต่อเนื่อง มีความคืบหน้า และดำเนินการให้แล้วเสร็จภายในระยะเวลาที่กำหนด",
+              "rule_2_no": "1.2",
+              "rule_2_text": "ต้องวางแผนงาน จัดลำดับความสำคัญ และพิจารณาขั้นตอนที่เกี่ยวข้อง รวมถึงผลกระทบที่อาจเกิดขึ้น ก่อนทีจะดำเนินการ",
+              "rule_3_no": "1.3",
+              "rule_3_text": "ต้องติดตามและผลักดันงานที่อยู่ในความรับผิดชอบด้วยตนเองอย่างต่อเนื่อง โดยไม่ต้องรอให้หัวหน้างานหรือบุคคลอื่นติดตามหรือแจ้งเตือน",
+              "rule_4_no": "1.4",
+              "rule_4_text": "ต้องดำเนินงานให้ครบถ้วนและมีคุณภาพ โดยต้องตรวจสอบความถูกต้องและรายละเอียดที่เกี่ยวข้องก่อนส่งมอบทุกครั้ง",
+              "rule_5_no": "1.5",
+              "rule_5_text": "ห้ามปล่อยให้งานที่ได้รับมอบหมายค้าง หยุดชะงัก หรือขาดความคืบหน้าโดยไม่มีการดำเนินการหรือแจ้งเหตุผลให้ผู้บังคับบัญชาทราบ"
+            }
+          },
+          {
+            "id": "b_footer",
+            "type": "footer_slogan",
+            "title": "สโลแกนท้ายประกาศ",
+            "settings": {
+              "footer_slogan": "ร่วมมือกัน สร้างผลงานที่ดี เพื่อองค์กรของเรา"
+            }
+          }
+        ],
+        "pages": [
+          {
+            "id": "page-1",
+            "json": "{\"version\":\"6.9.1\",\"objects\":[{\"type\":\"image\",\"src\":\"/assets/announcements/bg_announcement.svg\",\"left\":0,\"top\":0,\"width\":1200,\"height\":1200,\"selectable\":false,\"evented\":false},{\"type\":\"image\",\"src\":\"/assets/announcements/badge_ribbon.svg\",\"left\":95,\"top\":45,\"width\":600,\"height\":150,\"selectable\":true},{\"type\":\"textbox\",\"left\":175,\"top\":64,\"width\":440,\"text\":\"{{header_badge}}\",\"fontSize\":54,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"angle\":-2,\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/megaphone_3d.png\",\"left\":820,\"top\":35,\"width\":320,\"height\":275,\"scaleX\":1.05,\"scaleY\":1.05,\"selectable\":true},{\"type\":\"textbox\",\"left\":100,\"top\":188,\"width\":780,\"text\":\"{{doc_title_1}}\",\"fontSize\":50,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#111827\",\"lineHeight\":1.15,\"selectable\":true},{\"type\":\"textbox\",\"left\":100,\"top\":250,\"width\":780,\"text\":\"{{doc_title_2}}\",\"fontSize\":50,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#DC2626\",\"lineHeight\":1.15,\"selectable\":true},{\"type\":\"rect\",\"left\":180,\"top\":332,\"width\":840,\"height\":72,\"fill\":\"#B91C1C\",\"rx\":36,\"ry\":36,\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_target.svg\",\"left\":205,\"top\":344,\"width\":80,\"height\":80,\"scaleX\":0.6,\"scaleY\":0.6,\"selectable\":true},{\"type\":\"line\",\"left\":272,\"top\":346,\"x1\":0,\"y1\":0,\"x2\":0,\"y2\":44,\"stroke\":\"rgba(255, 255, 255, 0.45)\",\"strokeWidth\":2,\"selectable\":false},{\"type\":\"textbox\",\"left\":290,\"top\":348,\"width\":700,\"text\":\"{{section_title}}\",\"fontSize\":30,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":425,\"width\":350,\"height\":320,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":739,\"width\":350,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":70,\"top\":440,\"width\":140,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":80,\"top\":446,\"width\":120,\"text\":\"{{rule_1_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_calendar_clock.svg\",\"left\":320,\"top\":440,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":75,\"top\":520,\"width\":310,\"text\":\"{{rule_1_text}}\",\"fontSize\":17.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":425,\"top\":425,\"width\":350,\"height\":320,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":425,\"top\":739,\"width\":350,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":440,\"top\":440,\"width\":140,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":450,\"top\":446,\"width\":120,\"text\":\"{{rule_2_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_clipboard.svg\",\"left\":690,\"top\":440,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":445,\"top\":520,\"width\":310,\"text\":\"{{rule_2_text}}\",\"fontSize\":17.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":795,\"top\":425,\"width\":350,\"height\":320,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":795,\"top\":739,\"width\":350,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":810,\"top\":440,\"width\":140,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":820,\"top\":446,\"width\":120,\"text\":\"{{rule_3_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_growth.svg\",\"left\":1060,\"top\":440,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":815,\"top\":520,\"width\":310,\"text\":\"{{rule_3_text}}\",\"fontSize\":17.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":770,\"width\":535,\"height\":265,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":55,\"top\":1029,\"width\":535,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":73,\"top\":785,\"width\":150,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":85,\"top\":791,\"width\":126,\"text\":\"{{rule_4_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_shield.svg\",\"left\":503,\"top\":785,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":79,\"top\":865,\"width\":485,\"text\":\"{{rule_4_text}}\",\"fontSize\":18.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"rect\",\"left\":610,\"top\":770,\"width\":535,\"height\":265,\"rx\":18,\"ry\":18,\"fill\":\"#FFFFFF\",\"stroke\":\"#E2E8F0\",\"strokeWidth\":1.5,\"selectable\":true},{\"type\":\"rect\",\"left\":610,\"top\":1029,\"width\":535,\"height\":6,\"rx\":3,\"ry\":3,\"fill\":\"#DC2626\",\"selectable\":false},{\"type\":\"rect\",\"left\":628,\"top\":785,\"width\":150,\"height\":64,\"rx\":14,\"ry\":14,\"fill\":\"#DC2626\",\"selectable\":true},{\"type\":\"textbox\",\"left\":640,\"top\":791,\"width\":126,\"text\":\"{{rule_5_no}}\",\"fontSize\":38,\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true},{\"type\":\"image\",\"src\":\"/assets/announcements/icon_warning.svg\",\"left\":1058,\"top\":785,\"width\":80,\"height\":80,\"scaleX\":0.8,\"scaleY\":0.8,\"selectable\":true},{\"type\":\"textbox\",\"left\":634,\"top\":865,\"width\":485,\"text\":\"{{rule_5_text}}\",\"fontSize\":18.5,\"lineHeight\":1.55,\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#1E293B\",\"selectable\":true},{\"type\":\"textbox\",\"left\":100,\"top\":1132,\"width\":1000,\"text\":\"{{footer_slogan}}\",\"fontSize\":27,\"fontStyle\":\"italic\",\"fontWeight\":\"bold\",\"fontFamily\":\"'Noto Sans Thai', 'Noto Sans', sans-serif\",\"fill\":\"#FFFFFF\",\"textAlign\":\"center\",\"selectable\":true}]}"
+          }
+        ]
+      },
+      "updatedAt": "2026-09-14T06:51:50.117Z"
     }
   ],
   "templateBlocks": [

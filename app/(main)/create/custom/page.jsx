@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import UniversalTemplateRenderer from "@/components/document/UniversalTemplateRenderer";
 import FabricPrintRenderer from "@/components/document/FabricPrintRenderer";
+import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 import { extractTokensFromTemplate, DEFAULT_SAMPLE_TOKEN_MAP } from "@/lib/tokens/tokenEngine";
 import EmailScreen from "@/components/document/EmailScreen";
 import EditorToolbar from "@/components/document/EditorToolbar";
@@ -443,6 +444,15 @@ function UniversalDocumentContent() {
     template.pages[0]?.json
   );
 
+  const currentPreset = getCanvasPreset(
+    template?.canvasPreset || (template?.editorType === "slide" ? "slide-16-9" : "a4-portrait")
+  );
+  const isSquare = currentPreset.width === currentPreset.height;
+  const isSlide = template?.editorType === "slide" || currentPreset.id === "slide-16-9";
+  const previewScale = isFabricTemplate && currentPreset.width > 800
+    ? Math.min(1, 740 / currentPreset.width)
+    : 1;
+
   // เปิด Pop-Up Modal ยืนยันการบันทึก
   const handleOpenSaveModal = () => {
     setIsSaveSuccess(false);
@@ -457,28 +467,48 @@ function UniversalDocumentContent() {
         name: documentName || template?.name || "เอกสารไม่มีชื่อ",
         templateId: template?.id,
         categoryId: template?.categoryId,
-        status: status,
+        data: values,
         values: values,
-        watermark: watermark,
+        tableItems: tableItems,
+        tableVatRate: tableVatRate,
+        status: status,
+        updatedAt: new Date().toISOString(),
       };
 
-      const res = await fetch(activeDocId ? `/api/documents/${activeDocId}` : "/api/documents", {
-        method: activeDocId ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      let res;
+      if (activeDocId && activeDocId !== "preview") {
+        res = await fetch(`/api/documents/${activeDocId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        res = await fetch("/api/documents", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
 
-      if (!res.ok) throw new Error("ไม่สามารถบันทึกเอกสารได้");
-      const savedDoc = await res.json();
+      if (!res.ok) {
+        throw new Error("เกิดข้อผิดพลาดในการบันทึกเอกสาร");
+      }
+
+      const savedData = await res.json();
+      if (savedData?.id && !activeDocId) {
+        setActiveDocId(savedData.id);
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set("id", savedData.id);
+        window.history.replaceState({}, "", newUrl.toString());
+      }
 
       setDocumentStatus(status);
-      if (savedDoc?.id) {
-        setActiveDocId(savedDoc.id);
-      }
       setIsSaveSuccess(true);
-    } catch (e) {
-      alert("เกิดข้อผิดพลาด: " + e.message);
-      setSaveModalOpen(false);
+      setSaveToast("บันทึกเอกสารสำเร็จเรียบร้อยแล้ว!");
+      setTimeout(() => setSaveToast(""), 3000);
+    } catch (err) {
+      console.error("Save error:", err);
+      alert(err.message || "ไม่สามารถบันทึกเอกสารได้");
     } finally {
       setIsSaving(false);
     }
@@ -491,8 +521,8 @@ function UniversalDocumentContent() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-3">
-        <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs font-semibold text-gray-500">กำลังโหลดเทมเพลตเอกสาร...</p>
+        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs text-muted-foreground font-medium">กำลังเตรียมเอกสารและโหลดข้อมูล...</p>
       </div>
     );
   }
@@ -524,31 +554,60 @@ function UniversalDocumentContent() {
     total: totalFields,
   };
 
-  const renderDocumentPage = () => (
-    <div className="origin-top shadow-xl border border-gray-300 rounded-sm overflow-hidden bg-white print-paper-shadow">
-      {isNotification ? (
-        <DocumentFieldsProvider initialValues={values} defaultReadOnly={true}>
-          <div style={{ width: 794, minHeight: 1123 }} className="bg-white overflow-hidden text-left font-noto-looped">
-            <DynamicContractPage templateId="notification" pageNumber={1} />
+  const renderDocumentPage = () => {
+    const pageContent = (
+      <div className="origin-top shadow-xl border border-gray-300 rounded-sm overflow-hidden bg-white print-paper-shadow">
+        {isNotification ? (
+          <DocumentFieldsProvider initialValues={values} defaultReadOnly={true}>
+            <div style={{ width: 794, minHeight: 1123 }} className="bg-white overflow-hidden text-left font-noto-looped">
+              <DynamicContractPage templateId="notification" pageNumber={1} />
+            </div>
+          </DocumentFieldsProvider>
+        ) : isQuotation ? (
+          <QuotationDataProvider initialQuotation={quotationData} defaultReadOnly={true}>
+            <div style={{ width: 794, minHeight: 1123 }} className="bg-white overflow-hidden text-left font-noto-looped">
+              <QuotationDocument currentPage={1} />
+            </div>
+          </QuotationDataProvider>
+        ) : isFabricTemplate ? (
+          <FabricPrintRenderer
+            template={template}
+            values={values}
+            watermark={watermark}
+          />
+        ) : (
+          <UniversalTemplateRenderer template={template} scale={1} />
+        )}
+      </div>
+    );
+
+    if (previewScale < 1) {
+      return (
+        <div
+          className="print-scale-wrapper transition-all"
+          style={{
+            width: `${Math.round(currentPreset.width * previewScale)}px`,
+            height: `${Math.round(currentPreset.height * previewScale)}px`,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            className="print-scale-inner origin-top-left"
+            style={{
+              width: `${currentPreset.width}px`,
+              height: `${currentPreset.height}px`,
+              transform: `scale(${previewScale})`,
+              transformOrigin: "top left",
+            }}
+          >
+            {pageContent}
           </div>
-        </DocumentFieldsProvider>
-      ) : isQuotation ? (
-        <QuotationDataProvider initialQuotation={quotationData} defaultReadOnly={true}>
-          <div style={{ width: 794, minHeight: 1123 }} className="bg-white overflow-hidden text-left font-noto-looped">
-            <QuotationDocument currentPage={1} />
-          </div>
-        </QuotationDataProvider>
-      ) : isFabricTemplate ? (
-        <FabricPrintRenderer
-          template={template}
-          values={values}
-          watermark={watermark}
-        />
-      ) : (
-        <UniversalTemplateRenderer template={template} scale={1} />
-      )}
-    </div>
-  );
+        </div>
+      );
+    }
+
+    return pageContent;
+  };
 
   if (isReviewing) {
     return (
@@ -983,18 +1042,28 @@ function UniversalDocumentContent() {
           </aside>
         )}
 
-        {/* Right Column: Live A4 Document Output */}
+        {/* Right Column: Live Document Output */}
         <div className="flex-1 min-h-0 overflow-y-auto bg-muted/30 p-4 sm:p-6 flex flex-col items-center">
           <div className="w-full max-w-[850px] flex flex-col items-center space-y-3">
             <div className="w-full flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
                 <Eye size={15} className="text-primary" />
-                <span className="text-xs font-bold text-foreground">พรีวิวกระดาษ A4 เสมือนจริง (Print Preview)</span>
+                <span className="text-xs font-bold text-foreground">
+                  {isSquare
+                    ? "พรีวิวสี่เหลี่ยมจัตุรัส (Square Preview)"
+                    : isSlide
+                    ? "พรีวิวกระดาษสไลด์ 16:9 เสมือนจริง (Slide Preview)"
+                    : "พรีวิวกระดาษ A4 เสมือนจริง (Print Preview)"}
+                </span>
               </div>
-              <span className="text-[10px] font-semibold text-muted-foreground">ขนาด 210 x 297 mm</span>
+              <span className="text-[10px] font-semibold text-muted-foreground">
+                {currentPreset.mmWidth && currentPreset.mmHeight
+                  ? `ขนาด ${currentPreset.mmWidth} x ${currentPreset.mmHeight} mm`
+                  : `ขนาด ${currentPreset.width} x ${currentPreset.height} px`}
+              </span>
             </div>
 
-            {/* A4 Paper Output Container */}
+            {/* Document Output Container */}
             <div className="w-full flex justify-center overflow-x-auto print-container-wrapper">
               {renderDocumentPage()}
             </div>
@@ -1020,6 +1089,16 @@ function UniversalDocumentContent() {
           }
           .lg\\:col-span-7 {
             width: 100% !important;
+          }
+          .print-scale-wrapper {
+            width: auto !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
+          .print-scale-inner {
+            width: auto !important;
+            height: auto !important;
+            transform: none !important;
           }
           .print-container-wrapper {
             padding: 0 !important;
