@@ -27,15 +27,19 @@ import {
   Loader2,
   FileText,
   Users,
+  Search,
+  Shapes,
 } from "lucide-react";
 import { AVAILABLE_TOKEN_CATEGORIES, fetchCustomTokens, mergeWithCustomTokens } from "@/lib/tokens/tokenEngine";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
+import { VECTOR_ICONS, ICON_CATEGORIES } from "./utils/iconLibrary";
 
 
 export default function LeftSidebar({
   editorType = "document",
   onAddText,
   onAddShape,
+  onAddIcon,
   onAddImage,
   onAddPreset,
   onAddTable,
@@ -43,8 +47,12 @@ export default function LeftSidebar({
   onInsertToken,
 }) {
   const isSlide = editorType === "slide";
-  const [activeTab, setActiveTab] = useState(isSlide ? "text" : "blocks"); // "blocks" | "tokens" | "text" | "shapes" | "uploads"
+  const [activeTab, setActiveTab] = useState(isSlide ? "text" : "blocks"); // "blocks" | "tokens" | "text" | "shapes" | "icons" | "uploads"
   const fileInputRef = useRef(null);
+
+  // ── Icons Tab State ──
+  const [iconSearch, setIconSearch] = useState("");
+  const [selectedIconCat, setSelectedIconCat] = useState("all");
 
   // ── Custom Tokens State ──
   const [customTokens, setCustomTokens] = useState([]);
@@ -198,6 +206,19 @@ export default function LeftSidebar({
         >
           <Square className="w-5 h-5" />
           <span className="text-[10px]">รูปทรง</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("icons")}
+          className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+            activeTab === "icons"
+              ? "bg-indigo-600 text-white shadow-sm font-semibold"
+              : "text-gray-600 hover:bg-gray-200/70 hover:text-gray-900"
+          }`}
+          title="ไอคอนเวกเตอร์ (Vector Icons)"
+        >
+          <Sparkles className="w-5 h-5" />
+          <span className="text-[10px]">ไอคอน</span>
         </button>
 
         <button
@@ -677,6 +698,61 @@ export default function LeftSidebar({
           <div className="space-y-4">
             <div>
               <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                โครงสร้างการ์ด & ป้ายกำกับ
+              </h2>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {/* Container Card with Shadow */}
+                <button
+                  onClick={() => onAddShape && onAddShape({ type: "card" })}
+                  className="p-2.5 rounded-xl border border-indigo-200 hover:border-indigo-500 hover:bg-indigo-50/40 flex flex-col items-center gap-1.5 transition-all cursor-pointer bg-white shadow-2xs group"
+                  title="การ์ดคอนเทนเนอร์พร้อมเงา (Container Card)"
+                >
+                  <div className="w-7 h-5 border-2 border-indigo-500 bg-indigo-50/60 rounded-md shadow-xs" />
+                  <span className="text-[11px] font-bold text-indigo-900 group-hover:text-indigo-600">การ์ดพร้อมเงา</span>
+                </button>
+
+                {/* Slanted Badge */}
+                <button
+                  onClick={() => onAddShape && onAddShape({ type: "slanted-badge" })}
+                  className="p-2.5 rounded-xl border border-red-200 hover:border-red-500 hover:bg-red-50/40 flex flex-col items-center gap-1.5 transition-all cursor-pointer bg-white shadow-2xs group"
+                  title="ป้ายหัวข้อเฉียง (Slanted Badge)"
+                >
+                  <div className="w-7 h-5 bg-red-600 -skew-x-12 rounded-xs" />
+                  <span className="text-[11px] font-bold text-red-900 group-hover:text-red-600">ป้ายเฉียง</span>
+                </button>
+
+                {/* Accent Stripe Bar */}
+                <button
+                  onClick={() => onAddShape && onAddShape({ type: "accent-bar" })}
+                  className="p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 flex flex-col items-center gap-1.5 transition-all cursor-pointer bg-white shadow-2xs"
+                  title="แถบสีเน้นขอบการ์ด"
+                >
+                  <div className="w-8 h-2 bg-red-600 rounded-full" />
+                  <span className="text-[11px] font-medium text-gray-700">แถบสีขอบล่าง</span>
+                </button>
+
+                {/* Diamond */}
+                <button
+                  onClick={() => onAddShape && onAddShape({ type: "diamond" })}
+                  className="p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 flex flex-col items-center gap-1.5 transition-all cursor-pointer bg-white shadow-2xs"
+                  title="สี่เหลี่ยมขนมเปียกปูน / เพชร"
+                >
+                  <div className="w-4 h-4 border-2 border-indigo-600 rotate-45 my-0.5" />
+                  <span className="text-[11px] font-medium text-gray-700">เพชร / ข้าวหลามตัด</span>
+                </button>
+
+                {/* Hexagon */}
+                <button
+                  onClick={() => onAddShape && onAddShape({ type: "hexagon" })}
+                  className="p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 flex flex-col items-center gap-1.5 transition-all cursor-pointer bg-white shadow-2xs col-span-2"
+                  title="หกเหลี่ยม (Hexagon)"
+                >
+                  <Shapes className="w-5 h-5 text-emerald-600" />
+                  <span className="text-[11px] font-medium text-gray-700">หกเหลี่ยม (Hexagon)</span>
+                </button>
+              </div>
+
+              <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
                 รูปทรงเรขาคณิต & เส้น
               </h2>
               <div className="grid grid-cols-2 gap-2">
@@ -779,6 +855,69 @@ export default function LeftSidebar({
                   <div className="w-6 h-0.5 border-t-2 border-dashed border-gray-700 my-2" />
                   <span className="text-[11px] font-medium text-gray-700">เส้นประ</span>
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB 5: VECTOR ICONS ── */}
+        {activeTab === "icons" && (
+          <div className="space-y-4">
+            <div>
+              {/* Search Box */}
+              <div className="relative mb-3">
+                <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={iconSearch}
+                  onChange={(e) => setIconSearch(e.target.value)}
+                  placeholder="ค้นหาไอคอน (เช่น เป้าหมาย, ปฏิทิน...)"
+                  className="w-full bg-white border border-gray-200 rounded-xl pl-8 pr-3 py-1.5 text-xs outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              {/* Category Pills */}
+              <div className="flex flex-wrap gap-1 mb-3">
+                {ICON_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedIconCat(cat.id)}
+                    className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer ${
+                      selectedIconCat === cat.id
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Icons Grid */}
+              <div className="grid grid-cols-3 gap-2">
+                {VECTOR_ICONS
+                  .filter((icon) => {
+                    const matchCat = selectedIconCat === "all" || icon.category === selectedIconCat;
+                    const matchSearch = !iconSearch || icon.label.toLowerCase().includes(iconSearch.toLowerCase());
+                    return matchCat && matchSearch;
+                  })
+                  .map((icon) => (
+                    <button
+                      key={icon.id}
+                      onClick={() => onAddIcon && onAddIcon(icon)}
+                      className="p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/40 flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer bg-white shadow-2xs group"
+                      title={icon.label}
+                    >
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-700 group-hover:text-indigo-600 group-hover:scale-110 transition-transform">
+                        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">
+                          <path d={icon.path} />
+                        </svg>
+                      </div>
+                      <span className="text-[10px] font-medium text-gray-600 group-hover:text-indigo-900 truncate w-full text-center">
+                        {icon.label.split(" ")[0]}
+                      </span>
+                    </button>
+                  ))}
               </div>
             </div>
           </div>

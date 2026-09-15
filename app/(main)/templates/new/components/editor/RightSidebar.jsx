@@ -23,9 +23,20 @@ import {
   Minus,
   Table as TableIcon,
   RotateCw,
+  RotateCcw,
   Sparkles,
   Palette,
   X as XIcon,
+  PenTool,
+  Copy,
+  FlipHorizontal,
+  FlipVertical,
+  Group,
+  Ungroup,
+  List,
+  Type,
+  ArrowLeftRight,
+  ArrowUpDown,
 } from "lucide-react";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 import {
@@ -108,6 +119,17 @@ export default function RightSidebar({
     lineHeight: 1.2,
     locked: false,
     visible: true,
+    shadowEnabled: false,
+    shadowColor: "rgba(0, 0, 0, 0.15)",
+    shadowBlur: 12,
+    shadowOffsetX: 0,
+    shadowOffsetY: 4,
+    strokeStyle: "solid",
+    textStrokeEnabled: false,
+    textStroke: "#FFFFFF",
+    textStrokeWidth: 1.5,
+    charSpacing: 0,
+    splitByGrapheme: true,
   });
 
   // 🌈 Fabric.js Gradient Factory
@@ -204,6 +226,31 @@ export default function RightSidebar({
       }
     }
 
+    // 3. Drop Shadow extraction
+    const sObj = activeObject.shadow;
+    const shadowEnabled = Boolean(sObj);
+    const shadowColor = sObj?.color || "rgba(0, 0, 0, 0.15)";
+    const shadowBlur = sObj?.blur !== undefined ? sObj.blur : 12;
+    const shadowOffsetX = sObj?.offsetX !== undefined ? sObj.offsetX : 0;
+    const shadowOffsetY = sObj?.offsetY !== undefined ? sObj.offsetY : 4;
+
+    // 4. Stroke Style extraction
+    let strokeStyle = "solid";
+    if (Array.isArray(activeObject.strokeDashArray) && activeObject.strokeDashArray.length > 0) {
+      if (activeObject.strokeDashArray[0] <= 3) {
+        strokeStyle = "dotted";
+      } else {
+        strokeStyle = "dashed";
+      }
+    }
+
+    // 5. Text Stroke extraction
+    const textStroke = isText && activeObject.stroke ? activeObject.stroke : "#FFFFFF";
+    const textStrokeWidth = isText && activeObject.strokeWidth ? activeObject.strokeWidth : 0;
+    const textStrokeEnabled = Boolean(isText && activeObject.strokeWidth && activeObject.strokeWidth > 0);
+    const charSpacing = isText ? (activeObject.charSpacing || 0) : 0;
+    const splitByGrapheme = isText ? (activeObject.splitByGrapheme !== false) : true;
+
     setPropsState({
       left: Math.round(activeObject.left || 0),
       top: Math.round(activeObject.top || 0),
@@ -225,6 +272,17 @@ export default function RightSidebar({
       lineHeight: isText ? activeObject.lineHeight || 1.2 : 1.2,
       locked: Boolean(activeObject.lockMovementX),
       visible: activeObject.visible !== false,
+      shadowEnabled,
+      shadowColor,
+      shadowBlur,
+      shadowOffsetX,
+      shadowOffsetY,
+      strokeStyle,
+      textStrokeEnabled,
+      textStroke,
+      textStrokeWidth,
+      charSpacing,
+      splitByGrapheme,
     });
   }, [activeObject]);
 
@@ -239,7 +297,10 @@ export default function RightSidebar({
     if (!canvas) return;
     refreshLayers();
 
-    const handleCanvasChange = () => refreshLayers();
+    const handleCanvasChange = () => {
+      refreshLayers();
+    };
+
     canvas.on("object:added", handleCanvasChange);
     canvas.on("object:removed", handleCanvasChange);
     canvas.on("object:modified", handleCanvasChange);
@@ -255,21 +316,128 @@ export default function RightSidebar({
     if (!canvas || !activeObject) return;
 
     if (key === "width" || key === "height") {
-      if (activeObject.type === "textbox") {
-        activeObject.set(key, Number(value));
+      if (activeObject.type === "textbox" || activeObject.isType?.("Textbox")) {
+        if (key === "width") {
+          const newW = Math.max(10, Number(value));
+          activeObject.set({
+            width: newW,
+            scaleX: 1,
+            splitByGrapheme: true,
+            objectCaching: false,
+          });
+          if (typeof activeObject.initDimensions === "function") {
+            activeObject.initDimensions();
+          }
+          activeObject.dirty = true;
+        }
       } else {
         if (key === "width") activeObject.scaleToWidth(Number(value));
         if (key === "height") activeObject.scaleToHeight(Number(value));
+        activeObject.dirty = true;
       }
+    } else if (key === "fontSize") {
+      const size = Math.max(1, Number(value));
+      activeObject.set({
+        fontSize: size,
+        objectCaching: false,
+      });
+      if (typeof activeObject.initDimensions === "function") {
+        activeObject.initDimensions();
+      }
+      activeObject.dirty = true;
+    } else if (key === "splitByGrapheme") {
+      activeObject.set({
+        splitByGrapheme: Boolean(value),
+        objectCaching: false,
+      });
+      if (typeof activeObject.initDimensions === "function") {
+        activeObject.initDimensions();
+      }
+      activeObject.dirty = true;
     } else if (key === "fontWeight") {
       // ⚖️ Support numeric weights (300, 400, 500, 600, 700, 800)
       activeObject.set("fontWeight", Number(value) || value);
       activeObject.dirty = true;
     } else {
       activeObject.set(key, value);
+      activeObject.dirty = true;
     }
 
     setPropsState((prev) => ({ ...prev, [key]: value }));
+    canvas.requestRenderAll();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleShadowChange = (patch) => {
+    if (!canvas || !activeObject) return;
+    const nextProps = {
+      shadowEnabled: propsState.shadowEnabled,
+      shadowColor: propsState.shadowColor,
+      shadowBlur: propsState.shadowBlur,
+      shadowOffsetX: propsState.shadowOffsetX,
+      shadowOffsetY: propsState.shadowOffsetY,
+      ...patch,
+    };
+
+    if (!nextProps.shadowEnabled) {
+      activeObject.set("shadow", null);
+    } else {
+      activeObject.set(
+        "shadow",
+        new fabric.Shadow({
+          color: nextProps.shadowColor,
+          blur: Number(nextProps.shadowBlur),
+          offsetX: Number(nextProps.shadowOffsetX),
+          offsetY: Number(nextProps.shadowOffsetY),
+        })
+      );
+    }
+    activeObject.dirty = true;
+    canvas.requestRenderAll();
+    setPropsState((prev) => ({ ...prev, ...nextProps }));
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleStrokeStyleChange = (newStyle) => {
+    if (!canvas || !activeObject) return;
+    let dashArr = null;
+    if (newStyle === "dashed") dashArr = [8, 6];
+    else if (newStyle === "dotted") dashArr = [2, 4];
+    activeObject.set("strokeDashArray", dashArr);
+    activeObject.dirty = true;
+    canvas.requestRenderAll();
+    setPropsState((prev) => ({ ...prev, strokeStyle: newStyle }));
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const applyTextStroke = (enabled, color, width) => {
+    if (!canvas || !activeObject) return;
+    const strokeColor = color !== undefined ? color : (propsState.textStroke || "#FFFFFF");
+    const strokeWidth = width !== undefined ? Number(width) : (propsState.textStrokeWidth || 1.5);
+
+    if (!enabled) {
+      activeObject.set({
+        stroke: null,
+        strokeWidth: 0,
+      });
+      setPropsState((prev) => ({
+        ...prev,
+        textStrokeEnabled: false,
+      }));
+    } else {
+      activeObject.set({
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        paintFirst: "stroke",
+      });
+      setPropsState((prev) => ({
+        ...prev,
+        textStrokeEnabled: true,
+        textStroke: strokeColor,
+        textStrokeWidth: strokeWidth,
+      }));
+    }
+    activeObject.dirty = true;
     canvas.requestRenderAll();
     if (onPushHistory) onPushHistory(canvas);
   };
@@ -433,9 +601,234 @@ export default function RightSidebar({
     if (onPushHistory) onPushHistory(canvas);
   };
 
-  const isText = activeObject && (activeObject.type === "textbox" || activeObject.type === "i-text" || activeObject.type === "text");
-  const isShape = activeObject && (activeObject.type === "rect" || activeObject.type === "circle" || activeObject.type === "line");
-  const isDocTable = activeObject && (activeObject.isDocTable || activeObject.type === "DocTable" || activeObject.type === "docTable");
+  const handleDuplicate = async (obj = activeObject) => {
+    if (!canvas || !obj) return;
+    const clone = await obj.clone(CUSTOM_CANVAS_PROPS);
+    if (!clone) return;
+    clone.set({
+      left: (obj.left || 0) + 20,
+      top: (obj.top || 0) + 20,
+      evented: true,
+    });
+    if (clone.type?.toLowerCase() === "activeselection") {
+      clone.canvas = canvas;
+      clone.forEachObject((innerObj) => {
+        canvas.add(innerObj);
+      });
+      clone.setCoords();
+      canvas.setActiveObject(clone);
+    } else {
+      canvas.add(clone);
+      canvas.setActiveObject(clone);
+    }
+    canvas.requestRenderAll();
+    refreshLayers();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleFlip = (direction) => {
+    if (!canvas || !activeObject) return;
+    if (direction === "x") {
+      activeObject.set("flipX", !activeObject.flipX);
+    } else {
+      activeObject.set("flipY", !activeObject.flipY);
+    }
+    activeObject.setCoords();
+    activeObject.dirty = true;
+    canvas.requestRenderAll();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleRotateStep = (degrees) => {
+    if (!canvas || !activeObject) return;
+    const currentAngle = activeObject.angle || 0;
+    const nextAngle = (Math.round(currentAngle + degrees) + 360) % 360;
+    activeObject.set("angle", nextAngle);
+    activeObject.setCoords();
+    activeObject.dirty = true;
+    setPropsState((prev) => ({ ...prev, angle: nextAngle }));
+    canvas.requestRenderAll();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleGroupSelection = () => {
+    if (!canvas || !activeObject || activeObject.type?.toLowerCase() !== "activeselection") return;
+    const selectionObjects = activeObject.getObjects();
+    if (selectionObjects.length < 2) return;
+
+    const hasCustomClass = selectionObjects.some(
+      (o) => o.isDocTable || o.type === "DocTable" || o.type === "doctable" || o.isSignatureBlock
+    );
+    if (hasCustomClass) {
+      alert("ไม่สามารถรวมกลุ่ม (Group) ตารางหรือบล็อกลงนามร่วมกับวัตถุอื่นได้");
+      return;
+    }
+
+    canvas.discardActiveObject();
+    selectionObjects.forEach((obj) => canvas.remove(obj));
+    const newGroup = new fabric.Group(selectionObjects, { isUserGroup: true });
+    canvas.add(newGroup);
+    canvas.setActiveObject(newGroup);
+    canvas.requestRenderAll();
+    refreshLayers();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleUngroupSelection = () => {
+    if (!canvas || !activeObject || (!activeObject.isUserGroup && activeObject.type !== "group")) return;
+    const childObjects = [...activeObject.getObjects()];
+    const absTransforms = childObjects.map((child) => child.calcTransformMatrix());
+
+    canvas.discardActiveObject();
+    canvas.remove(activeObject);
+
+    childObjects.forEach((child, i) => {
+      const matrix = absTransforms[i];
+      const decomposed = fabric.util.qrDecompose(matrix);
+      child.set({
+        left: decomposed.translateX,
+        top: decomposed.translateY,
+        scaleX: decomposed.scaleX,
+        scaleY: decomposed.scaleY,
+        angle: decomposed.angle,
+        skewX: decomposed.skewX,
+        skewY: 0,
+        group: undefined,
+      });
+      child.setCoords();
+      canvas.add(child);
+    });
+
+    const sel = new fabric.ActiveSelection(childObjects, { canvas });
+    canvas.setActiveObject(sel);
+    canvas.requestRenderAll();
+    refreshLayers();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleAlignWithinSelection = (type) => {
+    if (!canvas || !activeObject || activeObject.type?.toLowerCase() !== "activeselection") return;
+    const objects = activeObject.getObjects();
+    if (objects.length < 2) return;
+    const groupWidth = activeObject.width;
+    const groupHeight = activeObject.height;
+
+    objects.forEach((obj) => {
+      const w = obj.getScaledWidth ? obj.getScaledWidth() : (obj.width || 0) * (obj.scaleX || 1);
+      const h = obj.getScaledHeight ? obj.getScaledHeight() : (obj.height || 0) * (obj.scaleY || 1);
+      switch (type) {
+        case "left":
+          obj.set("left", -groupWidth / 2);
+          break;
+        case "center":
+          obj.set("left", -w / 2);
+          break;
+        case "right":
+          obj.set("left", groupWidth / 2 - w);
+          break;
+        case "top":
+          obj.set("top", -groupHeight / 2);
+          break;
+        case "middle":
+          obj.set("top", -h / 2);
+          break;
+        case "bottom":
+          obj.set("top", groupHeight / 2 - h);
+          break;
+      }
+      obj.setCoords();
+    });
+    activeObject.setCoords();
+    activeObject.dirty = true;
+    canvas.requestRenderAll();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleDistribute = (direction) => {
+    if (!canvas || !activeObject || activeObject.type?.toLowerCase() !== "activeselection") return;
+    const objects = activeObject.getObjects();
+    if (objects.length < 3) return;
+
+    if (direction === "horizontal") {
+      const sorted = [...objects].sort((a, b) => (a.left || 0) - (b.left || 0));
+      const minLeft = sorted[0].left || 0;
+      const maxLeft = sorted[sorted.length - 1].left || 0;
+      const step = (maxLeft - minLeft) / (sorted.length - 1);
+      sorted.forEach((obj, idx) => {
+        obj.set("left", minLeft + step * idx);
+        obj.setCoords();
+      });
+    } else {
+      const sorted = [...objects].sort((a, b) => (a.top || 0) - (b.top || 0));
+      const minTop = sorted[0].top || 0;
+      const maxTop = sorted[sorted.length - 1].top || 0;
+      const step = (maxTop - minTop) / (sorted.length - 1);
+      sorted.forEach((obj, idx) => {
+        obj.set("top", minTop + step * idx);
+        obj.setCoords();
+      });
+    }
+    activeObject.setCoords();
+    activeObject.dirty = true;
+    canvas.requestRenderAll();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleTextTransform = (mode) => {
+    if (!canvas || !activeObject || !isText) return;
+    const currentText = activeObject.text || "";
+    let transformed = currentText;
+    if (mode === "uppercase") {
+      transformed = currentText.toUpperCase();
+    } else if (mode === "lowercase") {
+      transformed = currentText.toLowerCase();
+    } else if (mode === "capitalize") {
+      transformed = currentText.replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+    activeObject.set({ text: transformed, objectCaching: false });
+    if (typeof activeObject.initDimensions === "function") activeObject.initDimensions();
+    activeObject.dirty = true;
+    setPropsState((prev) => ({ ...prev, text: transformed }));
+    canvas.requestRenderAll();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const handleToggleBulletList = () => {
+    if (!canvas || !activeObject || !isText) return;
+    const currentText = activeObject.text || "";
+    const lines = currentText.split("\n");
+    const allBulleted = lines.every((l) => l.trim().startsWith("• "));
+    const updatedLines = lines.map((line) => {
+      if (allBulleted) {
+        return line.replace(/^\s*•\s*/, "");
+      } else {
+        return line.trim().startsWith("• ") ? line : `• ${line}`;
+      }
+    });
+    const newText = updatedLines.join("\n");
+    activeObject.set({ text: newText, objectCaching: false });
+    if (typeof activeObject.initDimensions === "function") activeObject.initDimensions();
+    activeObject.dirty = true;
+    setPropsState((prev) => ({ ...prev, text: newText }));
+    canvas.requestRenderAll();
+    if (onPushHistory) onPushHistory(canvas);
+  };
+
+  const isMultiple = Boolean(activeObject && activeObject.type?.toLowerCase() === "activeselection");
+  const isGroup = Boolean(activeObject && (activeObject.isUserGroup || (activeObject.type === "group" && !activeObject.isDocTable)));
+  const isText = Boolean(activeObject && (activeObject.type === "textbox" || activeObject.type === "i-text" || activeObject.type === "text"));
+  const isIcon = Boolean(activeObject && (activeObject.isIcon || activeObject.iconId || (activeObject.type === "path" && !activeObject.isArrow)));
+  const isShape = Boolean(activeObject && (
+    activeObject.type === "rect" ||
+    activeObject.type === "circle" ||
+    activeObject.type === "line" ||
+    activeObject.type === "polygon" ||
+    activeObject.type === "ellipse" ||
+    activeObject.type === "triangle" ||
+    activeObject.type === "path" ||
+    activeObject.isShape
+  ));
+  const isDocTable = Boolean(activeObject && (activeObject.isDocTable || activeObject.type === "DocTable" || activeObject.type === "docTable"));
 
   return (
     <aside className="editor-right-sidebar w-80 bg-white border-l border-gray-200 flex flex-col h-[calc(100vh-53px)] select-none z-20 shrink-0 shadow-xs">
@@ -534,17 +927,50 @@ export default function RightSidebar({
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                <span className="font-bold text-gray-900 text-sm">
-                  {isDocTable
-                    ? "📊 ตารางใบเสนอราคา (DocTable)"
+                <span
+                  className="font-bold text-gray-900 text-sm truncate max-w-[170px]"
+                  title={
+                    isMultiple
+                      ? `เลือก ${activeObject.getObjects?.()?.length || 0} ชิ้น`
+                      : isGroup
+                      ? "กลุ่มวัตถุ (Group)"
+                      : isDocTable
+                      ? "ตารางใบเสนอราคา"
+                      : isText
+                      ? "ข้อความ (Text)"
+                      : isIcon
+                      ? "ไอคอนเวกเตอร์"
+                      : isShape
+                      ? "รูปทรง (Shape)"
+                      : "รูปภาพ (Image)"
+                  }
+                >
+                  {isMultiple
+                    ? `👥 เลือกหลายชิ้น (${activeObject.getObjects?.()?.length || 0})`
+                    : isGroup
+                    ? "📦 กลุ่มวัตถุ (Group)"
+                    : isDocTable
+                    ? "📊 ตารางใบเสนอราคา"
                     : isText
                     ? "🔤 ข้อความ (Text)"
+                    : isIcon
+                    ? "✨ ไอคอนเวกเตอร์"
                     : isShape
                     ? "🔷 รูปทรง (Shape)"
                     : "🖼️ รูปภาพ (Image)"}
                 </span>
                 <div className="flex items-center gap-1">
+                  {/* 📋 Duplicate Button */}
                   <button
+                    type="button"
+                    onClick={() => handleDuplicate()}
+                    className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors cursor-pointer"
+                    title="ทำซ้ำวัตถุ (Duplicate - Ctrl+D)"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => handleToggleLock()}
                     className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
                       propsState.locked ? "bg-amber-50 text-amber-600 border-amber-200" : "text-gray-500 hover:bg-gray-100 border-gray-200"
@@ -554,6 +980,7 @@ export default function RightSidebar({
                     {propsState.locked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDelete()}
                     className="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                     title="ลบวัตถุ (Delete)"
@@ -562,6 +989,123 @@ export default function RightSidebar({
                   </button>
                 </div>
               </div>
+
+              {/* 👥 MULTI-SELECTION TOOLS */}
+              {isMultiple && (
+                <div className="space-y-3 p-3 bg-indigo-50/80 rounded-xl border border-indigo-200">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-indigo-950 text-xs flex items-center gap-1.5">
+                      <Group className="w-4 h-4 text-indigo-600" />
+                      <span>จัดการวัตถุที่เลือก ({activeObject.getObjects?.()?.length || 0} ชิ้น)</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleGroupSelection}
+                      className="flex items-center gap-1 px-2 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[11px] font-bold shadow-xs cursor-pointer transition-colors"
+                      title="รวมเป็นกลุ่มเดียวกัน (Ctrl+G)"
+                    >
+                      <Group className="w-3 h-3" />
+                      <span>จัดกลุ่ม (Ctrl+G)</span>
+                    </button>
+                  </div>
+
+                  {/* Align Within Selection */}
+                  <div className="pt-1 border-t border-indigo-200/60">
+                    <label className="text-[10px] text-indigo-900 font-semibold mb-1 block">จัดชิดระหว่างวัตถุที่เลือก</label>
+                    <div className="grid grid-cols-3 gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleAlignWithinSelection("left")}
+                        className="py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                      >
+                        ชิดซ้าย
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAlignWithinSelection("center")}
+                        className="py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                      >
+                        กึ่งกลาง
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAlignWithinSelection("right")}
+                        className="py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                      >
+                        ชิดขวา
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAlignWithinSelection("top")}
+                        className="py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                      >
+                        ชิดบน
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAlignWithinSelection("middle")}
+                        className="py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                      >
+                        กึ่งกลางตั้ง
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAlignWithinSelection("bottom")}
+                        className="py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                      >
+                        ชิดล่าง
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Distribute Evenly */}
+                  {activeObject.getObjects?.()?.length >= 3 && (
+                    <div className="pt-1 border-t border-indigo-200/60">
+                      <label className="text-[10px] text-indigo-900 font-semibold mb-1 block">กระจายระยะห่างเท่ากัน</label>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleDistribute("horizontal")}
+                          className="flex items-center justify-center gap-1 py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                        >
+                          <ArrowLeftRight className="w-3 h-3 text-indigo-600" />
+                          <span>แนวนอน</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDistribute("vertical")}
+                          className="flex items-center justify-center gap-1 py-1 px-1.5 bg-white hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded text-[10px] font-medium cursor-pointer"
+                        >
+                          <ArrowUpDown className="w-3 h-3 text-indigo-600" />
+                          <span>แนวตั้ง</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 📦 GROUP UNGROUP CONTROLS */}
+              {isGroup && (
+                <div className="p-3 bg-amber-50/80 rounded-xl border border-amber-200 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Group className="w-4 h-4 text-amber-700" />
+                    <div>
+                      <span className="font-bold text-amber-950 text-xs block">กลุ่มวัตถุ (Group)</span>
+                      <span className="text-[10px] text-amber-700 block">มี {activeObject.getObjects?.()?.length || 0} วัตถุข้างใน</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleUngroupSelection}
+                    className="flex items-center gap-1 px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[11px] font-bold shadow-2xs cursor-pointer transition-colors"
+                    title="แยกกลุ่มออกจากกัน (Ctrl+Shift+G)"
+                  >
+                    <Ungroup className="w-3.5 h-3.5 text-amber-700" />
+                    <span>ยกเลิกกลุ่ม</span>
+                  </button>
+                </div>
+              )}
 
               {/* ── DOCTABLE DYNAMIC ROW CONTROLS ── */}
               {isDocTable && (
@@ -787,6 +1331,36 @@ export default function RightSidebar({
                     </div>
                   </div>
 
+                  {/* 🎨 Quick Color Palette for Text */}
+                  <div>
+                    <span className="text-[10px] text-gray-500 font-semibold mb-1 block">สียอดนิยม</span>
+                    <div className="flex items-center gap-1.5 flex-wrap bg-gray-50/70 p-1.5 rounded-lg border border-gray-200/60">
+                      {[
+                        { color: "#111827", label: "ดำเข้ม" },
+                        { color: "#4F46E5", label: "คราม Indigo" },
+                        { color: "#2563EB", label: "น้ำเงิน Blue" },
+                        { color: "#0F766E", label: "เขียวหัวเป็ด Teal" },
+                        { color: "#16A34A", label: "เขียวสด Green" },
+                        { color: "#D97706", label: "ทอง Amber" },
+                        { color: "#DC2626", label: "แดง Red" },
+                        { color: "#9333EA", label: "ม่วง Purple" },
+                        { color: "#64748B", label: "เทา Slate" },
+                        { color: "#FFFFFF", label: "ขาว White" },
+                      ].map((swatch) => (
+                        <button
+                          key={swatch.color}
+                          type="button"
+                          onClick={() => applyProperty("fill", swatch.color)}
+                          className={`w-5 h-5 rounded-full border border-gray-300 shadow-2xs hover:scale-110 transition-transform cursor-pointer ${
+                            propsState.fill?.toLowerCase() === swatch.color.toLowerCase() ? "ring-2 ring-indigo-600 ring-offset-1" : ""
+                          }`}
+                          style={{ backgroundColor: swatch.color }}
+                          title={swatch.label}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
                   {/* ⚖️ Font Weight Selector */}
                   {(() => {
                     const currentAvailableWeights = getAvailableWeights(propsState.fontFamily, allFonts);
@@ -890,11 +1464,296 @@ export default function RightSidebar({
                       </button>
                     </div>
                   </div>
+
+                  {/* 🔠 Text Case & Bullet List Tools */}
+                  <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-1">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleTextTransform("uppercase")}
+                        className="px-2 py-1 text-[11px] font-bold text-gray-700 hover:bg-gray-200 rounded transition-colors cursor-pointer"
+                        title="แปลงเป็นตัวพิมพ์ใหญ่ทั้งหมด (UPPERCASE)"
+                      >
+                        AA
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleTextTransform("lowercase")}
+                        className="px-2 py-1 text-[11px] font-bold text-gray-700 hover:bg-gray-200 rounded transition-colors cursor-pointer"
+                        title="แปลงเป็นตัวพิมพ์เล็กทั้งหมด (lowercase)"
+                      >
+                        aa
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleTextTransform("capitalize")}
+                        className="px-2 py-1 text-[11px] font-bold text-gray-700 hover:bg-gray-200 rounded transition-colors cursor-pointer"
+                        title="ตัวแรกของคำพิมพ์ใหญ่ (Title Case)"
+                      >
+                        Aa
+                      </button>
+                    </div>
+
+                    <div className="h-4 w-px bg-gray-300" />
+
+                    <button
+                      type="button"
+                      onClick={handleToggleBulletList}
+                      className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-gray-700 hover:bg-gray-200 rounded transition-colors cursor-pointer"
+                      title="เพิ่ม/ลบ สัญลักษณ์จุดหัวข้อ (Bullet Points)"
+                    >
+                      <List className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>จุดหัวข้อ (•)</span>
+                    </button>
+                  </div>
+
+                  {/* 📏 Line Height & Letter Spacing */}
+                  <div className="grid grid-cols-2 gap-2 p-2.5 bg-gray-50/80 rounded-xl border border-gray-200/70">
+                    <div>
+                      <div className="flex justify-between text-[11px] text-gray-600 mb-1">
+                        <span>ระยะบรรทัด</span>
+                        <span className="font-mono font-bold text-indigo-600">{propsState.lineHeight || 1.2}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.8"
+                        max="2.5"
+                        step="0.05"
+                        value={propsState.lineHeight || 1.2}
+                        onChange={(e) => applyProperty("lineHeight", Number(e.target.value))}
+                        className="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-[11px] text-gray-600 mb-1">
+                        <span>ระยะตัวอักษร</span>
+                        <span className="font-mono font-bold text-indigo-600">{propsState.charSpacing || 0}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="-50"
+                        max="200"
+                        step="10"
+                        value={propsState.charSpacing || 0}
+                        onChange={(e) => applyProperty("charSpacing", Number(e.target.value))}
+                        className="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg cursor-pointer"
+                      />
+                    </div>
+                  </div>
+
+                  {/* 🖋️ Text Stroke Controls */}
+                  <div className="p-2.5 bg-gray-50/90 rounded-xl border border-gray-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1.5">
+                        <PenTool className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>เส้นขอบตัวอักษร (Text Stroke)</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => applyTextStroke(!propsState.textStrokeEnabled)}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer ${
+                          propsState.textStrokeEnabled
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                        }`}
+                      >
+                        {propsState.textStrokeEnabled ? "เปิดใช้งาน" : "ปิด"}
+                      </button>
+                    </div>
+
+                    {propsState.textStrokeEnabled && (
+                      <div className="space-y-2 pt-1 border-t border-gray-200/60">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[10px] text-gray-500 mb-0.5 block">สีขอบตัวอักษร</label>
+                            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1 shadow-2xs">
+                              <input
+                                type="color"
+                                value={propsState.textStroke}
+                                onChange={(e) => applyTextStroke(true, e.target.value, propsState.textStrokeWidth)}
+                                className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
+                              />
+                              <span className="font-mono text-[10px] text-gray-600 uppercase truncate">
+                                {propsState.textStroke}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
+                              <span>ความหนาขอบ</span>
+                              <span className="font-mono font-bold text-indigo-600">{propsState.textStrokeWidth}px</span>
+                            </div>
+                            <input
+                              type="range"
+                              min="0.5"
+                              max="10"
+                              step="0.5"
+                              value={propsState.textStrokeWidth}
+                              onChange={(e) => applyTextStroke(true, propsState.textStroke, Number(e.target.value))}
+                              className="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg cursor-pointer"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Quick Stroke Color Presets */}
+                        <div className="flex items-center gap-1 pt-1">
+                          <span className="text-[10px] text-gray-400">สียอดนิยม:</span>
+                          {["#FFFFFF", "#000000", "#DC2626", "#B91C1C", "#2563EB", "#F59E0B"].map((col) => (
+                            <button
+                              key={col}
+                              type="button"
+                              onClick={() => applyTextStroke(true, col, propsState.textStrokeWidth || 1.5)}
+                              className={`w-5 h-5 rounded-full border transition-transform hover:scale-110 cursor-pointer ${
+                                propsState.textStroke?.toLowerCase() === col.toLowerCase() ? "ring-2 ring-indigo-500" : "border-gray-300"
+                              }`}
+                              style={{ backgroundColor: col }}
+                              title={col}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 🌌 Text Shadow Controls */}
+                  <div className="p-2.5 bg-gray-50/90 rounded-xl border border-gray-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>เงาข้อความ (Text Shadow)</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleShadowChange({ shadowEnabled: !propsState.shadowEnabled })}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer ${
+                          propsState.shadowEnabled
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                        }`}
+                      >
+                        {propsState.shadowEnabled ? "เปิดใช้งาน" : "ปิด"}
+                      </button>
+                    </div>
+
+                    {propsState.shadowEnabled && (
+                      <div className="space-y-2 pt-1 border-t border-gray-200/60">
+                        {/* Quick Shadow Presets for Text */}
+                        <div className="grid grid-cols-4 gap-1">
+                          {[
+                            { label: "นุ่มนวล", blur: 8, x: 0, y: 3, color: "rgba(0, 0, 0, 0.25)" },
+                            { label: "คมชัด", blur: 2, x: 2, y: 2, color: "rgba(0, 0, 0, 0.5)" },
+                            { label: "3D แดง", blur: 4, x: 0, y: 3, color: "rgba(185, 28, 28, 0.6)" },
+                            { label: "เรืองแสง", blur: 12, x: 0, y: 0, color: "rgba(255, 255, 255, 0.8)" },
+                          ].map((sp) => (
+                            <button
+                              key={sp.label}
+                              type="button"
+                              onClick={() =>
+                                handleShadowChange({
+                                  shadowEnabled: true,
+                                  shadowBlur: sp.blur,
+                                  shadowOffsetX: sp.x,
+                                  shadowOffsetY: sp.y,
+                                  shadowColor: sp.color,
+                                })
+                              }
+                              className="py-1 text-[10px] rounded bg-white hover:bg-indigo-50 hover:text-indigo-700 border border-gray-200 text-gray-700 font-medium transition-colors cursor-pointer"
+                            >
+                              {sp.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
+                              <span>ความฟุ้ง</span>
+                              <span className="font-mono font-bold text-indigo-600">{propsState.shadowBlur}px</span>
+                            </div>
+                            <input
+                              type="range"
+                              min="0"
+                              max="30"
+                              value={propsState.shadowBlur}
+                              onChange={(e) => handleShadowChange({ shadowBlur: Number(e.target.value) })}
+                              className="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg cursor-pointer"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-gray-500 mb-0.5 block">สีเงา</label>
+                            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1 shadow-2xs">
+                              <input
+                                type="color"
+                                value={propsState.shadowColor?.startsWith("#") ? propsState.shadowColor : "#000000"}
+                                onChange={(e) => handleShadowChange({ shadowColor: e.target.value })}
+                                className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent"
+                              />
+                              <span className="font-mono text-[9.5px] text-gray-600 truncate">{propsState.shadowColor}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* การตัดคำและขึ้นบรรทัดใหม่ (Text Wrapping) */}
+                  <div className="pt-2 border-t border-gray-200/60">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-[11px] font-bold text-gray-700 block">ตัดบรรทัดภาษาไทยอัตโนมัติ</span>
+                        <span className="text-[10px] text-gray-400 block">ตัดตามตัวอักษรเพื่อไม่ให้กล่องติดคำยาว</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => applyProperty("splitByGrapheme", !propsState.splitByGrapheme)}
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer ${
+                          propsState.splitByGrapheme
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                        }`}
+                      >
+                        {propsState.splitByGrapheme ? "เปิดใช้งาน" : "ปิด"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
 
               {isShape && (
                 <div className="space-y-3.5">
+                  {isIcon && (
+                    <div className="p-2.5 bg-indigo-50/80 rounded-xl border border-indigo-200 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-indigo-950 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>สีไอคอนเวกเตอร์ (Vector Color)</span>
+                        </span>
+                        <span className="font-mono text-[10px] font-bold text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-indigo-200 uppercase">
+                          {propsState.fill}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {["#DC2626", "#2563EB", "#16A34A", "#F59E0B", "#9333EA", "#0D9488", "#1E293B", "#FFFFFF"].map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => {
+                              applyProperty("fill", c);
+                              handleUpdateStop(0, "color", c);
+                            }}
+                            className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 cursor-pointer ${
+                              propsState.fill?.toLowerCase() === c.toLowerCase() ? "border-indigo-600 scale-110 shadow-xs" : "border-gray-200"
+                            }`}
+                            style={{ backgroundColor: c }}
+                            title={c}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <h3 className="font-bold text-gray-700 uppercase tracking-wider text-[10px]">
                     สีพื้นหลังและเส้นขอบ
                   </h3>
@@ -1135,8 +1994,32 @@ export default function RightSidebar({
                       />
                     </div>
 
+                    <div>
+                      <label className="text-[11px] text-gray-500 mb-1 block">สไตล์เส้น (Stroke Style)</label>
+                      <div className="grid grid-cols-3 gap-1">
+                        {[
+                          { id: "solid", label: "ทึบ" },
+                          { id: "dashed", label: "ประ" },
+                          { id: "dotted", label: "จุด" },
+                        ].map((st) => (
+                          <button
+                            key={st.id}
+                            type="button"
+                            onClick={() => handleStrokeStyleChange(st.id)}
+                            className={`py-1 rounded text-[10px] font-medium transition-colors cursor-pointer ${
+                              propsState.strokeStyle === st.id
+                                ? "bg-indigo-600 text-white font-bold"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            }`}
+                          >
+                            {st.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     {activeObject.type === "rect" && (
-                      <div>
+                      <div className="col-span-2">
                         <label className="text-[11px] text-gray-500 mb-1 block">ความโค้งมน (Radius)</label>
                         <input
                           type="number"
@@ -1150,6 +2033,124 @@ export default function RightSidebar({
                           }}
                           className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs font-mono font-bold text-gray-800 outline-none focus:border-indigo-500"
                         />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ── DROP SHADOW CONTROLS ── */}
+                  <div className="space-y-2.5 pt-3 border-t border-gray-200/80">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-gray-700 uppercase tracking-wider text-[10px] flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-indigo-600" />
+                        <span>เงาตกกระทบ (Drop Shadow)</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleShadowChange({ shadowEnabled: !propsState.shadowEnabled })}
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer ${
+                          propsState.shadowEnabled
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                        }`}
+                      >
+                        {propsState.shadowEnabled ? "เปิดใช้งาน" : "ปิด"}
+                      </button>
+                    </div>
+
+                    {propsState.shadowEnabled && (
+                      <div className="space-y-2.5 p-2.5 bg-gray-50/90 rounded-xl border border-gray-200">
+                        {/* Quick Presets */}
+                        <div>
+                          <label className="text-[10px] text-gray-500 mb-1 block">พรีเซ็ตเงาด่วน</label>
+                          <div className="grid grid-cols-4 gap-1">
+                            {[
+                              { label: "นุ่มนวล", blur: 16, x: 0, y: 8, color: "rgba(0, 0, 0, 0.08)" },
+                              { label: "ลอยเด่น", blur: 24, x: 0, y: 12, color: "rgba(0, 0, 0, 0.16)" },
+                              { label: "คมชัด", blur: 4, x: 4, y: 4, color: "rgba(0, 0, 0, 0.25)" },
+                              { label: "ประกายแดง", blur: 14, x: 0, y: 4, color: "rgba(220, 38, 38, 0.35)" },
+                            ].map((preset) => (
+                              <button
+                                key={preset.label}
+                                type="button"
+                                onClick={() =>
+                                  handleShadowChange({
+                                    shadowEnabled: true,
+                                    shadowBlur: preset.blur,
+                                    shadowOffsetX: preset.x,
+                                    shadowOffsetY: preset.y,
+                                    shadowColor: preset.color,
+                                  })
+                                }
+                                className="py-1 text-[10px] rounded bg-white hover:bg-indigo-50 hover:text-indigo-700 border border-gray-200 text-gray-700 font-medium transition-colors cursor-pointer"
+                              >
+                                {preset.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Blur & Color */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
+                              <span>ความฟุ้ง (Blur)</span>
+                              <span className="font-mono font-bold">{propsState.shadowBlur}px</span>
+                            </div>
+                            <input
+                              type="range"
+                              min="0"
+                              max="50"
+                              value={propsState.shadowBlur}
+                              onChange={(e) => handleShadowChange({ shadowBlur: Number(e.target.value) })}
+                              className="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg cursor-pointer"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-gray-500 mb-0.5 block">สีเงา</label>
+                            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1 shadow-2xs">
+                              <input
+                                type="color"
+                                value={propsState.shadowColor?.startsWith("#") ? propsState.shadowColor : "#000000"}
+                                onChange={(e) => handleShadowChange({ shadowColor: e.target.value })}
+                                className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent"
+                              />
+                              <span className="font-mono text-[9.5px] text-gray-600 truncate">{propsState.shadowColor}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Offset X & Y */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
+                              <span>ระยะ X</span>
+                              <span className="font-mono font-bold">{propsState.shadowOffsetX}px</span>
+                            </div>
+                            <input
+                              type="range"
+                              min="-30"
+                              max="30"
+                              value={propsState.shadowOffsetX}
+                              onChange={(e) => handleShadowChange({ shadowOffsetX: Number(e.target.value) })}
+                              className="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg cursor-pointer"
+                            />
+                          </div>
+                          <div>
+                            <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
+                              <span>ระยะ Y</span>
+                              <span className="font-mono font-bold">{propsState.shadowOffsetY}px</span>
+                            </div>
+                            <input
+                              type="range"
+                              min="-30"
+                              max="30"
+                              value={propsState.shadowOffsetY}
+                              onChange={(e) => handleShadowChange({ shadowOffsetY: Number(e.target.value) })}
+                              className="w-full accent-indigo-600 h-1.5 bg-gray-200 rounded-lg cursor-pointer"
+                            />
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1179,6 +2180,44 @@ export default function RightSidebar({
                   </div>
                 </div>
 
+                {/* 📏 Width (W) & Height (H) */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-[11px] text-gray-500 block">ความกว้าง W (px)</label>
+                      {isText && (
+                        <span className="text-[9px] text-indigo-600 font-semibold bg-indigo-50 px-1 rounded">กล่องตัดคำ</span>
+                      )}
+                    </div>
+                    <input
+                      type="number"
+                      min="10"
+                      value={propsState.width}
+                      onChange={(e) => applyProperty("width", Number(e.target.value))}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs font-mono font-bold text-gray-800 outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-[11px] text-gray-500 block">ความสูง H (px)</label>
+                      {isText && (
+                        <span className="text-[9px] text-gray-400 font-semibold">อัตโนมัติ</span>
+                      )}
+                    </div>
+                    <input
+                      type="number"
+                      min="10"
+                      value={propsState.height}
+                      onChange={(e) => applyProperty("height", Number(e.target.value))}
+                      disabled={isText}
+                      className={`w-full bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs font-mono font-bold text-gray-800 outline-none focus:border-indigo-500 ${
+                        isText ? "opacity-60 cursor-not-allowed bg-gray-100" : ""
+                      }`}
+                      title={isText ? "ความสูงของกล่องข้อความจะคำนวณอัตโนมัติตามจำนวนบรรทัดของข้อความ" : ""}
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <div className="flex justify-between text-[11px] text-gray-500 mb-1">
                     <span>ความโปร่งใส (Opacity)</span>
@@ -1193,6 +2232,69 @@ export default function RightSidebar({
                     onChange={(e) => applyProperty("opacity", Number(e.target.value))}
                     className="w-full accent-indigo-600 cursor-pointer"
                   />
+                </div>
+
+                {/* 🔄 Rotation & Flip Controls */}
+                <div className="space-y-2 pt-1 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] text-gray-500 block">การหมุน (องศา)</label>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleRotateStep(-90)}
+                        className="p-1 rounded bg-gray-50 hover:bg-gray-200 border border-gray-200 text-gray-600 cursor-pointer transition-colors"
+                        title="หมุนทวนเข็ม -90°"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRotateStep(90)}
+                        className="p-1 rounded bg-gray-50 hover:bg-gray-200 border border-gray-200 text-gray-600 cursor-pointer transition-colors"
+                        title="หมุนตามเข็ม +90°"
+                      >
+                        <RotateCw className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="360"
+                      value={propsState.angle}
+                      onChange={(e) => applyProperty("angle", Number(e.target.value))}
+                      className="w-full accent-indigo-600 cursor-pointer"
+                    />
+                    <span className="font-mono text-xs font-bold text-gray-700 w-10 text-right">
+                      {propsState.angle}°
+                    </span>
+                  </div>
+
+                  {/* Flip Horizontal / Vertical */}
+                  <div>
+                    <label className="text-[11px] text-gray-500 mb-1 block">กลับด้าน (Flip)</label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleFlip("x")}
+                        className="flex items-center justify-center gap-1 py-1.5 px-2 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-200 rounded text-[10px] font-medium transition-colors cursor-pointer"
+                        title="กลับด้านแนวนอน (Flip Horizontal)"
+                      >
+                        <FlipHorizontal className="w-3.5 h-3.5" />
+                        <span>กลับแนวนอน</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleFlip("y")}
+                        className="flex items-center justify-center gap-1 py-1.5 px-2 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-200 rounded text-[10px] font-medium transition-colors cursor-pointer"
+                        title="กลับด้านแนวตั้ง (Flip Vertical)"
+                      >
+                        <FlipVertical className="w-3.5 h-3.5" />
+                        <span>กลับแนวตั้ง</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div>

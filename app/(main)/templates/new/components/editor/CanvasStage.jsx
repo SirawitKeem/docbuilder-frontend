@@ -13,6 +13,10 @@ const SNAP_THRESHOLD = 6; // px distance to snap
 
 export default function CanvasStage({
   zoom = 1,
+  pan = { x: 0, y: 0 },
+  isPanning = false,
+  isSpaceActive = false,
+  isHandToolActive = false,
   showRuler = true,
   showMargin = true,
   marginPx = null,
@@ -92,6 +96,37 @@ export default function CanvasStage({
       fabric.Canvas.prototype.__customPropsPatched = true;
     }
 
+    // 🔤 Asian & Thai Textbox Word Wrapping Support (Grapheme-based wrapping)
+    // 💎 Disable objectCaching for all text types to ensure 100% vector-sharp text rendering
+    // at any font size (from 10px to 2000px) and any zoom level without bitmap blurriness
+    if (fabric.config) {
+      fabric.config.perfLimitSizeTotal = 16777216; // 4096 x 4096 px
+      fabric.config.maxCacheSideLimit = 8192;
+    }
+
+    if (fabric.Textbox) {
+      if (fabric.Textbox.ownDefaults) {
+        fabric.Textbox.ownDefaults.splitByGrapheme = true;
+        fabric.Textbox.ownDefaults.minWidth = 10;
+        fabric.Textbox.ownDefaults.objectCaching = false;
+        fabric.Textbox.ownDefaults.noScaleCache = false;
+      }
+      if (fabric.Textbox.prototype) {
+        fabric.Textbox.prototype.splitByGrapheme = true;
+        fabric.Textbox.prototype.minWidth = 10;
+        fabric.Textbox.prototype.objectCaching = false;
+        fabric.Textbox.prototype.noScaleCache = false;
+      }
+    }
+    if (fabric.Text) {
+      if (fabric.Text.ownDefaults) fabric.Text.ownDefaults.objectCaching = false;
+      if (fabric.Text.prototype) fabric.Text.prototype.objectCaching = false;
+    }
+    if (fabric.IText) {
+      if (fabric.IText.ownDefaults) fabric.IText.ownDefaults.objectCaching = false;
+      if (fabric.IText.prototype) fabric.IText.prototype.objectCaching = false;
+    }
+
     const canvas = new fabric.Canvas(canvasElRef.current, {
       width: preset.width * zoom,
       height: preset.height * zoom,
@@ -100,6 +135,44 @@ export default function CanvasStage({
       preserveObjectStacking: true,
       renderOnAddRemove: true,
       enableRetinaScaling: true,
+    });
+
+    // 🔤 Ensure all textboxes support Thai grapheme wrapping, free resizing, and crystal-clear text
+    const patchTextbox = (obj) => {
+      if (!obj) return;
+      if (obj.type === "textbox" || obj.isType?.("Textbox") || obj.type === "text" || obj.type === "i-text") {
+        obj.set({
+          splitByGrapheme: true,
+          objectCaching: false,
+          noScaleCache: false,
+        });
+        if (typeof obj.initDimensions === "function") {
+          obj.initDimensions();
+        }
+      }
+    };
+
+    canvas.on("object:added", (opt) => {
+      patchTextbox(opt.target);
+    });
+
+    // 🔤 Handle Textbox scaling: convert scaleX to width so font is never distorted
+    // and characters wrap onto new lines dynamically when resizing width
+    canvas.on("object:scaling", (opt) => {
+      const target = opt.target;
+      if (target && (target.type === "textbox" || target.isType?.("Textbox"))) {
+        if (target.scaleX && target.scaleX !== 1) {
+          const newWidth = Math.max(10, Math.round(target.width * target.scaleX));
+          target.set({
+            width: newWidth,
+            scaleX: 1,
+            scaleY: 1,
+            splitByGrapheme: true,
+          });
+          target.initDimensions();
+          canvas.requestRenderAll();
+        }
+      }
     });
 
     canvas.setZoom(zoom);
@@ -396,7 +469,19 @@ export default function CanvasStage({
   const isMarginActive = showMargin && effectiveMarginPx > 0;
 
   return (
-    <div className="relative flex flex-col items-center justify-start select-none py-6">
+    <div
+      className={`relative flex flex-col items-center justify-start select-none py-6 transition-transform ${
+        isPanning
+          ? "cursor-grabbing"
+          : isSpaceActive || isHandToolActive
+          ? "cursor-grab"
+          : ""
+      }`}
+      style={{
+        transform: `translate3d(${pan?.x || 0}px, ${pan?.y || 0}px, 0)`,
+        transition: isPanning ? "none" : "transform 0.05s ease-out",
+      }}
+    >
       <div className="flex flex-col bg-white border border-gray-300 shadow-2xl rounded-xs overflow-hidden">
         {showRuler && (
           <div className="flex items-center bg-[#F8FAFC]">

@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { ICON_MAP } from "./CategoryManagerModal";
 import UniversalTemplateRenderer from "@/components/document/UniversalTemplateRenderer";
+import FabricPrintRenderer from "@/components/document/FabricPrintRenderer";
+import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 import { QuotationDataProvider } from "@/context/QuotationDataContext";
 import QuotationDocument from "@/components/document/quotation/QuotationDocument";
 import { DocumentFieldsProvider } from "@/context/DocumentFieldsContext";
@@ -47,9 +49,50 @@ const emptyQuotationPreviewData = {
   senderPhone: "",
 };
 
-function AuthenticDocumentPreview({ template, currentPage = 1, scale = 0.58 }) {
+function AuthenticDocumentPreview({ template, currentPage = 1, totalPages = 1, scale = 0.58 }) {
   const catId = (template.categoryId || "").toLowerCase();
   const tmplId = (template.id || "").toLowerCase();
+
+  const isFabricCanvas = Boolean(
+    template.pages &&
+    Array.isArray(template.pages) &&
+    template.pages.length > 0 &&
+    template.pages[0]?.json
+  );
+
+  if (isFabricCanvas) {
+    const preset = getCanvasPreset(
+      template.canvasPreset || (template.editorType === "slide" ? "slide-16-9" : "a4-portrait")
+    );
+    const isSquare = preset.width === preset.height;
+    const targetWidth = isSquare ? 430 : (preset.width > 900 ? 470 : 430);
+    const canvasScale = targetWidth / preset.width;
+
+    return (
+      <div
+        className="origin-top rounded-sm shadow-xl border border-gray-300 overflow-hidden bg-white"
+        style={{
+          width: Math.round(preset.width * canvasScale),
+          height: Math.round(preset.height * canvasScale),
+        }}
+      >
+        <div
+          style={{
+            width: preset.width,
+            height: preset.height,
+            transform: `scale(${canvasScale})`,
+            transformOrigin: "top left",
+          }}
+        >
+          <FabricPrintRenderer
+            template={template}
+            values={{}}
+            watermark="none"
+          />
+        </div>
+      </div>
+    );
+  }
 
   const isLandscape = template.orientation === "landscape";
   const effectiveScale = isLandscape ? 0.48 : scale;
@@ -337,7 +380,7 @@ export default function TemplateDetailModal({ template, onClose }) {
 
             {/* Render Canvas */}
             <div className="p-4 rounded-2xl bg-gray-200/60 border border-gray-300/80 flex justify-center shadow-inner overflow-hidden">
-              <AuthenticDocumentPreview template={template} currentPage={currentPage} scale={0.58} />
+              <AuthenticDocumentPreview template={template} currentPage={currentPage} totalPages={totalPages} scale={0.58} />
             </div>
           </div>
 

@@ -1,0 +1,143 @@
+/**
+ * 🎨 Vector Icon Library for Template Studio
+ * Contains clean SVG path data for business, document, and announcement icons.
+ * All icons can be added to Fabric Canvas as vector Path objects with dynamic fill/stroke.
+ */
+
+export const ICON_CATEGORIES = [
+  { id: 'all', label: 'ทั้งหมด' },
+  { id: 'business', label: 'ธุรกิจ & เอกสาร' },
+  { id: 'status', label: 'สถานะ & การเตือน' },
+  { id: 'interface', label: 'เครื่องหมายทั่วไป' },
+];
+
+export const VECTOR_ICONS = [
+  {
+    id: 'target',
+    label: 'เป้าหมาย (Target)',
+    category: 'business',
+    path: 'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm0-14a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm0-6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z',
+    defaultFill: '#DC2626',
+    scale: 2.2,
+  },
+  {
+    id: 'calendar',
+    label: 'ปฏิทิน / กำหนดการ (Calendar)',
+    category: 'business',
+    path: 'M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2zm-8 4h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z',
+    defaultFill: '#2563EB',
+    scale: 2.2,
+  },
+  {
+    id: 'clipboard',
+    label: 'คลิปบอร์ด / ตรวจงาน (Clipboard)',
+    category: 'business',
+    path: 'M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z',
+    defaultFill: '#0D9488',
+    scale: 2.2,
+  },
+  {
+    id: 'trending',
+    label: 'กราฟเติบโต (Trending Growth)',
+    category: 'business',
+    path: 'M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z M4 19h16v2H4z',
+    defaultFill: '#16A34A',
+    scale: 2.2,
+  },
+  {
+    id: 'shield_check',
+    label: 'โล่ความปลอดภัย (Shield Check)',
+    category: 'status',
+    path: 'M12 2 4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1.5 14.5L6.5 12.5l1.41-1.41 2.59 2.58 6.59-6.59 1.41 1.42-8 8z',
+    defaultFill: '#2563EB',
+    scale: 2.2,
+  },
+  {
+    id: 'alert_triangle',
+    label: 'ป้ายเตือน / ข้อควรระวัง (Warning)',
+    category: 'status',
+    path: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',
+    defaultFill: '#EA580C',
+    scale: 2.2,
+  },
+  {
+    id: 'check_circle',
+    label: 'ผ่านการอนุมัติ (Check Circle)',
+    category: 'status',
+    path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',
+    defaultFill: '#16A34A',
+    scale: 2.2,
+  },
+  {
+    id: 'award',
+    label: 'รางวัล / เกียรติบัตร (Award Badge)',
+    category: 'business',
+    path: 'M12 15c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm0-8c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm7.07 10.73-3.29-3.29c.77-1.31 1.22-2.83 1.22-4.44 0-4.97-4.03-9-9-9s-9 4.03-9 9c0 1.61.45 3.13 1.22 4.44l-3.29 3.29c-.39.39-.39 1.02 0 1.41l2.83 2.83c.39.39 1.02.39 1.41 0l3.05-3.05c1.13.52 2.38.82 3.69.82s2.56-.3 3.69-.82l3.05 3.05c.39.39 1.02.39 1.41 0l2.83-2.83c.39-.39.39-1.02 0-1.41z',
+    defaultFill: '#D97706',
+    scale: 2.0,
+  },
+  {
+    id: 'building',
+    label: 'สำนักงาน / องค์กร (Company Building)',
+    category: 'business',
+    path: 'M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z',
+    defaultFill: '#475569',
+    scale: 2.0,
+  },
+  {
+    id: 'file_text',
+    label: 'เอกสาร / ข้อกำหนด (Document)',
+    category: 'business',
+    path: 'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z',
+    defaultFill: '#4F46E5',
+    scale: 2.2,
+  },
+  {
+    id: 'star',
+    label: 'ดาวเด่น (Star)',
+    category: 'interface',
+    path: 'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z',
+    defaultFill: '#EAB308',
+    scale: 2.2,
+  },
+  {
+    id: 'megaphone',
+    label: 'ประกาศ / ประชาสัมพันธ์ (Megaphone)',
+    category: 'business',
+    path: 'M20 2v3H4c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h3l2 7h3l-1.5-7H20v3l4-4-4-4z',
+    defaultFill: '#DC2626',
+    scale: 2.0,
+  },
+  {
+    id: 'clock',
+    label: 'เวลา / กำหนดส่ง (Clock)',
+    category: 'interface',
+    path: 'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z',
+    defaultFill: '#64748B',
+    scale: 2.2,
+  },
+  {
+    id: 'users',
+    label: 'ทีมงาน / บุคลากร (Team Users)',
+    category: 'business',
+    path: 'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 3s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z',
+    defaultFill: '#0284C7',
+    scale: 2.0,
+  },
+  {
+    id: 'mail',
+    label: 'อีเมล / การติดต่อ (Mail Envelope)',
+    category: 'interface',
+    path: 'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z',
+    defaultFill: '#7C3AED',
+    scale: 2.2,
+  },
+  {
+    id: 'phone',
+    label: 'โทรศัพท์ (Phone Call)',
+    category: 'interface',
+    path: 'M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1.01A11.36 11.36 0 0 1 8.5 3.99c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-.99-1.11z',
+    defaultFill: '#059669',
+    scale: 2.2,
+  },
+]

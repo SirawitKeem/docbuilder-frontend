@@ -30,6 +30,10 @@ export const CUSTOM_CANVAS_PROPS = [
   "isUserGroup",
   "originX",
   "originY",
+  "splitByGrapheme",
+  "objectCaching",
+  "flipX",
+  "flipY",
 ];
 
 // Ensure FabricObject & Group serialize custom properties even with toJSON()

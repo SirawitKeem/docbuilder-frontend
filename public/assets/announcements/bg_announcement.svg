@@ -16,12 +16,6 @@
       <stop offset="100%" stop-color="#7f1d1d" />
     </linearGradient>
 
-    <!-- Bottom Banner Gradient -->
-    <linearGradient id="footerRed" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#991b1b" />
-      <stop offset="50%" stop-color="#7f1d1d" />
-      <stop offset="100%" stop-color="#450a0a" />
-    </linearGradient>
   </defs>
 
   <!-- Clean Base Background -->
@@ -34,12 +28,6 @@
   <polygon points="0,290 80,0 0,440" fill="#dc2626" opacity="0.25" />
 
   <!-- ── BOTTOM-LEFT & BOTTOM-RIGHT CORNER ACCENTS ── -->
-  <polygon points="0,960 140,1110 0,1110" fill="url(#cornerRed1)" opacity="0.75" />
-  <polygon points="1200,980 1060,1110 1200,1110" fill="url(#cornerRed1)" opacity="0.75" />
-
-  <!-- ── BOTTOM SLOGAN FOOTER BANNER ── -->
-  <rect x="0" y="1100" width="1200" height="100" fill="url(#footerRed)" />
-  <!-- Accent Line in Footer -->
-  <line x1="200" y1="1150" x2="360" y2="1150" stroke="#fca5a5" stroke-width="1.5" opacity="0.6" />
-  <line x1="840" y1="1150" x2="1000" y2="1150" stroke="#fca5a5" stroke-width="1.5" opacity="0.6" />
+  <polygon points="0,1020 180,1200 0,1200" fill="url(#cornerRed1)" opacity="0.75" />
+  <polygon points="1200,1020 1020,1200 1200,1200" fill="url(#cornerRed1)" opacity="0.75" />
 </svg>

@@ -187,6 +187,16 @@ export default function FabricPrintRenderer({
         tempCanvasEl.width = preset.width;
         tempCanvasEl.height = preset.height;
 
+        // 🔤 Support Thai grapheme wrapping in print renderer
+        if (fabric.Textbox) {
+          if (fabric.Textbox.ownDefaults) {
+            fabric.Textbox.ownDefaults.splitByGrapheme = true;
+          }
+          if (fabric.Textbox.prototype) {
+            fabric.Textbox.prototype.splitByGrapheme = true;
+          }
+        }
+
         const fabricCanvas = new fabric.Canvas(tempCanvasEl, {
           width: preset.width,
           height: preset.height,
@@ -198,7 +208,16 @@ export default function FabricPrintRenderer({
           await new Promise((resolve) => {
             fabricCanvas.loadFromJSON(pageJson).then(() => {
               const objects = fabricCanvas.getObjects();
-              objects.forEach((obj) => replaceTokensInObject(obj, tokenMap));
+              objects.forEach((obj) => {
+                if (obj.type === "textbox" || obj.isType?.("Textbox") || obj.type === "text" || obj.type === "i-text") {
+                  obj.set({
+                    splitByGrapheme: true,
+                    objectCaching: false,
+                  });
+                  if (typeof obj.initDimensions === "function") obj.initDimensions();
+                }
+                replaceTokensInObject(obj, tokenMap);
+              });
 
               fabricCanvas.renderAll();
               resolve();

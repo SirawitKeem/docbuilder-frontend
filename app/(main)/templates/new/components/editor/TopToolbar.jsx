@@ -18,6 +18,10 @@ import {
   Loader2,
   Minus,
   Plus,
+  Hand,
+  ChevronDown,
+  Maximize2,
+  Focus,
 } from "lucide-react";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 
@@ -30,6 +34,13 @@ export default function TopToolbar({
   onZoomIn,
   onZoomOut,
   onZoomReset,
+  onFitToScreen,
+  onZoomTo100,
+  onZoomToSelection,
+  onResetPan,
+  onSetCustomZoom,
+  isHandToolActive = false,
+  onToggleHandTool,
   showRuler,
   onToggleRuler,
   showMargin,
@@ -56,6 +67,22 @@ export default function TopToolbar({
   const isMetric = Boolean(preset?.mmWidth);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState(templateName);
+  const [showZoomMenu, setShowZoomMenu] = useState(false);
+  const zoomMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (zoomMenuRef.current && !zoomMenuRef.current.contains(e.target)) {
+        setShowZoomMenu(false);
+      }
+    };
+    if (showZoomMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showZoomMenu]);
 
   const currentVal = isMetric
     ? (marginMm !== null && marginMm !== undefined ? marginMm : 15)
@@ -209,32 +236,153 @@ export default function TopToolbar({
           </button>
         </div>
 
-        {/* Zoom Controls */}
-        <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-0.5 text-gray-700 text-xs font-medium">
+        {/* Zoom & Viewport Navigation Controls */}
+        <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-lg p-0.5 text-gray-700 text-xs font-medium" ref={zoomMenuRef}>
+          {/* Hand Tool Toggle Button */}
+          {onToggleHandTool && (
+            <button
+              type="button"
+              onClick={onToggleHandTool}
+              className={`p-1.5 rounded-md transition-colors cursor-pointer mr-0.5 ${
+                isHandToolActive
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "hover:bg-white text-gray-700"
+              }`}
+              title="เครื่องมือเลื่อนพื้นที่ Hand Tool (กด H หรือกด Spacebar ค้างเพื่อลากแคนวาส)"
+            >
+              <Hand className="w-4 h-4" />
+            </button>
+          )}
+
           <button
             onClick={onZoomOut}
             className="p-1.5 hover:bg-white rounded-md transition-colors cursor-pointer"
-            title="ย่อขนาด"
+            title="ย่อขนาด (Ctrl + -)"
           >
             <ZoomOut className="w-4 h-4" />
           </button>
-          <span className="px-2 select-none min-w-[48px] text-center font-mono font-bold text-xs text-gray-800">
-            {Math.round(zoom * 100)}%
-          </span>
+
+          {/* Zoom Percentage Dropdown Trigger */}
+          <button
+            type="button"
+            onClick={() => setShowZoomMenu(!showZoomMenu)}
+            className="px-1.5 py-1 hover:bg-white rounded-md transition-colors cursor-pointer flex items-center gap-1 font-mono font-bold text-xs text-gray-800"
+            title="เลือกระดับการซูม (คลิกเพื่อดูตัวเลือก)"
+          >
+            <span>{Math.round(zoom * 100)}%</span>
+            <ChevronDown className="w-3 h-3 text-gray-500" />
+          </button>
+
           <button
             onClick={onZoomIn}
             className="p-1.5 hover:bg-white rounded-md transition-colors cursor-pointer"
-            title="ขยายขนาด"
+            title="ขยายขนาด (Ctrl + +)"
           >
             <ZoomIn className="w-4 h-4" />
           </button>
+
           <button
-            onClick={onZoomReset}
+            onClick={onFitToScreen || onZoomReset}
             className="p-1.5 hover:bg-white rounded-md transition-colors border-l border-gray-200 ml-0.5 cursor-pointer"
-            title="รีเซ็ตขนาดพอดี (85%)"
+            title="พอดีหน้าจอ Fit to Screen (Shift + 1)"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
+
+          {/* Zoom Dropdown Popover */}
+          {showZoomMenu && (
+            <div className="absolute top-full left-0 mt-1.5 w-52 bg-white border border-gray-200 rounded-xl shadow-xl py-1.5 z-50 text-xs font-normal">
+              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                การซูมและการจัดมุมมอง
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onFitToScreen) onFitToScreen();
+                  else if (onZoomReset) onZoomReset();
+                  setShowZoomMenu(false);
+                }}
+                className="w-full text-left px-3 py-1.5 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-between transition-colors cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>พอดีหน้าจอ (Fit to Screen)</span>
+                </span>
+                <kbd className="text-[10px] font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Shift+1</kbd>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onZoomToSelection) onZoomToSelection();
+                  setShowZoomMenu(false);
+                }}
+                className="w-full text-left px-3 py-1.5 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-between transition-colors cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  <Focus className="w-3.5 h-3.5" />
+                  <span>ซูมวัตถุที่เลือก (Selection)</span>
+                </span>
+                <kbd className="text-[10px] font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Shift+2</kbd>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onZoomTo100) onZoomTo100();
+                  else if (onSetCustomZoom) onSetCustomZoom(1.0);
+                  setShowZoomMenu(false);
+                }}
+                className="w-full text-left px-3 py-1.5 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-between transition-colors cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  <span>ขนาดจริง 100%</span>
+                </span>
+                <kbd className="text-[10px] font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Ctrl+0</kbd>
+              </button>
+
+              <div className="border-t border-gray-100 my-1" />
+
+              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                ระดับการซูม (Presets)
+              </div>
+
+              <div className="grid grid-cols-3 gap-1 px-2 py-1">
+                {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((presetVal) => (
+                  <button
+                    key={presetVal}
+                    type="button"
+                    onClick={() => {
+                      if (onSetCustomZoom) onSetCustomZoom(presetVal);
+                      setShowZoomMenu(false);
+                    }}
+                    className={`px-2 py-1 text-center rounded font-mono text-xs transition-colors cursor-pointer ${
+                      Math.round(zoom * 100) === Math.round(presetVal * 100)
+                        ? "bg-indigo-600 text-white font-bold"
+                        : "hover:bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {Math.round(presetVal * 100)}%
+                  </button>
+                ))}
+              </div>
+
+              <div className="border-t border-gray-100 my-1" />
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onResetPan) onResetPan();
+                  setShowZoomMenu(false);
+                }}
+                className="w-full text-left px-3 py-1.5 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-between transition-colors cursor-pointer text-gray-600"
+              >
+                <span>จัดตำแหน่งกึ่งกลาง (Reset Pan)</span>
+                <kbd className="text-[10px] font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Center</kbd>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* View Guides Toggles */}

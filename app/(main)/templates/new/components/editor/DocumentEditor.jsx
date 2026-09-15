@@ -69,6 +69,24 @@ function syncPageNumberOnCanvas(canvas, pageIdx, totalPages, editorType = "docum
   canvas.requestRenderAll();
 }
 
+/**
+ * 🔤 Ensures all textboxes support Thai grapheme wrapping and vector-sharp text rendering
+ * without blurry bitmap caching at any font size or canvas zoom level.
+ */
+function ensureThaiTextWrapping(canvas) {
+  if (!canvas) return;
+  canvas.getObjects().forEach((obj) => {
+    if (obj.type === "textbox" || obj.isType?.("Textbox") || obj.type === "text" || obj.type === "i-text") {
+      obj.set({
+        splitByGrapheme: true,
+        objectCaching: false,
+        noScaleCache: false,
+      });
+      if (typeof obj.initDimensions === "function") obj.initDimensions();
+    }
+  });
+}
+
 export default function DocumentEditor({
   templateName = "เทมเพลตเอกสารใหม่ (A4)",
   categoryName = "Notification Letter",
@@ -129,6 +147,43 @@ export default function DocumentEditor({
   const mainContainerRef = useRef(null);
   const [currentTitle, setCurrentTitle] = useState(templateName);
   const [zoom, setZoom] = useState(preset.defaultZoom || (editorType === "slide" ? 0.65 : 0.85));
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [isSpaceActive, setIsSpaceActive] = useState(false);
+  const [isHandToolActive, setIsHandToolActive] = useState(false);
+
+  const zoomRef = useRef(zoom);
+  const panRef = useRef(pan);
+  const isSpacePressedRef = useRef(false);
+  const isHandToolActiveRef = useRef(false);
+  const isDraggingPanRef = useRef(false);
+  const dragStartPosRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+
+  useEffect(() => {
+    zoomRef.current = zoom;
+  }, [zoom]);
+
+  useEffect(() => {
+    panRef.current = pan;
+  }, [pan]);
+
+  useEffect(() => {
+    isHandToolActiveRef.current = isHandToolActive;
+    const canvas = fabricCanvasRef.current;
+    if (canvas) {
+      if (isHandToolActive || isSpaceActive) {
+        canvas.defaultCursor = "grab";
+        canvas.hoverCursor = "grab";
+        canvas.selection = false;
+      } else {
+        canvas.defaultCursor = "default";
+        canvas.hoverCursor = "move";
+        canvas.selection = true;
+      }
+      canvas.requestRenderAll();
+    }
+  }, [isHandToolActive, isSpaceActive]);
+
   const [showRuler, setShowRuler] = useState(true);
   const [showMargin, setShowMargin] = useState(true);
   const [activeObject, setActiveObject] = useState(null);
@@ -216,6 +271,7 @@ export default function DocumentEditor({
       if (fabricCanvasRef.current && initialPages[0]?.json) {
         fabricCanvasRef.current.loadFromJSON(initialPages[0].json).then(() => {
           syncPageNumberOnCanvas(fabricCanvasRef.current, 0, initialPages.length, editorType, preset);
+          ensureThaiTextWrapping(fabricCanvasRef.current);
           fabricCanvasRef.current.renderAll();
           initHistory(fabricCanvasRef.current);
           hasUnsavedChangesRef.current = false;
@@ -237,6 +293,7 @@ export default function DocumentEditor({
     if (initialPages && Array.isArray(initialPages) && initialPages.length > 0 && initialPages[0]?.json) {
       canvas.loadFromJSON(initialPages[0].json).then(() => {
         syncPageNumberOnCanvas(canvas, 0, initialPages.length, editorType, preset);
+        ensureThaiTextWrapping(canvas);
         canvas.renderAll();
         initHistory(canvas);
         hasUnsavedChangesRef.current = false;
@@ -257,13 +314,189 @@ export default function DocumentEditor({
     }
   }, [initialPages, initHistory, editorType, preset.id, handleHistoryPush]);
 
-  // Zoom handlers
-  const handleZoomIn = () => setZoom((z) => Math.min(1.5, Number((z + 0.1).toFixed(2))));
-  const handleZoomOut = () => setZoom((z) => Math.max(0.3, Number((z - 0.1).toFixed(2))));
-  const handleZoomReset = () => {
+  // 🔍 Figma-style Viewport Zoom & Pan Handlers
+  const handleZoomIn = useCallback(() => {
+    setZoom((z) => Math.min(4.0, Number((z * 1.15).toFixed(2))));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoom((z) => Math.max(0.15, Number((z / 1.15).toFixed(2))));
+  }, []);
+
+  const handleFitToScreen = useCallback(() => {
     const fit = calculateFitZoom();
     setZoom(fit);
-  };
+    setPan({ x: 0, y: 0 });
+  }, [calculateFitZoom]);
+
+  const handleZoomTo100 = useCallback(() => {
+    setZoom(1.0);
+    setPan({ x: 0, y: 0 });
+  }, []);
+
+  const handleResetPan = useCallback(() => {
+    setPan({ x: 0, y: 0 });
+  }, []);
+
+  const handleSetCustomZoom = useCallback((val) => {
+    const clamped = Math.min(4.0, Math.max(0.15, Number(Number(val).toFixed(2))));
+    setZoom(clamped);
+  }, []);
+
+  const handleZoomToSelection = useCallback(() => {
+    const canvas = fabricCanvasRef.current;
+    const container = mainContainerRef.current;
+    if (!canvas || !container) return;
+
+    const active = canvas.getActiveObject();
+    if (!active) {
+      handleFitToScreen();
+      return;
+    }
+
+    const availW = Math.max(100, container.clientWidth - 120);
+    const availH = Math.max(100, container.clientHeight - 120);
+
+    const objW = Math.max(40, active.getScaledWidth());
+    const objH = Math.max(40, active.getScaledHeight());
+
+    const scaleX = availW / objW;
+    const scaleY = availH / objH;
+    const targetZoom = Math.min(3.0, Math.max(0.3, Number((Math.min(scaleX, scaleY) * 0.7).toFixed(2))));
+
+    const objCenterX = active.left + objW / 2;
+    const objCenterY = active.top + objH / 2;
+
+    const pageCenterX = preset.width / 2;
+    const pageCenterY = preset.height / 2;
+
+    const panX = -(objCenterX - pageCenterX) * targetZoom;
+    const panY = -(objCenterY - pageCenterY) * targetZoom;
+
+    setZoom(targetZoom);
+    setPan({ x: Math.round(panX), y: Math.round(panY) });
+  }, [handleFitToScreen, preset.width, preset.height]);
+
+  const handleZoomReset = handleFitToScreen;
+
+  // 🔍 Figma-style Viewport Zoom (Ctrl + Wheel centered at mouse) and Wheel Pan
+  useEffect(() => {
+    const container = mainContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e) => {
+      // 1. Zoom with Ctrl / Cmd / Trackpad pinch
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const rect = container.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+        const curZoom = zoomRef.current;
+        const newZoom = Math.min(4.0, Math.max(0.15, Number((curZoom * zoomFactor).toFixed(3))));
+
+        if (newZoom === curZoom) return;
+
+        const k = newZoom / curZoom;
+        const curPan = panRef.current;
+
+        // Formula to keep mouse pointer stationary relative to canvas content
+        const cx = mouseX - centerX;
+        const cy = mouseY - centerY;
+        const newPanX = cx - (cx - curPan.x) * k;
+        const newPanY = cy - (cy - curPan.y) * k;
+
+        setZoom(newZoom);
+        setPan({ x: Math.round(newPanX * 10) / 10, y: Math.round(newPanY * 10) / 10 });
+        return;
+      }
+
+      // 2. Pan with normal wheel or Shift+wheel
+      e.preventDefault();
+      const curPan = panRef.current;
+      if (e.shiftKey) {
+        const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+        setPan((p) => ({ ...p, x: Math.round(p.x - delta) }));
+      } else {
+        setPan((p) => ({
+          x: Math.round(p.x - e.deltaX),
+          y: Math.round(p.y - e.deltaY),
+        }));
+      }
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
+  // 🖐️ Middle Click (Mouse 3) & Spacebar + Left Click Canvas Drag (Pan)
+  useEffect(() => {
+    const container = mainContainerRef.current;
+    if (!container) return;
+
+    const handlePointerDown = (e) => {
+      const isMiddle = e.button === 1;
+      const isHandDrag = e.button === 0 && (isSpacePressedRef.current || isHandToolActiveRef.current);
+
+      if (isMiddle || isHandDrag) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        isDraggingPanRef.current = true;
+        dragStartPosRef.current = {
+          x: e.clientX,
+          y: e.clientY,
+          panX: panRef.current.x,
+          panY: panRef.current.y,
+        };
+        setIsPanning(true);
+      }
+    };
+
+    const handlePointerMove = (e) => {
+      if (!isDraggingPanRef.current) return;
+      e.preventDefault();
+      const dx = e.clientX - dragStartPosRef.current.x;
+      const dy = e.clientY - dragStartPosRef.current.y;
+      setPan({
+        x: Math.round(dragStartPosRef.current.panX + dx),
+        y: Math.round(dragStartPosRef.current.panY + dy),
+      });
+    };
+
+    const handlePointerUp = (e) => {
+      if (isDraggingPanRef.current) {
+        isDraggingPanRef.current = false;
+        setIsPanning(false);
+      }
+    };
+
+    const handleAuxClick = (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+      }
+    };
+
+    container.addEventListener("pointerdown", handlePointerDown, { capture: true });
+    container.addEventListener("auxclick", handleAuxClick);
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+
+    return () => {
+      container.removeEventListener("pointerdown", handlePointerDown, { capture: true });
+      container.removeEventListener("auxclick", handleAuxClick);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, []);
 
   // 🏷️ Toggle Live Data Preview
   const handleTogglePreviewTokens = useCallback(() => {
@@ -356,6 +589,7 @@ export default function DocumentEditor({
     if (targetPageJson) {
       canvas.loadFromJSON(targetPageJson).then(() => {
         syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset);
+        ensureThaiTextWrapping(canvas);
         canvas.renderAll();
         initHistory(canvas);
       });
@@ -432,6 +666,7 @@ export default function DocumentEditor({
 
     canvas.loadFromJSON(duplicatedPage.json).then(() => {
       syncPageNumberOnCanvas(canvas, newIndex, updatedPages.length, editorType, preset);
+      ensureThaiTextWrapping(canvas);
       canvas.renderAll();
       initHistory(canvas);
       hasUnsavedChangesRef.current = true;
@@ -463,6 +698,7 @@ export default function DocumentEditor({
     if (targetJson) {
       canvas.loadFromJSON(targetJson).then(() => {
         syncPageNumberOnCanvas(canvas, newActiveIndex, remainingPages.length, editorType, preset);
+        ensureThaiTextWrapping(canvas);
         canvas.renderAll();
         initHistory(canvas);
         hasUnsavedChangesRef.current = true;
@@ -514,6 +750,8 @@ export default function DocumentEditor({
       fontWeight: options.fontWeight || "normal",
       fill: options.fill || "#111827",
       fontFamily: options.fontFamily || "'Noto Sans Thai', 'Noto Sans', sans-serif",
+      splitByGrapheme: true,
+      objectCaching: false,
       editable: true,
     });
 
@@ -640,6 +878,83 @@ export default function DocumentEditor({
         strokeWidth: 1.5,
         strokeDashArray: [6, 4],
       });
+    } else if (options.type === "card") {
+      shapeObj = new fabric.Rect({
+        left: MARGIN_PX + 20,
+        top: MARGIN_PX + 40,
+        width: options.width || 340,
+        height: options.height || 220,
+        fill: options.fill || "#FFFFFF",
+        stroke: options.stroke || "#E2E8F0",
+        strokeWidth: options.strokeWidth || 1.5,
+        rx: options.rx || 20,
+        ry: options.ry || 20,
+        shadow: new fabric.Shadow({
+          color: "rgba(0, 0, 0, 0.08)",
+          blur: 16,
+          offsetX: 0,
+          offsetY: 8,
+        }),
+      });
+    } else if (options.type === "slanted-badge") {
+      const w = options.width || 145;
+      const h = options.height || 60;
+      const slant = 24;
+      const points = [
+        { x: 0, y: 0 },
+        { x: w, y: 0 },
+        { x: w - slant, y: h },
+        { x: 0, y: h },
+      ];
+      shapeObj = new fabric.Polygon(points, {
+        left: MARGIN_PX + 20,
+        top: MARGIN_PX + 40,
+        fill: options.fill || "#DC2626",
+        stroke: options.stroke || "transparent",
+        strokeWidth: 0,
+      });
+    } else if (options.type === "accent-bar") {
+      shapeObj = new fabric.Rect({
+        left: MARGIN_PX + 20,
+        top: MARGIN_PX + 40,
+        width: options.width || 310,
+        height: options.height || 8,
+        fill: options.fill || "#DC2626",
+        rx: 4,
+        ry: 4,
+      });
+    } else if (options.type === "diamond") {
+      const size = options.size || 80;
+      const diamondPoints = [
+        { x: size / 2, y: 0 },
+        { x: size, y: size / 2 },
+        { x: size / 2, y: size },
+        { x: 0, y: size / 2 },
+      ];
+      shapeObj = new fabric.Polygon(diamondPoints, {
+        left: MARGIN_PX + 20,
+        top: MARGIN_PX + 40,
+        fill: options.fill || "#EEF2FF",
+        stroke: options.stroke || "#6366F1",
+        strokeWidth: 2,
+      });
+    } else if (options.type === "hexagon") {
+      const r = options.radius || 45;
+      const hexPoints = [];
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i - Math.PI / 6;
+        hexPoints.push({
+          x: r + r * Math.cos(angle),
+          y: r + r * Math.sin(angle),
+        });
+      }
+      shapeObj = new fabric.Polygon(hexPoints, {
+        left: MARGIN_PX + 20,
+        top: MARGIN_PX + 40,
+        fill: options.fill || "#ECFDF5",
+        stroke: options.stroke || "#10B981",
+        strokeWidth: 2,
+      });
     }
 
     if (shapeObj) {
@@ -648,6 +963,31 @@ export default function DocumentEditor({
       canvas.renderAll();
       handleHistoryPush(canvas);
     }
+  }, [handleHistoryPush]);
+
+  // ✨ Add Vector Icon
+  const handleAddIcon = useCallback((iconData) => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || !iconData || !iconData.path) return;
+
+    const pathObj = new fabric.Path(iconData.path, {
+      left: MARGIN_PX + 30,
+      top: MARGIN_PX + 50,
+      scaleX: iconData.scale || 2.2,
+      scaleY: iconData.scale || 2.2,
+      fill: iconData.defaultFill || "#DC2626",
+      stroke: "transparent",
+      strokeWidth: 0,
+      selectable: true,
+      isIcon: true,
+      iconId: iconData.id,
+      iconLabel: iconData.label,
+    });
+
+    canvas.add(pathObj);
+    canvas.setActiveObject(pathObj);
+    canvas.renderAll();
+    handleHistoryPush(canvas);
   }, [handleHistoryPush]);
 
   // 📁 Add Image / Logo
@@ -1267,17 +1607,90 @@ export default function DocumentEditor({
         hasUnsavedChangesRef.current = true;
         return;
       }
+      // ── 13. Spacebar Hand Tool (Hold Space to Pan) ──
+      if (e.code === "Space" && !e.repeat) {
+        if (isInputActive || isTextEditing) {
+          return; // Allow typing space inside text!
+        }
+        e.preventDefault();
+        isSpacePressedRef.current = true;
+        setIsSpaceActive(true);
+        return;
+      }
+
+      // ── 14. Toggle Hand Tool (H) & Select Tool (V) ──
+      if (code === "KeyH" && !isModifier && !e.shiftKey) {
+        if (isInputActive || isTextEditing) return;
+        e.preventDefault();
+        setIsHandToolActive((prev) => !prev);
+        return;
+      }
+      if (code === "KeyV" && !isModifier && !e.shiftKey) {
+        if (isInputActive || isTextEditing) return;
+        e.preventDefault();
+        setIsHandToolActive(false);
+        return;
+      }
+
+      // ── 15. Fit to Screen (Shift + 1) ──
+      if (e.shiftKey && (code === "Digit1" || code === "Numpad1") && !isModifier) {
+        if (isInputActive || isTextEditing) return;
+        e.preventDefault();
+        handleFitToScreen();
+        return;
+      }
+
+      // ── 16. Zoom to Selection (Shift + 2) ──
+      if (e.shiftKey && (code === "Digit2" || code === "Numpad2") && !isModifier) {
+        if (isInputActive || isTextEditing) return;
+        e.preventDefault();
+        handleZoomToSelection();
+        return;
+      }
+
+      // ── 17. Zoom to 100% (Ctrl + 0 / Cmd + 0) ──
+      if (isModifier && (code === "Digit0" || code === "Numpad0")) {
+        if (isInputActive || isTextEditing) return;
+        e.preventDefault();
+        handleZoomTo100();
+        return;
+      }
+
+      // ── 18. Zoom In (Ctrl + + / Ctrl + =) ──
+      if (isModifier && (code === "Equal" || code === "NumpadAdd")) {
+        if (isInputActive || isTextEditing) return;
+        e.preventDefault();
+        handleZoomIn();
+        return;
+      }
+
+      // ── 19. Zoom Out (Ctrl + - / Ctrl + _) ──
+      if (isModifier && (code === "Minus" || code === "NumpadSubtract")) {
+        if (isInputActive || isTextEditing) return;
+        e.preventDefault();
+        handleZoomOut();
+        return;
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.code === "Space") {
+        isSpacePressedRef.current = false;
+        setIsSpaceActive(false);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
       if (nudgeTimerRef.current) {
         clearTimeout(nudgeTimerRef.current);
         nudgeTimerRef.current = null;
       }
     };
-  }, [undo, redo, handleHistoryPush]);
+  }, [undo, redo, handleHistoryPush, handleFitToScreen, handleZoomToSelection, handleZoomTo100, handleZoomIn, handleZoomOut]);
 
   // 🛡️ Full Multi-Page Save Payload with 100% Guaranteed Raw Token Preservation Across ALL Pages
   const handleSaveAll = () => {
@@ -1382,6 +1795,13 @@ export default function DocumentEditor({
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
         onZoomReset={handleZoomReset}
+        onFitToScreen={handleFitToScreen}
+        onZoomTo100={handleZoomTo100}
+        onZoomToSelection={handleZoomToSelection}
+        onResetPan={handleResetPan}
+        onSetCustomZoom={handleSetCustomZoom}
+        isHandToolActive={isHandToolActive}
+        onToggleHandTool={() => setIsHandToolActive((prev) => !prev)}
         showRuler={showRuler}
         onToggleRuler={() => setShowRuler(!showRuler)}
         showMargin={showMargin}
@@ -1414,6 +1834,7 @@ export default function DocumentEditor({
           editorType={editorType}
           onAddText={handleAddText}
           onAddShape={handleAddShape}
+          onAddIcon={handleAddIcon}
           onAddImage={handleAddImage}
           onAddPreset={handleAddPreset}
           onAddTable={handleAddTable}
@@ -1422,10 +1843,25 @@ export default function DocumentEditor({
         />
 
         {/* Center Canvas Stage + Bottom Pagination Bar */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#F1F3F6]">
-          <main ref={mainContainerRef} className="flex-1 overflow-auto flex items-start justify-center p-6">
+        <div className="flex-1 flex flex-col overflow-hidden bg-[#F1F3F6] relative">
+          <main
+            ref={mainContainerRef}
+            tabIndex={0}
+            className={`flex-1 overflow-hidden relative flex items-center justify-center outline-none select-none ${
+              isPanning
+                ? "cursor-grabbing"
+                : isSpaceActive || isHandToolActive
+                ? "cursor-grab"
+                : "cursor-default"
+            }`}
+            style={{ touchAction: "none" }}
+          >
             <CanvasStage
               zoom={zoom}
+              pan={pan}
+              isPanning={isPanning}
+              isSpaceActive={isSpaceActive}
+              isHandToolActive={isHandToolActive}
               showRuler={showRuler}
               showMargin={showMargin}
               marginPx={marginPx}
@@ -1435,6 +1871,18 @@ export default function DocumentEditor({
               onHistoryPush={handleHistoryPush}
               onSelectionChange={setActiveObject}
             />
+
+            {/* 💡 Floating Viewport Navigation Shortcut Chip */}
+            <div className="absolute bottom-3 left-4 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-xs border border-gray-200/80 shadow-xs rounded-full px-3 py-1 text-[11px] text-gray-600 select-none pointer-events-none">
+              <span className="flex items-center gap-1.5 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                <span><kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">Space</kbd> + ลาก หรือ <kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">เมาส์กลาง</kbd> เพื่อ Pan</span>
+                <span className="text-gray-300">•</span>
+                <span><kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">Ctrl + Wheel</kbd> เพื่อ Zoom</span>
+                <span className="text-gray-300">•</span>
+                <span><kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">Shift+1</kbd> พอดีจอ</span>
+              </span>
+            </div>
           </main>
 
           {/* 📑 Bottom Multi-Page Pagination Bar */}
