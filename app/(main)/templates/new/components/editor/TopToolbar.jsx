@@ -22,6 +22,7 @@ import {
   ChevronDown,
   Maximize2,
   Focus,
+  Hash,
 } from "lucide-react";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 
@@ -55,6 +56,8 @@ export default function TopToolbar({
   onRedo,
   onSave,
   saving,
+  showPageNumber = true,
+  onTogglePageNumber,
   isPreviewTokens = false,
   onTogglePreviewTokens,
   onExportPptx,
@@ -477,6 +480,23 @@ export default function TopToolbar({
               <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
+
+          {/* ── Page Number Toggle ── */}
+          {onTogglePageNumber && (
+            <button
+              type="button"
+              onClick={onTogglePageNumber}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors cursor-pointer ${
+                showPageNumber
+                  ? "bg-slate-800 text-white border-slate-800 shadow-xs"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+              }`}
+              title={showPageNumber ? "คลิกเพื่อซ่อนเลขหน้า (หน้า 1 จาก 1)" : "คลิกเพื่อเปิดแสดงเลขหน้า"}
+            >
+              <Hash className="w-3.5 h-3.5" />
+              <span>เลขหน้า</span>
+            </button>
+          )}
         </div>
       </div>
 

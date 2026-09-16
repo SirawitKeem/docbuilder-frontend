@@ -132,6 +132,8 @@ export default function CanvasStage({
       height: preset.height * zoom,
       backgroundColor: "#FFFFFF",
       selection: true,
+      defaultCursor: "default",
+      hoverCursor: "default",
       preserveObjectStacking: true,
       renderOnAddRemove: true,
       enableRetinaScaling: true,
@@ -153,7 +155,13 @@ export default function CanvasStage({
     };
 
     canvas.on("object:added", (opt) => {
-      patchTextbox(opt.target);
+      const target = opt.target;
+      if (target) {
+        if (target.selectable === false || target.isBackground) {
+          target.evented = false;
+        }
+        patchTextbox(target);
+      }
     });
 
     // 🔤 Handle Textbox scaling: convert scaleX to width so font is never distorted
@@ -412,6 +420,24 @@ export default function CanvasStage({
       if (e && e.target && e.target.isSnapGuide) return;
       if (onHistoryPush) onHistoryPush(canvas);
     };
+
+    // 🔤 Text Editing Synchronization: Ensure user-typed text & line breaks are preserved
+    const handleTextSync = (e) => {
+      const target = e?.target;
+      if (target && (target.type === "textbox" || target.type === "i-text" || target.type === "text" || target.isType?.("Textbox"))) {
+        if (target._previewGeneratedText !== undefined && target.text !== target._previewGeneratedText) {
+          target.rawTemplateText = target.text;
+        } else if (!target._previewGeneratedText) {
+          target.rawTemplateText = target.text;
+        }
+      }
+    };
+
+    canvas.on("text:changed", handleTextSync);
+    canvas.on("editing:exited", (e) => {
+      handleTextSync(e);
+      if (onHistoryPush) onHistoryPush(canvas);
+    });
 
     canvas.on("object:modified", handleMutation);
     canvas.on("object:added", (e) => {

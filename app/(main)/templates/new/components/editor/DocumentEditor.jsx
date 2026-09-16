@@ -32,11 +32,20 @@ const CanvasStage = dynamic(() => import("./CanvasStage"), {
 /**
  * Automatically updates or adds the dynamic Page Number indicator at the bottom right of the page/slide
  */
-function syncPageNumberOnCanvas(canvas, pageIdx, totalPages, editorType = "document", preset = null) {
+function syncPageNumberOnCanvas(canvas, pageIdx, totalPages, editorType = "document", preset = null, showPageNumber = true) {
   if (!canvas) return;
   const p = preset || { width: 794, height: 1123, marginPx: 56 };
   const objs = canvas.getObjects();
   const pageNumObjs = objs.filter((o) => o.isPageFooterNumber || o.name === "pageFooterNumber");
+
+  // 🛡️ When page numbers are toggled OFF, remove all page number objects from canvas
+  if (!showPageNumber) {
+    if (pageNumObjs.length > 0) {
+      pageNumObjs.forEach((o) => canvas.remove(o));
+      canvas.requestRenderAll();
+    }
+    return;
+  }
 
   const isSlide = editorType === "slide";
   const textVal = isSlide ? `สไลด์ ${pageIdx + 1} / ${totalPages}` : `หน้า ${pageIdx + 1} จาก ${totalPages}`;
@@ -87,6 +96,19 @@ function ensureThaiTextWrapping(canvas) {
   });
 }
 
+/**
+ * 🔒 Ensures unselectable and background objects do not intercept mouse events,
+ * allowing full-canvas marquee selection box (rubber-band selection) and normal cursor behavior.
+ */
+function ensureUnselectableObjectsAreNotEvented(canvas) {
+  if (!canvas) return;
+  canvas.getObjects().forEach((obj) => {
+    if (obj.selectable === false || obj.isBackground) {
+      obj.evented = false;
+    }
+  });
+}
+
 export default function DocumentEditor({
   templateName = "เทมเพลตเอกสารใหม่ (A4)",
   categoryName = "Notification Letter",
@@ -95,6 +117,7 @@ export default function DocumentEditor({
   initialPages = null,
   initialMarginMm = null,
   initialMarginPx = null,
+  initialShowPageNumbers = null,
   editorType = "document",
   canvasPreset = null,
 }) {
@@ -177,7 +200,7 @@ export default function DocumentEditor({
         canvas.selection = false;
       } else {
         canvas.defaultCursor = "default";
-        canvas.hoverCursor = "move";
+        canvas.hoverCursor = "default";
         canvas.selection = true;
       }
       canvas.requestRenderAll();
@@ -241,6 +264,46 @@ export default function DocumentEditor({
   });
   const [activePageIndex, setActivePageIndex] = useState(0);
 
+  const isPosterOrSquare = preset.width === preset.height || (canvasPreset && canvasPreset.includes("poster"));
+  const [showPageNumber, setShowPageNumber] = useState(() => {
+    if (initialShowPageNumbers !== null && initialShowPageNumbers !== undefined) {
+      return initialShowPageNumbers;
+    }
+    return !isPosterOrSquare;
+  });
+  const showPageNumberRef = useRef(
+    initialShowPageNumbers !== null && initialShowPageNumbers !== undefined
+      ? initialShowPageNumbers
+      : !isPosterOrSquare
+  );
+
+  useEffect(() => {
+    if (initialShowPageNumbers !== null && initialShowPageNumbers !== undefined) {
+      setShowPageNumber(initialShowPageNumbers);
+      showPageNumberRef.current = initialShowPageNumbers;
+      const canvas = fabricCanvasRef.current;
+      if (canvas) {
+        syncPageNumberOnCanvas(canvas, activePageIndex, pages.length, editorType, preset, initialShowPageNumbers);
+      }
+    }
+  }, [initialShowPageNumbers, activePageIndex, pages.length, editorType, preset]);
+
+  useEffect(() => {
+    showPageNumberRef.current = showPageNumber;
+  }, [showPageNumber]);
+
+  const handleTogglePageNumber = useCallback(() => {
+    setShowPageNumber((prev) => {
+      const next = !prev;
+      showPageNumberRef.current = next;
+      const canvas = fabricCanvasRef.current;
+      if (canvas) {
+        syncPageNumberOnCanvas(canvas, activePageIndex, pages.length, editorType, preset, next);
+      }
+      return next;
+    });
+  }, [activePageIndex, pages.length, editorType, preset]);
+
   const {
     initHistory,
     pushState,
@@ -270,8 +333,9 @@ export default function DocumentEditor({
       setPages(initialPages);
       if (fabricCanvasRef.current && initialPages[0]?.json) {
         fabricCanvasRef.current.loadFromJSON(initialPages[0].json).then(() => {
-          syncPageNumberOnCanvas(fabricCanvasRef.current, 0, initialPages.length, editorType, preset);
+          syncPageNumberOnCanvas(fabricCanvasRef.current, 0, initialPages.length, editorType, preset, showPageNumberRef.current);
           ensureThaiTextWrapping(fabricCanvasRef.current);
+          ensureUnselectableObjectsAreNotEvented(fabricCanvasRef.current);
           fabricCanvasRef.current.renderAll();
           initHistory(fabricCanvasRef.current);
           hasUnsavedChangesRef.current = false;
@@ -292,15 +356,16 @@ export default function DocumentEditor({
 
     if (initialPages && Array.isArray(initialPages) && initialPages.length > 0 && initialPages[0]?.json) {
       canvas.loadFromJSON(initialPages[0].json).then(() => {
-        syncPageNumberOnCanvas(canvas, 0, initialPages.length, editorType, preset);
+        syncPageNumberOnCanvas(canvas, 0, initialPages.length, editorType, preset, showPageNumberRef.current);
         ensureThaiTextWrapping(canvas);
+        ensureUnselectableObjectsAreNotEvented(canvas);
         canvas.renderAll();
         initHistory(canvas);
         hasUnsavedChangesRef.current = false;
       });
     } else {
       // Embed initial page footer number
-      syncPageNumberOnCanvas(canvas, 0, 1, editorType, preset);
+      syncPageNumberOnCanvas(canvas, 0, 1, editorType, preset, showPageNumberRef.current);
       initHistory(canvas);
       const initialJson = canvas.toJSON(CUSTOM_CANVAS_PROPS);
       setPages([{ id: "page-1", json: initialJson }]);
@@ -588,15 +653,16 @@ export default function DocumentEditor({
     const targetPageJson = updatedPages[targetIndex].json;
     if (targetPageJson) {
       canvas.loadFromJSON(targetPageJson).then(() => {
-        syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset);
+        syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset, showPageNumberRef.current);
         ensureThaiTextWrapping(canvas);
+        ensureUnselectableObjectsAreNotEvented(canvas);
         canvas.renderAll();
         initHistory(canvas);
       });
     } else {
       canvas.clear();
       canvas.backgroundColor = "#FFFFFF";
-      syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset);
+      syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset, showPageNumberRef.current);
       canvas.renderAll();
       initHistory(canvas);
     }
@@ -628,7 +694,7 @@ export default function DocumentEditor({
 
     canvas.clear();
     canvas.backgroundColor = "#FFFFFF";
-    syncPageNumberOnCanvas(canvas, newIndex, updatedPages.length, editorType, preset);
+    syncPageNumberOnCanvas(canvas, newIndex, updatedPages.length, editorType, preset, showPageNumberRef.current);
     canvas.renderAll();
     initHistory(canvas);
     hasUnsavedChangesRef.current = true;
@@ -665,7 +731,7 @@ export default function DocumentEditor({
     setActiveObject(null);
 
     canvas.loadFromJSON(duplicatedPage.json).then(() => {
-      syncPageNumberOnCanvas(canvas, newIndex, updatedPages.length, editorType, preset);
+      syncPageNumberOnCanvas(canvas, newIndex, updatedPages.length, editorType, preset, showPageNumberRef.current);
       ensureThaiTextWrapping(canvas);
       canvas.renderAll();
       initHistory(canvas);
@@ -697,7 +763,7 @@ export default function DocumentEditor({
     const targetJson = remainingPages[newActiveIndex].json;
     if (targetJson) {
       canvas.loadFromJSON(targetJson).then(() => {
-        syncPageNumberOnCanvas(canvas, newActiveIndex, remainingPages.length, editorType, preset);
+        syncPageNumberOnCanvas(canvas, newActiveIndex, remainingPages.length, editorType, preset, showPageNumberRef.current);
         ensureThaiTextWrapping(canvas);
         canvas.renderAll();
         initHistory(canvas);
@@ -706,7 +772,7 @@ export default function DocumentEditor({
     } else {
       canvas.clear();
       canvas.backgroundColor = "#FFFFFF";
-      syncPageNumberOnCanvas(canvas, newActiveIndex, remainingPages.length, editorType, preset);
+      syncPageNumberOnCanvas(canvas, newActiveIndex, remainingPages.length, editorType, preset, showPageNumberRef.current);
       canvas.renderAll();
       initHistory(canvas);
       hasUnsavedChangesRef.current = true;
@@ -732,7 +798,7 @@ export default function DocumentEditor({
     setActivePageIndex(targetIndex);
 
     if (canvas) {
-      syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset);
+      syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset, showPageNumberRef.current);
     }
     hasUnsavedChangesRef.current = true;
   }, [activePageIndex, pages, editorType, preset.id]);
@@ -1699,6 +1765,15 @@ export default function DocumentEditor({
 
     // 1. Always force-restore raw tokens on active canvas before capturing final JSON
     if (canvas) {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj && activeObj.isEditing && typeof activeObj.exitEditing === "function") {
+        activeObj.exitEditing();
+        if (activeObj._previewGeneratedText !== undefined && activeObj.text !== activeObj._previewGeneratedText) {
+          activeObj.rawTemplateText = activeObj.text;
+        } else if (!activeObj._previewGeneratedText) {
+          activeObj.rawTemplateText = activeObj.text;
+        }
+      }
       applyTokensToCanvas(canvas, false);
       setIsPreviewTokens(false);
     }
@@ -1726,6 +1801,7 @@ export default function DocumentEditor({
       pages: allPages,
       marginMm,
       marginPx,
+      showPageNumbers: showPageNumber,
     });
   };
 
@@ -1821,6 +1897,8 @@ export default function DocumentEditor({
         }}
         onSave={handleSaveAll}
         saving={saving}
+        showPageNumber={showPageNumber}
+        onTogglePageNumber={handleTogglePageNumber}
         isPreviewTokens={isPreviewTokens}
         onTogglePreviewTokens={handleTogglePreviewTokens}
         onExportPptx={handleExportPptx}

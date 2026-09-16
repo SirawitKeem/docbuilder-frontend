@@ -66,6 +66,7 @@ function TemplateBuilderContent() {
   const [initialSheetData, setInitialSheetData] = useState(null);
   const [initialMarginMm, setInitialMarginMm] = useState(null);
   const [initialMarginPx, setInitialMarginPx] = useState(null);
+  const [initialShowPageNumbers, setInitialShowPageNumbers] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [isSaveSuccess, setIsSaveSuccess] = useState(false);
@@ -116,6 +117,7 @@ function TemplateBuilderContent() {
             const savedMarginPx = tmpl.margin?.px ?? tmpl.theme?.marginPx ?? null;
             if (savedMarginMm !== null && savedMarginMm !== undefined) setInitialMarginMm(savedMarginMm);
             if (savedMarginPx !== null && savedMarginPx !== undefined) setInitialMarginPx(savedMarginPx);
+            if (tmpl.theme?.showPageNumbers !== undefined) setInitialShowPageNumbers(tmpl.theme.showPageNumbers);
 
             // Fetch category details based on the template's actual category
             const targetCat = tmpl.categoryId || categoryIdParam;
@@ -203,6 +205,7 @@ function TemplateBuilderContent() {
           hasWatermark: false,
           marginMm: editorData?.marginMm,
           marginPx: editorData?.marginPx,
+          showPageNumbers: editorData?.showPageNumbers !== undefined ? editorData.showPageNumbers : true,
         },
         margin: {
           mm: editorData?.marginMm,
@@ -252,6 +255,7 @@ function TemplateBuilderContent() {
           initialPages={initialPages}
           initialMarginMm={initialMarginMm}
           initialMarginPx={initialMarginPx}
+          initialShowPageNumbers={initialShowPageNumbers}
           onSave={handleInitiateSave}
           saving={saving}
         />

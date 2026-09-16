@@ -22,12 +22,4 @@
   <rect x="0" y="0" width="1200" height="1200" fill="#fcfdfe" />
   <rect x="0" y="0" width="1200" height="1200" fill="url(#diagStripes)" opacity="0.85" />
 
-  <!-- ── TOP-LEFT CORNER FACETS ── -->
-  <polygon points="0,0 220,0 0,320" fill="url(#cornerRed1)" />
-  <polygon points="0,180 140,0 0,380" fill="url(#cornerDark)" opacity="0.4" />
-  <polygon points="0,290 80,0 0,440" fill="#dc2626" opacity="0.25" />
-
-  <!-- ── BOTTOM-LEFT & BOTTOM-RIGHT CORNER ACCENTS ── -->
-  <polygon points="0,1020 180,1200 0,1200" fill="url(#cornerRed1)" opacity="0.75" />
-  <polygon points="1200,1020 1020,1200 1200,1200" fill="url(#cornerRed1)" opacity="0.75" />
 </svg>
