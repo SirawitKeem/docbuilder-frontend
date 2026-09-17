@@ -34,3 +34,6 @@ next-env.d.ts
 .DS_Store
 .idea/
 .vscode/
+
+# Temporary DB files
+data/*.tmp*
