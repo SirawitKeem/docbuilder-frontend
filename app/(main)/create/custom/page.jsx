@@ -62,6 +62,7 @@ function UniversalDocumentContent() {
   const [isReviewing, setIsReviewing] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [saveToast, setSaveToast] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(true);
   const [profiles, setProfiles] = useState([]);
@@ -514,8 +515,53 @@ function UniversalDocumentContent() {
     }
   };
 
-  const handlePrint = () => {
-    window.print();
+  const handleExportAction = async (format = "pdf") => {
+    if (format === "print") {
+      window.print();
+      return;
+    }
+    try {
+      setIsExporting(true);
+      const res = await fetch("/api/export-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          templateId: template?.id || templateIdParam,
+          values: values || {},
+          quotationData: values || {},
+          fileName: documentName || template?.name || "document",
+          format,
+          canvasPreset: template?.canvasPreset || currentPreset?.id,
+          width: currentPreset?.width,
+          height: currentPreset?.height,
+          mmWidth: currentPreset?.mmWidth,
+          mmHeight: currentPreset?.mmHeight,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `ไม่สามารถส่งออก ${format.toUpperCase()} ได้`);
+      }
+
+      const blob = await res.blob();
+      const baseName = (documentName || template?.name || "document").replace(/\.(pdf|html|webp|png)$/i, "");
+      const downloadFileName = `${baseName}.${format}`;
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = downloadFileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Export error:", err);
+      alert(err.message || "เกิดข้อผิดพลาดในการส่งออกไฟล์");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (loading) {
@@ -622,7 +668,8 @@ function UniversalDocumentContent() {
           customRender={true}
           pages={[renderDocumentPage]}
           status={statusObj}
-          onExport={handlePrint}
+          onExport={handleExportAction}
+          exporting={isExporting}
           onSendEmail={() => setIsEmailModalOpen(true)}
           onBackToEdit={() => setIsReviewing(false)}
         />
@@ -667,7 +714,8 @@ function UniversalDocumentContent() {
         onDocNameChange={setDocumentName}
         status={statusObj}
         onPreview={() => setIsReviewing(true)}
-        onExport={handlePrint}
+        onExport={handleExportAction}
+        exporting={isExporting}
         onSave={handleOpenSaveModal}
         isSaving={isSaving}
         isFormOpen={isFormOpen}

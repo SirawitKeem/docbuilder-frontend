@@ -309,6 +309,25 @@ export default function FabricPrintRenderer({
           ${preset.mmWidth ? `size: ${preset.mmWidth}mm ${preset.mmHeight}mm;` : `size: ${preset.width}px ${preset.height}px;`}
           margin: 0mm;
         }
+        .fabric-vector-page {
+          width: ${preset.width}px !important;
+          height: ${preset.height}px !important;
+          max-width: ${preset.width}px !important;
+          max-height: ${preset.height}px !important;
+          min-width: ${preset.width}px !important;
+          min-height: ${preset.height}px !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          box-sizing: border-box !important;
+          position: relative !important;
+          overflow: hidden !important;
+          background: #ffffff !important;
+        }
+        .fabric-vector-page svg {
+          width: ${preset.width}px !important;
+          height: ${preset.height}px !important;
+          display: block !important;
+        }
         @media print {
           html, body {
             background: #ffffff !important;
@@ -318,26 +337,9 @@ export default function FabricPrintRenderer({
             height: auto !important;
             font-family: 'Noto Sans Thai', sans-serif !important;
           }
-          .fabric-vector-page {
-            width: ${preset.width}px !important;
-            height: ${preset.height}px !important;
-            max-height: ${preset.height}px !important;
-            min-height: ${preset.height}px !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-            box-sizing: border-box !important;
-            position: relative !important;
-            overflow: hidden !important;
-            background: #ffffff !important;
-          }
           .fabric-vector-page + .fabric-vector-page {
             page-break-before: always !important;
             break-before: page !important;
-          }
-          .fabric-vector-page svg {
-            width: ${preset.width}px !important;
-            height: ${preset.height}px !important;
-            display: block !important;
           }
         }
       `}</style>

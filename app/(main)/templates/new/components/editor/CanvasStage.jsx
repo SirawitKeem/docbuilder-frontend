@@ -186,23 +186,67 @@ export default function CanvasStage({
     canvas.setZoom(zoom);
     fabricCanvasRef.current = canvas;
 
-    // 🧲 Smart Snapping Guidelines Helper
+    // 🧲 Enhanced Smart Alignment Guides Helper (Page Center, Margins & Object-to-Object)
     const clearSnapGuides = () => {
       const guides = canvas.getObjects().filter((obj) => obj.isSnapGuide);
       guides.forEach((g) => canvas.remove(g));
     };
 
-    const drawSnapGuide = (points) => {
+    const drawSnapGuide = (points, type = "center", label = "") => {
+      const isPageCenter = type === "center-x" || type === "center-y";
+      const isEdge = type.includes("margin") || type.includes("edge");
+      const strokeColor = isPageCenter ? "#F43F5E" : isEdge ? "#6366F1" : "#EC4899";
+
       const line = new fabric.Line(points, {
-        stroke: "#D946EF",
-        strokeWidth: 1.2,
-        strokeDashArray: [4, 4],
+        stroke: strokeColor,
+        strokeWidth: isPageCenter ? 1.5 : 1.2,
+        strokeDashArray: isPageCenter ? [6, 4] : [4, 4],
         selectable: false,
         evented: false,
         isSnapGuide: true,
         excludeFromExport: true,
       });
       canvas.add(line);
+
+      // Clean Guide Badge indicator
+      if (label) {
+        const isVert = points[0] === points[2];
+        const badgeLeft = isVert ? Math.min(preset.width - 150, Math.max(10, points[0] + 6)) : 20;
+        const badgeTop = isVert ? 20 : Math.min(preset.height - 30, Math.max(10, points[1] + 4));
+
+        const badgeRect = new fabric.Rect({
+          left: badgeLeft,
+          top: badgeTop,
+          rx: 4,
+          ry: 4,
+          fill: strokeColor,
+          selectable: false,
+          evented: false,
+          isSnapGuide: true,
+          excludeFromExport: true,
+        });
+
+        const badgeText = new fabric.Text(label, {
+          left: badgeLeft + 6,
+          top: badgeTop + 3,
+          fontSize: 10,
+          fontFamily: "'Noto Sans Thai', sans-serif",
+          fontWeight: "bold",
+          fill: "#FFFFFF",
+          selectable: false,
+          evented: false,
+          isSnapGuide: true,
+          excludeFromExport: true,
+        });
+
+        badgeRect.set({
+          width: badgeText.width + 12,
+          height: badgeText.height + 6,
+        });
+
+        canvas.add(badgeRect);
+        canvas.add(badgeText);
+      }
     };
 
     // 🎯 Drag Origin Tracking for Shift-Constrained Movement
@@ -218,7 +262,7 @@ export default function CanvasStage({
       if (opt.transform?.target) trackDragStart(opt.transform.target);
     });
 
-    // 🧲 Snapping & Shift+Drag Axis Constrain (object:moving)
+    // 🧲 Smart Snapping & Shift+Drag Axis Constrain (object:moving)
     canvas.on("object:moving", (opt) => {
       const target = opt.target;
       if (!target || target.isSnapGuide) return;
@@ -260,68 +304,140 @@ export default function CanvasStage({
       const targetCenterY = targetTop + targetHeight / 2;
       const targetBottom = targetTop + targetHeight;
 
-      // Vertical Snap Points: Left Margin, Center, Right Margin (only if not vertically locked)
+      let hasVerticalSnap = false;
+      let hasHorizontalSnap = false;
+
+      // 1. Page Center & Margin Snapping (Vertical X-Axis)
       if (!isAxisLockedVertical) {
         const activeMargin = marginPxRef.current ?? preset.marginPx;
         const vSnapPoints = [
+          { x: preset.width / 2, type: "center-x", label: "กึ่งกลางหน้ากระดาษ (X)" },
           ...(activeMargin > 0
             ? [
-                { x: activeMargin, type: "margin-left" },
-                { x: preset.width - activeMargin, type: "margin-right" },
+                { x: activeMargin, type: "margin-left", label: "ระยะขอบซ้าย" },
+                { x: preset.width - activeMargin, type: "margin-right", label: "ระยะขอบขวา" },
               ]
             : [
-                { x: 0, type: "edge-left" },
-                { x: preset.width, type: "edge-right" },
+                { x: 0, type: "edge-left", label: "ขอบซ้ายสุด" },
+                { x: preset.width, type: "edge-right", label: "ขอบขวาสุด" },
               ]),
-          { x: preset.width / 2, type: "center-x" },
         ];
 
         for (const p of vSnapPoints) {
           if (Math.abs(targetCenterX - p.x) <= SNAP_THRESHOLD) {
             target.set("left", p.x - targetWidth / 2);
-            drawSnapGuide([p.x, 0, p.x, preset.height], "vertical");
+            drawSnapGuide([p.x, 0, p.x, preset.height], p.type, p.label);
+            hasVerticalSnap = true;
             break;
           } else if (Math.abs(targetLeft - p.x) <= SNAP_THRESHOLD) {
             target.set("left", p.x);
-            drawSnapGuide([p.x, 0, p.x, preset.height], "vertical");
+            drawSnapGuide([p.x, 0, p.x, preset.height], p.type, p.label);
+            hasVerticalSnap = true;
             break;
           } else if (Math.abs(targetRight - p.x) <= SNAP_THRESHOLD) {
             target.set("left", p.x - targetWidth);
-            drawSnapGuide([p.x, 0, p.x, preset.height], "vertical");
+            drawSnapGuide([p.x, 0, p.x, preset.height], p.type, p.label);
+            hasVerticalSnap = true;
             break;
           }
         }
       }
 
-      // Horizontal Snap Points: Top Margin, Center, Bottom Margin (only if not horizontally locked)
+      // 2. Page Center & Margin Snapping (Horizontal Y-Axis)
       if (!isAxisLockedHorizontal) {
         const activeMargin = marginPxRef.current ?? preset.marginPx;
         const hSnapPoints = [
+          { y: preset.height / 2, type: "center-y", label: "กึ่งกลางหน้ากระดาษ (Y)" },
           ...(activeMargin > 0
             ? [
-                { y: activeMargin, type: "margin-top" },
-                { y: preset.height - activeMargin, type: "margin-bottom" },
+                { y: activeMargin, type: "margin-top", label: "ระยะขอบบน" },
+                { y: preset.height - activeMargin, type: "margin-bottom", label: "ระยะขอบล่าง" },
               ]
             : [
-                { y: 0, type: "edge-top" },
-                { y: preset.height, type: "edge-bottom" },
+                { y: 0, type: "edge-top", label: "ขอบบนสุด" },
+                { y: preset.height, type: "edge-bottom", label: "ขอบล่างสุด" },
               ]),
-          { y: preset.height / 2, type: "center-y" },
         ];
 
         for (const p of hSnapPoints) {
           if (Math.abs(targetCenterY - p.y) <= SNAP_THRESHOLD) {
             target.set("top", p.y - targetHeight / 2);
-            drawSnapGuide([0, p.y, preset.width, p.y], "horizontal");
+            drawSnapGuide([0, p.y, preset.width, p.y], p.type, p.label);
+            hasHorizontalSnap = true;
             break;
           } else if (Math.abs(targetTop - p.y) <= SNAP_THRESHOLD) {
             target.set("top", p.y);
-            drawSnapGuide([0, p.y, preset.width, p.y], "horizontal");
+            drawSnapGuide([0, p.y, preset.width, p.y], p.type, p.label);
+            hasHorizontalSnap = true;
             break;
           } else if (Math.abs(targetBottom - p.y) <= SNAP_THRESHOLD) {
             target.set("top", p.y - targetHeight);
-            drawSnapGuide([0, p.y, preset.width, p.y], "horizontal");
+            drawSnapGuide([0, p.y, preset.width, p.y], p.type, p.label);
+            hasHorizontalSnap = true;
             break;
+          }
+        }
+      }
+
+      // 3. Object-to-Object Smart Alignment Guides
+      const otherObjects = canvas.getObjects().filter(
+        (o) =>
+          o !== target &&
+          o.selectable !== false &&
+          o.visible !== false &&
+          !o.isSnapGuide &&
+          !o.isPageFooterNumber &&
+          !o.excludeFromExport
+      );
+
+      for (const other of otherObjects) {
+        // Vertical Alignments with other object (X-Axis)
+        if (!isAxisLockedVertical && !hasVerticalSnap) {
+          const otherW = other.getScaledWidth();
+          const otherLeft = other.left;
+          const otherCenterX = otherLeft + otherW / 2;
+          const otherRight = otherLeft + otherW;
+
+          const minY = Math.min(targetTop, other.top) - 10;
+          const maxY = Math.max(targetBottom, other.top + other.getScaledHeight()) + 10;
+
+          if (Math.abs(targetLeft - otherLeft) <= SNAP_THRESHOLD) {
+            target.set("left", otherLeft);
+            drawSnapGuide([otherLeft, minY, otherLeft, maxY], "object-align");
+            hasVerticalSnap = true;
+          } else if (Math.abs(targetCenterX - otherCenterX) <= SNAP_THRESHOLD) {
+            target.set("left", otherCenterX - targetWidth / 2);
+            drawSnapGuide([otherCenterX, minY, otherCenterX, maxY], "object-center");
+            hasVerticalSnap = true;
+          } else if (Math.abs(targetRight - otherRight) <= SNAP_THRESHOLD) {
+            target.set("left", otherRight - targetWidth);
+            drawSnapGuide([otherRight, minY, otherRight, maxY], "object-align");
+            hasVerticalSnap = true;
+          }
+        }
+
+        // Horizontal Alignments with other object (Y-Axis)
+        if (!isAxisLockedHorizontal && !hasHorizontalSnap) {
+          const otherH = other.getScaledHeight();
+          const otherTop = other.top;
+          const otherCenterY = otherTop + otherH / 2;
+          const otherBottom = otherTop + otherH;
+
+          const minX = Math.min(targetLeft, other.left) - 10;
+          const maxX = Math.max(targetRight, other.left + other.getScaledWidth()) + 10;
+
+          if (Math.abs(targetTop - otherTop) <= SNAP_THRESHOLD) {
+            target.set("top", otherTop);
+            drawSnapGuide([minX, otherTop, maxX, otherTop], "object-align");
+            hasHorizontalSnap = true;
+          } else if (Math.abs(targetCenterY - otherCenterY) <= SNAP_THRESHOLD) {
+            target.set("top", otherCenterY - targetHeight / 2);
+            drawSnapGuide([minX, otherCenterY, maxX, otherCenterY], "object-center");
+            hasHorizontalSnap = true;
+          } else if (Math.abs(targetBottom - otherBottom) <= SNAP_THRESHOLD) {
+            target.set("top", otherBottom - targetHeight);
+            drawSnapGuide([minX, otherBottom, maxX, otherBottom], "object-align");
+            hasHorizontalSnap = true;
           }
         }
       }

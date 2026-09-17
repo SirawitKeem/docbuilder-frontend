@@ -350,11 +350,12 @@ export default function DocumentsTable({
           quotationData: doc.values || {},
           fileName: doc.name || "document",
           format,
+          canvasPreset: doc.canvasPreset || doc.template?.canvasPreset,
         }),
       });
       if (!res.ok) throw new Error("Failed to export document");
       const blob = await res.blob();
-      const baseName = (doc.name || "document").replace(/\.(pdf|html|webp)$/i, "");
+      const baseName = (doc.name || "document").replace(/\.(pdf|html|webp|png)$/i, "");
       const downloadFileName = `${baseName}.${format}`;
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -764,6 +765,22 @@ export default function DocumentsTable({
                                         <ImageIcon size={13} className="text-purple-500 shrink-0" />
                                       )}
                                       <span>Export WebP (.webp)</span>
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setOpenMenuId(null);
+                                        setExpandedExportDocId(null);
+                                        handleDirectExport(doc, "png");
+                                      }}
+                                      disabled={downloadingDocId === `${doc.id}_png`}
+                                      className="w-full text-left px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-background hover:shadow-xs rounded-md flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer disabled:opacity-50"
+                                    >
+                                      {downloadingDocId === `${doc.id}_png` ? (
+                                        <Loader2 size={13} className="animate-spin text-emerald-500 shrink-0" />
+                                      ) : (
+                                        <ImageIcon size={13} className="text-emerald-500 shrink-0" />
+                                      )}
+                                      <span>Export PNG (.png)</span>
                                     </button>
                                   </div>
                                 )}

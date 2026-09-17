@@ -4,7 +4,6 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
-import SaveConfirmModal from "@/components/common/SaveConfirmModal";
 
 // Dynamic import for DocumentEditor with SSR disabled
 const DocumentEditor = dynamic(
@@ -47,6 +46,7 @@ function TemplateBuilderContent() {
   const canvasPresetParam = searchParams.get("canvasPreset") || defaultPreset;
   const customNameParam = searchParams.get("customName") ? decodeURIComponent(searchParams.get("customName")) : null;
   const editId = searchParams.get("edit");
+  const [currentEditId, setCurrentEditId] = useState(editId);
 
   const [categoryId, setCategoryId] = useState(categoryIdParam);
   const [editorType, setEditorType] = useState(editorTypeParam);
@@ -68,10 +68,12 @@ function TemplateBuilderContent() {
   const [initialMarginPx, setInitialMarginPx] = useState(null);
   const [initialShowPageNumbers, setInitialShowPageNumbers] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [isSaveSuccess, setIsSaveSuccess] = useState(false);
-  const [pendingEditorData, setPendingEditorData] = useState(null);
-  const [saveErrorMessage, setSaveErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (editId) {
+      setCurrentEditId(editId);
+    }
+  }, [editId]);
 
   // Sync state when query parameters change (new template creation)
   useEffect(() => {
@@ -147,17 +149,8 @@ function TemplateBuilderContent() {
     }
   }, [categoryIdParam, editId]);
 
-  const handleInitiateSave = (editorData) => {
-    setPendingEditorData(editorData);
-    setIsSaveSuccess(false);
-    setSaveErrorMessage("");
-    setShowSaveModal(true);
-  };
-
-  const handleConfirmSave = async () => {
-    const editorData = pendingEditorData;
+  const handleDirectSave = async (editorData) => {
     setSaving(true);
-    setSaveErrorMessage("");
     try {
       const activeEditorType = editorData?.editorType || editorType || "document";
       const isSheet = activeEditorType === "sheet";
@@ -213,8 +206,9 @@ function TemplateBuilderContent() {
         },
       };
 
-      const url = editId ? `/api/templates/${editId}` : "/api/templates";
-      const method = editId ? "PUT" : "POST";
+      const effectiveId = currentEditId || editId;
+      const url = effectiveId ? `/api/templates/${effectiveId}` : "/api/templates";
+      const method = effectiveId ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
@@ -227,10 +221,23 @@ function TemplateBuilderContent() {
         throw new Error(errorData.error || "เกิดข้อผิดพลาดในการบันทึกเทมเพลต");
       }
 
-      setIsSaveSuccess(true);
+      const savedData = await res.json().catch(() => ({}));
+      const newId = savedData?.id || effectiveId;
+
+      if (newId && !effectiveId) {
+        setCurrentEditId(newId);
+        // Silently update browser URL to edit mode without refreshing or remounting
+        if (typeof window !== "undefined") {
+          const u = new URL(window.location.href);
+          u.searchParams.set("edit", newId);
+          window.history.replaceState(null, "", u.toString());
+        }
+      }
+
+      return { success: true, id: newId };
     } catch (err) {
       console.error("Save error:", err);
-      setSaveErrorMessage(err.message || "เกิดข้อผิดพลาดในการบันทึกเทมเพลต");
+      throw err;
     } finally {
       setSaving(false);
     }
@@ -243,7 +250,7 @@ function TemplateBuilderContent() {
           templateName={templateName}
           categoryName={categoryName}
           initialSheetData={initialSheetData}
-          onSave={handleInitiateSave}
+          onSave={handleDirectSave}
           saving={saving}
         />
       ) : (
@@ -256,25 +263,10 @@ function TemplateBuilderContent() {
           initialMarginMm={initialMarginMm}
           initialMarginPx={initialMarginPx}
           initialShowPageNumbers={initialShowPageNumbers}
-          onSave={handleInitiateSave}
+          onSave={handleDirectSave}
           saving={saving}
         />
       )}
-
-      <SaveConfirmModal
-        isOpen={showSaveModal}
-        onClose={() => {
-          if (!saving) setShowSaveModal(false);
-        }}
-        onConfirm={handleConfirmSave}
-        isLoading={saving}
-        isSuccess={isSaveSuccess}
-        onSuccessClose={() => {
-          setShowSaveModal(false);
-          router.push("/templates");
-        }}
-        description={saveErrorMessage || undefined}
-      />
     </>
   );
 }

@@ -109,7 +109,17 @@ export default function SheetEditor({
   const [isTokenDropdownOpen, setIsTokenDropdownOpen] = useState(false);
   const [copiedToken, setCopiedToken] = useState(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const toastTimeoutRef = useRef(null);
   const hasUnsavedChangesRef = useRef(false);
+
+  const showToast = useCallback((msg) => {
+    setToastMessage(msg);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     if (templateName) {
@@ -193,23 +203,42 @@ export default function SheetEditor({
   }, []);
 
   // Save Flow
-  const handleSave = () => {
+  const handleSave = useCallback(async () => {
     // 🛡️ Zero-Leakage: Ensure raw tokens are preserved
     const cleanSheetData = revertTokensInSheetData(sheetData);
 
     if (onSave) {
-      onSave({
-        name: currentTitle,
-        categoryName,
-        editorType: "sheet",
-        canvasPreset: null,
-        sheetData: cleanSheetData,
-        pageCount: 0,
-        pages: [],
-      });
-      hasUnsavedChangesRef.current = false;
+      try {
+        await onSave({
+          name: currentTitle,
+          categoryName,
+          editorType: "sheet",
+          canvasPreset: null,
+          sheetData: cleanSheetData,
+          pageCount: 0,
+          pages: [],
+        });
+        hasUnsavedChangesRef.current = false;
+        showToast("✨ บันทึกเทมเพลตเรียบร้อยแล้ว (ทำงานต่อได้ทันที)");
+      } catch (err) {
+        showToast(`❌ ${err.message || "เกิดข้อผิดพลาดในการบันทึก"}`);
+      }
     }
-  };
+  }, [sheetData, onSave, currentTitle, categoryName, showToast]);
+
+  // Keyboard shortcut for Save (Ctrl+S / Cmd+S / Thai ห)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isModifier = e.ctrlKey || e.metaKey;
+      const isSaveKey = e.code === "KeyS" || e.key === "s" || e.key === "S" || e.key === "ห";
+      if (isModifier && isSaveKey && !e.shiftKey) {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleSave]);
 
   // Export .xlsx Flow
   const handleExportXlsx = async () => {
@@ -374,6 +403,13 @@ export default function SheetEditor({
           allowEdit={true}
         />
       </main>
+
+      {/* 🍞 Interactive Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-slate-900/95 backdrop-blur-md text-white px-4 py-2 rounded-full shadow-2xl text-xs font-semibold animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-none border border-white/10">
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }

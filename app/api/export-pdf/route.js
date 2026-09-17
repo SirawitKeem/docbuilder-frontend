@@ -5,33 +5,60 @@ import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 export async function POST(request) {
   let browser;
   try {
-    const { templateId, values, quotationData, fileName, format = "pdf" } = await request.json();
+    const {
+      templateId,
+      values,
+      quotationData,
+      fileName,
+      format = "pdf",
+      canvasPreset: reqCanvasPreset,
+      width: reqWidth,
+      height: reqHeight,
+      mmWidth: reqMmWidth,
+      mmHeight: reqMmHeight,
+    } = await request.json();
 
     const payload = quotationData || values || {};
     
     // Dynamically determine template format & dimensions (Docs A4 vs Slides 16:9 vs Custom)
     let isSlide = false;
+    let isCustomSize = false;
     let pageWidth = 794;
     let pageHeight = 1123;
+    let mmWidth = reqMmWidth || null;
+    let mmHeight = reqMmHeight || null;
 
+    // 1. Check explicit client-sent dimensions / preset
+    if (reqCanvasPreset) {
+      const preset = getCanvasPreset(reqCanvasPreset);
+      if (preset) {
+        pageWidth = preset.width;
+        pageHeight = preset.height;
+        mmWidth = preset.mmWidth;
+        mmHeight = preset.mmHeight;
+        isSlide = preset.id === "slide-16-9";
+        isCustomSize = preset.id !== "a4-portrait";
+      }
+    } else if (reqWidth && reqHeight) {
+      pageWidth = Math.round(reqWidth);
+      pageHeight = Math.round(reqHeight);
+      isCustomSize = true;
+    }
+
+    // 2. Fallback to database lookup if not fully resolved
     try {
-      if (templateId) {
+      if (templateId && !reqCanvasPreset && !reqWidth) {
         const tmpl = await customTemplatesRepo.getById(templateId);
         if (tmpl) {
-          if (tmpl.canvasPreset) {
-            const preset = getCanvasPreset(tmpl.canvasPreset);
-            if (preset) {
-              pageWidth = preset.width;
-              pageHeight = preset.height;
-              isSlide = tmpl.editorType === "slide" || tmpl.canvasPreset === "slide-16-9";
-            }
-          } else if (tmpl.editorType === "slide") {
-            isSlide = true;
-            pageWidth = 1280;
-            pageHeight = 720;
-          } else if (tmpl.orientation === "landscape") {
-            pageWidth = 1123;
-            pageHeight = 794;
+          const rawPresetId = tmpl.canvasPreset || (tmpl.editorType === "slide" ? "slide-16-9" : "a4-portrait");
+          const preset = getCanvasPreset(rawPresetId);
+          if (preset) {
+            pageWidth = preset.width;
+            pageHeight = preset.height;
+            mmWidth = preset.mmWidth;
+            mmHeight = preset.mmHeight;
+            isSlide = tmpl.editorType === "slide" || tmpl.canvasPreset === "slide-16-9";
+            isCustomSize = preset.id !== "a4-portrait";
           }
         }
       }
@@ -64,21 +91,45 @@ export async function POST(request) {
       document.head.appendChild(style);
     }, payload);
 
-    // Set initial viewport matching page dimensions
+    // Set initial viewport matching page dimensions (scale 1 for exact pixel accuracy)
     await page.setViewport({
       width: pageWidth,
       height: pageHeight,
-      deviceScaleFactor: 2,
+      deviceScaleFactor: 1,
     });
 
-    await page.goto(printUrl, { waitUntil: "networkidle0" });
+    await page.goto(printUrl, { waitUntil: "networkidle2", timeout: 25000 });
     await page.evaluate(() => (document.fonts ? document.fonts.ready : Promise.resolve()));
     await page.waitForSelector('[data-ready="true"]', { timeout: 15000 });
+
+    // 🔍 Dynamically detect exact page dimensions from the rendered DOM
+    const detectedDims = await page.evaluate(() => {
+      const el = document.querySelector(".fabric-vector-page") ||
+                 document.querySelector("#fabric-print-container") ||
+                 document.querySelector("#print-root") ||
+                 document.querySelector(".print-page");
+      if (el) {
+        const computed = window.getComputedStyle(el);
+        const w = parseFloat(computed.width) || el.offsetWidth;
+        const h = parseFloat(computed.height) || el.offsetHeight;
+        if (w > 50 && h > 50) {
+          return { width: Math.round(w), height: Math.round(h) };
+        }
+      }
+      return null;
+    });
+
+    if (detectedDims) {
+      pageWidth = detectedDims.width;
+      pageHeight = detectedDims.height;
+    }
 
     // Count actual page card elements rendered in the DOM
     const pageCount = await page.evaluate(() => {
       const wrapper = document.querySelector(".quotation-document-wrapper");
       if (wrapper && wrapper.children.length > 0) return wrapper.children.length;
+      const fabricPages = document.querySelectorAll(".fabric-vector-page");
+      if (fabricPages && fabricPages.length > 0) return fabricPages.length;
       const printPages = document.querySelectorAll(".print-page");
       if (printPages && printPages.length > 0) return printPages.length;
       const readyPages = document.querySelectorAll("[data-ready='true']");
@@ -86,17 +137,17 @@ export async function POST(request) {
       return 1;
     });
 
-    // Resize viewport to exactly fit all pages
+    // Resize viewport to fit page dimensions exactly with 1:1 deviceScaleFactor
     await page.setViewport({
       width: pageWidth,
       height: Math.max(pageHeight, pageCount * pageHeight),
-      deviceScaleFactor: 2,
+      deviceScaleFactor: 1,
     });
 
     // Small wait for any reflow after resize
     await new Promise((r) => setTimeout(r, 300));
 
-    const baseName = (fileName || `${payload.quotationNo || "document"}`).replace(/\.(pdf|html|webp)$/i, "");
+    const baseName = (fileName || `${payload.quotationNo || "document"}`).replace(/\.(pdf|html|webp|png)$/i, "");
 
     // 🌐 FORMAT 1: HTML Document (Standalone Offline HTML)
     if (format === "html") {
@@ -222,18 +273,45 @@ ${allCss}
       });
     }
 
-    // 🔴 FORMAT 3: PDF Document (Default - Unchanged)
-    // 🛡️ CRITICAL RULE: Pure isolation between format: "A4" and custom width/height
+    // 🖼️ FORMAT 2b: PNG Image (Exact 1:1 Pixel Snapshot matching template paper dimensions)
+    if (format === "png") {
+      const pageEl = (await page.$(".fabric-vector-page")) ||
+                     (await page.$("#fabric-print-container")) ||
+                     (await page.$("#print-root"));
+      const targetElement = pageEl || page;
+      const pngBuffer = await targetElement.screenshot({
+        type: "png",
+      });
+
+      await browser.close();
+
+      const downloadFileName = `${baseName}.png`;
+      return new Response(pngBuffer, {
+        status: 200,
+        headers: {
+          "Content-Type": "image/png",
+          "Content-Disposition": `attachment; filename="${encodeURIComponent(downloadFileName)}"`,
+        },
+      });
+    }
+
+    // 🔴 FORMAT 3: PDF Document (Supports A4, Slide 16:9, and Custom Dimensions)
     let pdfBuffer;
-    if (isSlide) {
-      pdfBuffer = await page.pdf({
-        width: `${pageWidth}px`,
-        height: `${pageHeight}px`,
+    if (isCustomSize || isSlide) {
+      const pdfOptions = {
         printBackground: true,
         preferCSSPageSize: true,
         margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" },
         displayHeaderFooter: false,
-      });
+      };
+      if (mmWidth && mmHeight) {
+        pdfOptions.width = `${mmWidth}mm`;
+        pdfOptions.height = `${mmHeight}mm`;
+      } else {
+        pdfOptions.width = `${pageWidth}px`;
+        pdfOptions.height = `${pageHeight}px`;
+      }
+      pdfBuffer = await page.pdf(pdfOptions);
     } else {
       pdfBuffer = await page.pdf({
         format: "A4",
@@ -258,6 +336,6 @@ ${allCss}
   } catch (error) {
     if (browser) await browser.close();
     console.error("export-pdf error:", error);
-    return Response.json({ error: "ส่งออกไฟล์ไม่สำเร็จ" }, { status: 500 });
+    return Response.json({ error: error.message || "ส่งออกไฟล์ไม่สำเร็จ" }, { status: 500 });
   }
 }

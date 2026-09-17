@@ -217,6 +217,29 @@ export default function ReviewScreen({
                     <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">รูปภาพความละเอียดสูง คมชัดระดับ Retina ขนาดไฟล์เล็ก</p>
                   </div>
                 </button>
+
+                {/* 4. PNG */}
+                <button
+                  onClick={() => {
+                    setSelectedFormat("png");
+                    setExportMenuOpen(false);
+                    handleExportAction("png");
+                  }}
+                  className={`w-full text-left px-3.5 py-2.5 hover:bg-gray-50 flex items-start gap-3 transition-colors cursor-pointer group border-t border-gray-100 ${
+                    selectedFormat === "png" ? "bg-emerald-50/50" : ""
+                  }`}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                    <ImageIcon size={16} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-gray-900">PNG Image (.png)</span>
+                      <span className="text-[10px] font-medium bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">รูปภาพ HD</span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">รูปภาพความละเอียดสูง คมชัดระดับต้นฉบับ ไม่บีบอัด</p>
+                  </div>
+                </button>
               </div>
             )}
           </div>

@@ -23,6 +23,8 @@ import {
   Maximize2,
   Focus,
   Hash,
+  Copy,
+  ClipboardPaste,
 } from "lucide-react";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 
@@ -54,6 +56,9 @@ export default function TopToolbar({
   canRedo,
   onUndo,
   onRedo,
+  canCopy = false,
+  onCopy,
+  onPaste,
   onSave,
   saving,
   showPageNumber = true,
@@ -236,6 +241,27 @@ export default function TopToolbar({
             title="ทำซ้ำ (Redo - Ctrl+Y)"
           >
             <Redo2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* 📋 Copy / Paste (Cross-Template) */}
+        <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-0.5">
+          <button
+            type="button"
+            onClick={onCopy}
+            disabled={!canCopy}
+            className="p-1.5 rounded-md text-gray-700 hover:bg-white disabled:opacity-35 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors cursor-pointer"
+            title="คัดลอกวัตถุข้ามโปรเจกต์ (Copy - Ctrl+C)"
+          >
+            <Copy className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={onPaste}
+            className="p-1.5 rounded-md text-gray-700 hover:bg-white transition-colors cursor-pointer"
+            title="วางวัตถุข้ามโปรเจกต์ (Paste - Ctrl+V)"
+          >
+            <ClipboardPaste className="w-4 h-4" />
           </button>
         </div>
 
@@ -555,9 +581,14 @@ export default function TopToolbar({
         <button
           onClick={onSave}
           disabled={saving}
+          title="บันทึกเทมเพลต (Ctrl+S)"
           className="primary-button flex items-center gap-2 h-9 px-4 rounded-[8px] text-white text-xs font-medium shadow-xs hover:opacity-95 transition-all disabled:opacity-50 cursor-pointer"
         >
-          <Save className="w-4 h-4" />
+          {saving ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
           <span>{saving ? "กำลังบันทึก..." : "บันทึกเทมเพลต"}</span>
         </button>
       </div>

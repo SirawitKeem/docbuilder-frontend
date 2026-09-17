@@ -168,6 +168,10 @@ function QuotationEditorContent({ docId }) {
         description: "WebP Image (.webp)",
         accept: { "image/webp": [".webp"] },
       },
+      png: {
+        description: "PNG Image (.png)",
+        accept: { "image/png": [".png"] },
+      },
     };
 
     if ("showSaveFilePicker" in window) {

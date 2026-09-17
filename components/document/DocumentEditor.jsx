@@ -140,6 +140,10 @@ function EditorContent({ templateId, initialDocId, initialDocName, profileId }) 
         description: "WebP Image (.webp)",
         accept: { "image/webp": [".webp"] },
       },
+      png: {
+        description: "PNG Image (.png)",
+        accept: { "image/png": [".png"] },
+      },
     };
 
     // 1. ลองใช้ File System Access API (เปิดหน้าต่าง "Save As...")

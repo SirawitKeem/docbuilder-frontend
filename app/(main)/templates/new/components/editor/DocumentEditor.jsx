@@ -10,7 +10,7 @@ import PagePaginationBar from "./PagePaginationBar";
 import { useHistory } from "./hooks/useHistory";
 import { A4_WIDTH, MARGIN_PX } from "./CanvasStage";
 import { createDocTable, CUSTOM_CANVAS_PROPS } from "./elements/DocTable";
-import { cloneFabricObject } from "./utils/clipboard";
+import { cloneFabricObject, saveToCrossTemplateStorage, loadFromCrossTemplateStorage } from "./utils/clipboard";
 import { createSignatureBlock } from "./elements/SignatureBlock";
 import { createCompanyHeaderBlock, createPartyInfoGrid, createTermsBox } from "./elements/HeaderBlock";
 import { applyTokensToCanvas, revertTokensInPageJson } from "@/lib/tokens/tokenEngine";
@@ -213,10 +213,79 @@ export default function DocumentEditor({
   const [canvasInstance, setCanvasInstance] = useState(null);
   const [isPreviewTokens, setIsPreviewTokens] = useState(false);
   const [isExportingPptx, setIsExportingPptx] = useState(false);
+  const [isExportingPng, setIsExportingPng] = useState(false);
   const fabricCanvasRef = useRef(null);
   const hasUnsavedChangesRef = useRef(false);
   const clipboardRef = useRef(null);
   const nudgeTimerRef = useRef(null);
+  const [toastMessage, setToastMessage] = useState(null);
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = useCallback((msg) => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToastMessage(msg);
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastMessage(null);
+    }, 2800);
+  }, []);
+
+  const {
+    initHistory,
+    pushState,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+  } = useHistory();
+
+  const handleHistoryPush = useCallback((canvas) => {
+    pushState(canvas);
+    hasUnsavedChangesRef.current = true;
+  }, [pushState]);
+
+  const handleCopy = useCallback(async () => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+    const activeObj = canvas.getActiveObject();
+    if (!activeObj) {
+      showToast("⚠️ กรุณาคลิกเลือกวัตถุที่ต้องการคัดลอกก่อน");
+      return;
+    }
+
+    const res = await saveToCrossTemplateStorage(activeObj);
+    if (res?.success) {
+      clipboardRef.current = {
+        pasteCount: 0,
+        timestamp: Date.now(),
+        sourceObj: activeObj,
+      };
+      showToast(`📋 คัดลอก ${res.count} ชิ้นส่วนแล้ว (นำไปวางในเทมเพลตอื่นได้ทันที)`);
+    } else {
+      showToast("⚠️ ไม่สามารถคัดลอกวัตถุได้");
+    }
+  }, [showToast]);
+
+  const handlePaste = useCallback(async () => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+
+    if (clipboardRef.current) {
+      clipboardRef.current.pasteCount += 1;
+    } else {
+      clipboardRef.current = { pasteCount: 1, sourceObj: null, timestamp: Date.now() };
+    }
+
+    const offset = 20 * clipboardRef.current.pasteCount;
+    const pasted = await loadFromCrossTemplateStorage(canvas, offset, offset);
+    if (pasted) {
+      setActiveObject(pasted);
+      handleHistoryPush(canvas);
+      hasUnsavedChangesRef.current = true;
+      showToast("✨ วางชิ้นส่วนจากคลิปบอร์ดเรียบร้อยแล้ว");
+    } else {
+      showToast("⚠️ ไม่มีข้อมูลในคลิปบอร์ด กรุณากดคัดลอกวัตถุก่อน");
+    }
+  }, [handleHistoryPush, showToast]);
 
   // Sync title when loaded from async fetch (e.g. edit mode)
   useEffect(() => {
@@ -304,15 +373,6 @@ export default function DocumentEditor({
     });
   }, [activePageIndex, pages.length, editorType, preset]);
 
-  const {
-    initHistory,
-    pushState,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-  } = useHistory();
-
   // 🛡️ Unsaved-Changes Warning on Tab/Window Close (Phase 7)
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -343,11 +403,6 @@ export default function DocumentEditor({
       }
     }
   }, [initialPages, initHistory, editorType, preset.id]);
-
-  const handleHistoryPush = useCallback((canvas) => {
-    pushState(canvas);
-    hasUnsavedChangesRef.current = true;
-  }, [pushState]);
 
   // Canvas Ready Callback
   const handleCanvasReady = useCallback((canvas) => {
@@ -1331,7 +1386,72 @@ export default function DocumentEditor({
     }
   }, [handleHistoryPush]);
 
-  // Keyboard Shortcuts: Copy, Paste, Duplicate, Select All, Nudge, Escape, Undo, Redo, Delete
+  // 🛡️ Full Multi-Page Save Payload with 100% Guaranteed Raw Token Preservation Across ALL Pages
+  const handleSaveAll = useCallback(async () => {
+    if (!onSave) return;
+    const canvas = fabricCanvasRef.current;
+
+    // 1. Always force-restore raw tokens on active canvas before capturing final JSON
+    if (canvas) {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj && activeObj.isEditing && typeof activeObj.exitEditing === "function") {
+        activeObj.exitEditing();
+        if (activeObj._previewGeneratedText !== undefined && activeObj.text !== activeObj._previewGeneratedText) {
+          activeObj.rawTemplateText = activeObj.text;
+        } else if (!activeObj._previewGeneratedText) {
+          activeObj.rawTemplateText = activeObj.text;
+        }
+      }
+      applyTokensToCanvas(canvas, false);
+      setIsPreviewTokens(false);
+    }
+
+    const currentJson = canvas ? canvas.toJSON(CUSTOM_CANVAS_PROPS) : null;
+
+    // 2. 🛡️ CRITICAL MULTI-PAGE GUARD:
+    // Strip mock preview values and force raw tokens across EVERY SINGLE PAGE in the document tree
+    const allPages = pages.map((p, idx) => {
+      const pageJson = idx === activePageIndex ? currentJson : p.json;
+      return {
+        ...p,
+        json: revertTokensInPageJson(pageJson),
+      };
+    });
+
+    try {
+      await onSave({
+        name: currentTitle,
+        categoryName,
+        editorType: editorType || "document",
+        canvasPreset: canvasPreset || (editorType === "slide" ? "slide-16-9" : "a4-portrait"),
+        pageCount: allPages.length,
+        pages: allPages,
+        marginMm,
+        marginPx,
+        showPageNumbers: showPageNumber,
+      });
+
+      hasUnsavedChangesRef.current = false;
+      showToast("✨ บันทึกเทมเพลตเรียบร้อยแล้ว (ทำงานต่อได้ทันที)");
+    } catch (err) {
+      console.error("Save error:", err);
+      showToast(`❌ ${err.message || "เกิดข้อผิดพลาดในการบันทึกเทมเพลต"}`);
+    }
+  }, [
+    onSave,
+    currentTitle,
+    categoryName,
+    editorType,
+    canvasPreset,
+    pages,
+    activePageIndex,
+    marginMm,
+    marginPx,
+    showPageNumber,
+    showToast,
+  ]);
+
+  // Keyboard Shortcuts: Save, Copy, Paste, Duplicate, Select All, Nudge, Escape, Undo, Redo, Delete
   useEffect(() => {
     const handleKeyDown = async (e) => {
       const canvas = fabricCanvasRef.current;
@@ -1350,60 +1470,33 @@ export default function DocumentEditor({
       const isModifier = e.ctrlKey || e.metaKey;
       const code = e.code;
 
-      // ── 1. Copy (Ctrl+C / Cmd+C) ──
-      if (isModifier && code === "KeyC" && !e.shiftKey) {
-        if (isInputActive || isTextEditing) {
-          return; // Allow standard browser text copying
-        }
-        if (!activeObj) return;
-
-        // Clone active object and reset cascading paste counter
-        const copiedClone = await activeObj.clone(CUSTOM_CANVAS_PROPS);
-        clipboardRef.current = {
-          sourceObj: copiedClone,
-          pasteCount: 0,
-        };
+      // ── 0. Save (Ctrl+S / Cmd+S / Thai ห) ──
+      const isSaveKey = code === "KeyS" || e.key === "s" || e.key === "S" || e.key === "ห";
+      if (isModifier && isSaveKey && !e.shiftKey) {
+        e.preventDefault();
+        handleSaveAll();
         return;
       }
 
-      // ── 2. Paste (Ctrl+V / Cmd+V) ──
-      if (isModifier && code === "KeyV" && !e.shiftKey) {
+      // ── 1. Copy (Ctrl+C / Cmd+C / Thai แ) ──
+      const isCopyKey = code === "KeyC" || e.key === "c" || e.key === "C" || e.key === "แ";
+      if (isModifier && isCopyKey && !e.shiftKey) {
+        if (isInputActive || isTextEditing) {
+          return; // Allow standard browser text copying
+        }
+        e.preventDefault();
+        handleCopy();
+        return;
+      }
+
+      // ── 2. Paste (Ctrl+V / Cmd+V / Thai อ) ──
+      const isPasteKey = code === "KeyV" || e.key === "v" || e.key === "V" || e.key === "อ";
+      if (isModifier && isPasteKey && !e.shiftKey) {
         if (isInputActive || isTextEditing) {
           return; // Allow standard browser text pasting into input
         }
-        if (!clipboardRef.current || !clipboardRef.current.sourceObj) return;
-
         e.preventDefault();
-        clipboardRef.current.pasteCount += 1;
-        const offset = 20 * clipboardRef.current.pasteCount;
-
-        const pastedObj = await cloneFabricObject(
-          clipboardRef.current.sourceObj,
-          offset,
-          offset
-        );
-
-        if (!pastedObj) return;
-
-        canvas.discardActiveObject();
-
-        if (pastedObj.type?.toLowerCase() === "activeselection") {
-          pastedObj.canvas = canvas;
-          pastedObj.forEachObject((obj) => {
-            canvas.add(obj);
-          });
-          pastedObj.setCoords();
-          canvas.setActiveObject(pastedObj);
-          setActiveObject(pastedObj);
-        } else {
-          canvas.add(pastedObj);
-          canvas.setActiveObject(pastedObj);
-          setActiveObject(pastedObj);
-        }
-
-        canvas.requestRenderAll();
-        handleHistoryPush(canvas);
-        hasUnsavedChangesRef.current = true;
+        handlePaste();
         return;
       }
 
@@ -1756,54 +1849,7 @@ export default function DocumentEditor({
         nudgeTimerRef.current = null;
       }
     };
-  }, [undo, redo, handleHistoryPush, handleFitToScreen, handleZoomToSelection, handleZoomTo100, handleZoomIn, handleZoomOut]);
-
-  // 🛡️ Full Multi-Page Save Payload with 100% Guaranteed Raw Token Preservation Across ALL Pages
-  const handleSaveAll = () => {
-    if (!onSave) return;
-    const canvas = fabricCanvasRef.current;
-
-    // 1. Always force-restore raw tokens on active canvas before capturing final JSON
-    if (canvas) {
-      const activeObj = canvas.getActiveObject();
-      if (activeObj && activeObj.isEditing && typeof activeObj.exitEditing === "function") {
-        activeObj.exitEditing();
-        if (activeObj._previewGeneratedText !== undefined && activeObj.text !== activeObj._previewGeneratedText) {
-          activeObj.rawTemplateText = activeObj.text;
-        } else if (!activeObj._previewGeneratedText) {
-          activeObj.rawTemplateText = activeObj.text;
-        }
-      }
-      applyTokensToCanvas(canvas, false);
-      setIsPreviewTokens(false);
-    }
-
-    const currentJson = canvas ? canvas.toJSON(CUSTOM_CANVAS_PROPS) : null;
-
-    // 2. 🛡️ CRITICAL MULTI-PAGE GUARD:
-    // Strip mock preview values and force raw tokens across EVERY SINGLE PAGE in the document tree
-    const allPages = pages.map((p, idx) => {
-      const pageJson = idx === activePageIndex ? currentJson : p.json;
-      return {
-        ...p,
-        json: revertTokensInPageJson(pageJson),
-      };
-    });
-
-    hasUnsavedChangesRef.current = false;
-
-    onSave({
-      name: currentTitle,
-      categoryName,
-      editorType: editorType || "document",
-      canvasPreset: canvasPreset || (editorType === "slide" ? "slide-16-9" : "a4-portrait"),
-      pageCount: allPages.length,
-      pages: allPages,
-      marginMm,
-      marginPx,
-      showPageNumbers: showPageNumber,
-    });
-  };
+  }, [undo, redo, handleHistoryPush, handleFitToScreen, handleZoomToSelection, handleZoomTo100, handleZoomIn, handleZoomOut, handleCopy, handlePaste, handleSaveAll]);
 
   // 🚀 Export Native Microsoft PowerPoint (.pptx) Handler
   const handleExportPptx = async () => {
@@ -1855,6 +1901,89 @@ export default function DocumentEditor({
     }
   };
 
+  // 🖼️ Export PNG Handler — exports each page as a high-res PNG file
+  const handleExportPng = async () => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+    try {
+      setIsExportingPng(true);
+
+      // Save current active page JSON
+      const currentPageJson = canvas.toJSON(CUSTOM_CANVAS_PROPS);
+      const allPages = pages.map((p, idx) =>
+        idx === activePageIndex ? { ...p, json: currentPageJson } : p
+      );
+
+      const safeName = (currentTitle || "template").replace(/[/\\?%*:|"<>]/g, "_");
+
+      // Helper: hide snap guides / page number decorators, export, then restore
+      const captureCanvasPng = () => {
+        const objects = canvas.getObjects();
+        const hidden = [];
+        objects.forEach((obj) => {
+          if (obj.isSnapGuide || obj.isPageFooterNumber || obj.excludeFromExport) {
+            obj.set("visible", false);
+            hidden.push(obj);
+          }
+        });
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        // Dynamically compute multiplier based on current zoom so the exported PNG matches exact template preset dimensions
+        const exportMultiplier = zoom > 0 ? 1 / zoom : 1;
+        const dataUrl = canvas.toDataURL({ format: "png", quality: 1, multiplier: exportMultiplier });
+        hidden.forEach((obj) => obj.set("visible", true));
+        canvas.renderAll();
+        return dataUrl;
+      };
+
+      // Helper: trigger browser download
+      const downloadPng = (dataUrl, fileName) => {
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      };
+
+      if (allPages.length === 1) {
+        // Single page — export directly from the live canvas
+        const dataUrl = captureCanvasPng();
+        downloadPng(dataUrl, `${safeName}.png`);
+      } else {
+        // Multi-page — load each page into the live canvas, capture, then restore
+        for (let i = 0; i < allPages.length; i++) {
+          const page = allPages[i];
+          if (!page.json) continue;
+
+          if (i !== activePageIndex) {
+            // Temporarily load the target page onto the canvas
+            await canvas.loadFromJSON(page.json);
+          }
+
+          const dataUrl = captureCanvasPng();
+          downloadPng(dataUrl, `${safeName}_หน้า${i + 1}.png`);
+
+          if (i !== activePageIndex) {
+            // Restore the original active page
+            await canvas.loadFromJSON(currentPageJson);
+            canvas.renderAll();
+          }
+
+          // Small delay between downloads to avoid browser blocking
+          if (i < allPages.length - 1) {
+            await new Promise((r) => setTimeout(r, 350));
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Export PNG error:", err);
+      alert(err.message || "เกิดข้อผิดพลาดในการ Export PNG");
+    } finally {
+      setIsExportingPng(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F1F3F6] flex flex-col overflow-hidden">
       {/* ── TOP TOOLBAR ── */}
@@ -1903,6 +2032,9 @@ export default function DocumentEditor({
         onTogglePreviewTokens={handleTogglePreviewTokens}
         onExportPptx={handleExportPptx}
         isExportingPptx={isExportingPptx}
+        canCopy={Boolean(activeObject)}
+        onCopy={handleCopy}
+        onPaste={handlePaste}
       />
 
       {/* ── MAIN STUDIO BODY: LEFT SIDEBAR + CANVAS + RIGHT SIDEBAR ── */}
@@ -1985,8 +2117,17 @@ export default function DocumentEditor({
           marginPx={marginPx}
           onUpdateMargin={handleUpdateMargin}
           onPushHistory={handleHistoryPush}
+          onCopy={handleCopy}
+          onPaste={handlePaste}
         />
       </div>
+
+      {/* 🍞 Interactive Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-slate-900/95 backdrop-blur-md text-white px-4 py-2 rounded-full shadow-2xl text-xs font-semibold animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-none border border-white/10">
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }

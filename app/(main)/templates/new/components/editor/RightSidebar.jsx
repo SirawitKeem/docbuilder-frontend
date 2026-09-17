@@ -29,6 +29,7 @@ import {
   X as XIcon,
   PenTool,
   Copy,
+  ClipboardPaste,
   FlipHorizontal,
   FlipVertical,
   Group,
@@ -47,6 +48,68 @@ import {
 } from "@/lib/fonts/fontRegistry";
 import GoogleFontPickerModal from "./GoogleFontPickerModal";
 
+// 🎨 Helper to dynamically extract unique hex colors currently used on canvas objects
+function extractDocumentColors(canvas) {
+  if (!canvas) return [];
+  const colorSet = new Set();
+
+  const normalizeColor = (val) => {
+    if (!val || typeof val !== "string") return null;
+    const clean = val.trim();
+    if (clean === "transparent" || clean === "none" || clean === "rgba(0,0,0,0)") return null;
+    if (clean.startsWith("#")) {
+      if (clean.length === 4) {
+        return `#${clean[1]}${clean[1]}${clean[2]}${clean[2]}${clean[3]}${clean[3]}`.toUpperCase();
+      }
+      return clean.substring(0, 7).toUpperCase();
+    }
+    const rgbMatch = clean.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    if (rgbMatch) {
+      const r = parseInt(rgbMatch[1], 10).toString(16).padStart(2, "0");
+      const g = parseInt(rgbMatch[2], 10).toString(16).padStart(2, "0");
+      const b = parseInt(rgbMatch[3], 10).toString(16).padStart(2, "0");
+      return `#${r}${g}${b}`.toUpperCase();
+    }
+    return null;
+  };
+
+  const processObject = (obj) => {
+    if (!obj || obj.isSnapGuide) return;
+    if (typeof obj.fill === "string") {
+      const c = normalizeColor(obj.fill);
+      if (c) colorSet.add(c);
+    } else if (obj.fill && Array.isArray(obj.fill.colorStops)) {
+      obj.fill.colorStops.forEach((stop) => {
+        const c = normalizeColor(stop.color);
+        if (c) colorSet.add(c);
+      });
+    }
+    if (typeof obj.stroke === "string") {
+      const c = normalizeColor(obj.stroke);
+      if (c) colorSet.add(c);
+    }
+    if (typeof obj.textStroke === "string") {
+      const c = normalizeColor(obj.textStroke);
+      if (c) colorSet.add(c);
+    }
+    if (obj.getObjects && typeof obj.getObjects === "function") {
+      obj.getObjects().forEach(processObject);
+    }
+  };
+
+  try {
+    canvas.getObjects().forEach(processObject);
+  } catch (e) {
+    console.warn("Color extraction error:", e);
+  }
+
+  // Base fallback colors if canvas is mostly empty
+  const fallbackBrandColors = ["#DC2626", "#991B1B", "#0F172A", "#111827", "#4F46E5", "#059669", "#F59E0B", "#FFFFFF"];
+  fallbackBrandColors.forEach((c) => colorSet.add(c));
+
+  return Array.from(colorSet).slice(0, 16);
+}
+
 export default function RightSidebar({
   canvas,
   activeObject,
@@ -55,12 +118,32 @@ export default function RightSidebar({
   marginMm = 15,
   marginPx = 56,
   onUpdateMargin,
+  onCopy,
+  onPaste,
 }) {
   const preset = getCanvasPreset(canvasPreset);
   const [activeTab, setActiveTab] = useState("properties");
   const [layersList, setLayersList] = useState([]);
   const [allFonts, setAllFonts] = useState(DEFAULT_FONTS);
   const [isFontPickerOpen, setIsFontPickerOpen] = useState(false);
+  const [documentColors, setDocumentColors] = useState([]);
+
+  // 🎨 Listen to canvas mutations to keep document colors dynamically updated
+  useEffect(() => {
+    if (!canvas) return;
+    const updateColors = () => {
+      setDocumentColors(extractDocumentColors(canvas));
+    };
+    updateColors();
+    canvas.on("object:added", updateColors);
+    canvas.on("object:modified", updateColors);
+    canvas.on("object:removed", updateColors);
+    return () => {
+      canvas.off("object:added", updateColors);
+      canvas.off("object:modified", updateColors);
+      canvas.off("object:removed", updateColors);
+    };
+  }, [canvas]);
 
   // 🔤 Load Registered Fonts from API and Preload Google Fonts Stylesheet
   const loadFonts = async () => {
@@ -245,7 +328,7 @@ export default function RightSidebar({
     }
 
     // 5. Text Stroke extraction
-    const textStroke = isText && activeObject.stroke ? activeObject.stroke : "#FFFFFF";
+    const textStroke = isText && typeof activeObject.stroke === "string" ? activeObject.stroke : "#FFFFFF";
     const textStrokeWidth = isText && activeObject.strokeWidth ? activeObject.strokeWidth : 0;
     const textStrokeEnabled = Boolean(isText && activeObject.strokeWidth && activeObject.strokeWidth > 0);
     const charSpacing = isText ? (activeObject.charSpacing || 0) : 0;
@@ -259,7 +342,7 @@ export default function RightSidebar({
       angle: Math.round(activeObject.angle || 0),
       opacity: activeObject.opacity !== undefined ? activeObject.opacity : 1,
       fill: currentFillHex,
-      stroke: activeObject.stroke || "#000000",
+      stroke: typeof activeObject.stroke === "string" ? activeObject.stroke : "#000000",
       strokeWidth: activeObject.strokeWidth || 0,
       rx: activeObject.rx || 0,
       text: isText ? activeObject.text : "",
@@ -360,6 +443,9 @@ export default function RightSidebar({
       activeObject.dirty = true;
     } else {
       activeObject.set(key, value);
+      if (key === "angle") {
+        activeObject.setCoords();
+      }
       activeObject.dirty = true;
     }
 
@@ -922,13 +1008,33 @@ export default function RightSidebar({
                     </div>
                   )}
                 </div>
+
+                {/* 📋 Cross-Template Clipboard Paste */}
+                {onPaste && (
+                  <div className="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-indigo-950 flex items-center gap-1.5">
+                        <ClipboardPaste className="w-4 h-4 text-indigo-600" />
+                        <span>คลิปบอร์ดข้ามโปรเจกต์</span>
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={onPaste}
+                      className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                    >
+                      <ClipboardPaste className="w-3.5 h-3.5" />
+                      <span>วางวัตถุที่คัดลอกไว้ (Ctrl+V)</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                 <span
-                  className="font-bold text-gray-900 text-sm truncate max-w-[170px]"
+                  className="font-bold text-gray-900 text-sm truncate max-w-[150px]"
                   title={
                     isMultiple
                       ? `เลือก ${activeObject.getObjects?.()?.length || 0} ชิ้น`
@@ -960,14 +1066,25 @@ export default function RightSidebar({
                     : "🖼️ รูปภาพ (Image)"}
                 </span>
                 <div className="flex items-center gap-1">
+                  {/* 📋 Copy Button (Cross-Template) */}
+                  {onCopy && (
+                    <button
+                      type="button"
+                      onClick={onCopy}
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors cursor-pointer"
+                      title="คัดลอกวัตถุข้ามโปรเจกต์ (Copy - Ctrl+C)"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   {/* 📋 Duplicate Button */}
                   <button
                     type="button"
                     onClick={() => handleDuplicate()}
                     className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors cursor-pointer"
-                    title="ทำซ้ำวัตถุ (Duplicate - Ctrl+D)"
+                    title="ทำซ้ำวัตถุในหน้านี้ (Duplicate - Ctrl+D)"
                   >
-                    <Copy className="w-3.5 h-3.5" />
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
@@ -1152,7 +1269,7 @@ export default function RightSidebar({
                       <div className="flex items-center gap-1.5 bg-white border border-blue-200 rounded-lg p-1">
                         <input
                           type="color"
-                          value={activeObject.docTableData?.themeColor || "#2563EB"}
+                          value={typeof activeObject.docTableData?.themeColor === "string" && /^#[0-9A-Fa-f]{6}$/.test(activeObject.docTableData.themeColor) ? activeObject.docTableData.themeColor : "#2563EB"}
                           onChange={(e) => {
                             activeObject.setThemeColor(e.target.value);
                             if (onPushHistory) onPushHistory(canvas);
@@ -1160,7 +1277,7 @@ export default function RightSidebar({
                           className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent"
                         />
                         <span className="font-mono text-[10px] text-blue-900 uppercase truncate">
-                          {activeObject.docTableData?.themeColor || "#2563EB"}
+                          {typeof activeObject.docTableData?.themeColor === "string" ? activeObject.docTableData.themeColor : "#2563EB"}
                         </span>
                       </div>
                     </div>
@@ -1322,40 +1439,37 @@ export default function RightSidebar({
                       <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg p-1">
                         <input
                           type="color"
-                          value={propsState.fill}
+                          value={typeof propsState.fill === "string" && /^#[0-9A-Fa-f]{6}$/.test(propsState.fill) ? propsState.fill : "#111827"}
                           onChange={(e) => applyProperty("fill", e.target.value)}
                           className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
                         />
-                        <span className="font-mono text-[11px] text-gray-600 uppercase truncate">{propsState.fill}</span>
+                        <span className="font-mono text-[11px] text-gray-600 uppercase truncate">
+                          {typeof propsState.fill === "string" ? propsState.fill : "สีพิเศษ"}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* 🎨 Quick Color Palette for Text */}
+                  {/* 🎨 Dynamic Document Colors Palette for Text */}
                   <div>
-                    <span className="text-[10px] text-gray-500 font-semibold mb-1 block">สียอดนิยม</span>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-gray-700 font-bold flex items-center gap-1">
+                        <Palette className="w-3 h-3 text-indigo-600" />
+                        <span>สีในเอกสารนี้ (Document Colors)</span>
+                      </span>
+                      <span className="text-[9px] text-gray-400 font-medium">สีที่ใช้จริงบนหน้า</span>
+                    </div>
                     <div className="flex items-center gap-1.5 flex-wrap bg-gray-50/70 p-1.5 rounded-lg border border-gray-200/60">
-                      {[
-                        { color: "#111827", label: "ดำเข้ม" },
-                        { color: "#4F46E5", label: "คราม Indigo" },
-                        { color: "#2563EB", label: "น้ำเงิน Blue" },
-                        { color: "#0F766E", label: "เขียวหัวเป็ด Teal" },
-                        { color: "#16A34A", label: "เขียวสด Green" },
-                        { color: "#D97706", label: "ทอง Amber" },
-                        { color: "#DC2626", label: "แดง Red" },
-                        { color: "#9333EA", label: "ม่วง Purple" },
-                        { color: "#64748B", label: "เทา Slate" },
-                        { color: "#FFFFFF", label: "ขาว White" },
-                      ].map((swatch) => (
+                      {documentColors.map((col) => (
                         <button
-                          key={swatch.color}
+                          key={col}
                           type="button"
-                          onClick={() => applyProperty("fill", swatch.color)}
-                          className={`w-5 h-5 rounded-full border border-gray-300 shadow-2xs hover:scale-110 transition-transform cursor-pointer ${
-                            propsState.fill?.toLowerCase() === swatch.color.toLowerCase() ? "ring-2 ring-indigo-600 ring-offset-1" : ""
+                          onClick={() => applyProperty("fill", col)}
+                          className={`w-5 h-5 rounded-full border border-gray-300 shadow-2xs hover:scale-115 transition-transform cursor-pointer ${
+                            typeof propsState.fill === "string" && propsState.fill.toLowerCase() === col.toLowerCase() ? "ring-2 ring-indigo-600 ring-offset-1 scale-110" : ""
                           }`}
-                          style={{ backgroundColor: swatch.color }}
-                          title={swatch.label}
+                          style={{ backgroundColor: col }}
+                          title={`ใช้สี ${col}`}
                         />
                       ))}
                     </div>
@@ -1510,9 +1624,17 @@ export default function RightSidebar({
                   {/* 📏 Line Height & Letter Spacing */}
                   <div className="grid grid-cols-2 gap-2 p-2.5 bg-gray-50/80 rounded-xl border border-gray-200/70">
                     <div>
-                      <div className="flex justify-between text-[11px] text-gray-600 mb-1">
+                      <div className="flex justify-between items-center text-[11px] text-gray-600 mb-1">
                         <span>ระยะบรรทัด</span>
-                        <span className="font-mono font-bold text-indigo-600">{propsState.lineHeight || 1.2}</span>
+                        <input
+                          type="number"
+                          min="0.5"
+                          max="3"
+                          step="0.05"
+                          value={propsState.lineHeight || 1.2}
+                          onChange={(e) => applyProperty("lineHeight", Number(e.target.value))}
+                          className="w-12 text-right font-mono font-bold text-indigo-600 bg-white border border-gray-200 rounded px-1 py-0.5 text-[10px] outline-none focus:border-indigo-500"
+                        />
                       </div>
                       <input
                         type="range"
@@ -1525,9 +1647,17 @@ export default function RightSidebar({
                       />
                     </div>
                     <div>
-                      <div className="flex justify-between text-[11px] text-gray-600 mb-1">
+                      <div className="flex justify-between items-center text-[11px] text-gray-600 mb-1">
                         <span>ระยะตัวอักษร</span>
-                        <span className="font-mono font-bold text-indigo-600">{propsState.charSpacing || 0}</span>
+                        <input
+                          type="number"
+                          min="-50"
+                          max="200"
+                          step="5"
+                          value={propsState.charSpacing || 0}
+                          onChange={(e) => applyProperty("charSpacing", Number(e.target.value))}
+                          className="w-12 text-right font-mono font-bold text-indigo-600 bg-white border border-gray-200 rounded px-1 py-0.5 text-[10px] outline-none focus:border-indigo-500"
+                        />
                       </div>
                       <input
                         type="range"
@@ -1569,20 +1699,31 @@ export default function RightSidebar({
                             <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1 shadow-2xs">
                               <input
                                 type="color"
-                                value={propsState.textStroke}
+                                value={typeof propsState.textStroke === "string" && /^#[0-9A-Fa-f]{6}$/.test(propsState.textStroke) ? propsState.textStroke : "#000000"}
                                 onChange={(e) => applyTextStroke(true, e.target.value, propsState.textStrokeWidth)}
                                 className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
                               />
                               <span className="font-mono text-[10px] text-gray-600 uppercase truncate">
-                                {propsState.textStroke}
+                                {typeof propsState.textStroke === "string" ? propsState.textStroke : ""}
                               </span>
                             </div>
                           </div>
 
                           <div>
-                            <div className="flex justify-between text-[10px] text-gray-500 mb-0.5">
+                            <div className="flex justify-between items-center text-[10px] text-gray-500 mb-0.5">
                               <span>ความหนาขอบ</span>
-                              <span className="font-mono font-bold text-indigo-600">{propsState.textStrokeWidth}px</span>
+                              <div className="flex items-center bg-white border border-gray-200 rounded px-1 py-0.2 focus-within:border-indigo-500">
+                                <input
+                                  type="number"
+                                  min="0.5"
+                                  max="20"
+                                  step="0.5"
+                                  value={propsState.textStrokeWidth}
+                                  onChange={(e) => applyTextStroke(true, propsState.textStroke, Number(e.target.value))}
+                                  className="w-8 text-right font-mono text-[10px] font-bold text-indigo-600 outline-none bg-transparent"
+                                />
+                                <span className="text-[9px] text-gray-400 font-mono ml-0.5 select-none">px</span>
+                              </div>
                             </div>
                             <input
                               type="range"
@@ -1597,18 +1738,19 @@ export default function RightSidebar({
                         </div>
 
                         {/* Quick Stroke Color Presets */}
-                        <div className="flex items-center gap-1 pt-1">
-                          <span className="text-[10px] text-gray-400">สียอดนิยม:</span>
-                          {["#FFFFFF", "#000000", "#DC2626", "#B91C1C", "#2563EB", "#F59E0B"].map((col) => (
+                        {/* Dynamic Document Colors for Stroke */}
+                        <div className="flex items-center gap-1 pt-1 flex-wrap">
+                          <span className="text-[10px] text-gray-500 font-semibold mr-0.5">สีในเอกสาร:</span>
+                          {documentColors.slice(0, 8).map((col) => (
                             <button
                               key={col}
                               type="button"
                               onClick={() => applyTextStroke(true, col, propsState.textStrokeWidth || 1.5)}
                               className={`w-5 h-5 rounded-full border transition-transform hover:scale-110 cursor-pointer ${
-                                propsState.textStroke?.toLowerCase() === col.toLowerCase() ? "ring-2 ring-indigo-500" : "border-gray-300"
+                                typeof propsState.textStroke === "string" && propsState.textStroke.toLowerCase() === col.toLowerCase() ? "ring-2 ring-indigo-500" : "border-gray-300"
                               }`}
                               style={{ backgroundColor: col }}
-                              title={col}
+                              title={`ขอบสี ${col}`}
                             />
                           ))}
                         </div>
@@ -1690,7 +1832,9 @@ export default function RightSidebar({
                                 onChange={(e) => handleShadowChange({ shadowColor: e.target.value })}
                                 className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent"
                               />
-                              <span className="font-mono text-[9.5px] text-gray-600 truncate">{propsState.shadowColor}</span>
+                              <span className="font-mono text-[9.5px] text-gray-600 truncate">
+                                {typeof propsState.shadowColor === "string" ? propsState.shadowColor : ""}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -1731,11 +1875,11 @@ export default function RightSidebar({
                           <span>สีไอคอนเวกเตอร์ (Vector Color)</span>
                         </span>
                         <span className="font-mono text-[10px] font-bold text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-indigo-200 uppercase">
-                          {propsState.fill}
+                          {typeof propsState.fill === "string" ? propsState.fill : "Gradient"}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        {["#DC2626", "#2563EB", "#16A34A", "#F59E0B", "#9333EA", "#0D9488", "#1E293B", "#FFFFFF"].map((c) => (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {documentColors.slice(0, 10).map((c) => (
                           <button
                             key={c}
                             type="button"
@@ -1744,10 +1888,10 @@ export default function RightSidebar({
                               handleUpdateStop(0, "color", c);
                             }}
                             className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 cursor-pointer ${
-                              propsState.fill?.toLowerCase() === c.toLowerCase() ? "border-indigo-600 scale-110 shadow-xs" : "border-gray-200"
+                              typeof propsState.fill === "string" && propsState.fill.toLowerCase() === c.toLowerCase() ? "border-indigo-600 scale-110 shadow-xs" : "border-gray-200"
                             }`}
                             style={{ backgroundColor: c }}
-                            title={c}
+                            title={`ใช้สี ${c}`}
                           />
                         ))}
                       </div>
@@ -1809,11 +1953,11 @@ export default function RightSidebar({
 
                     {/* SOLID FILL */}
                     {fillType === "solid" && (
-                      <div className="pt-0.5">
+                      <div className="pt-0.5 space-y-2">
                         <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-1.5 shadow-2xs">
                           <input
                             type="color"
-                            value={propsState.fill}
+                            value={typeof propsState.fill === "string" && /^#[0-9A-Fa-f]{6}$/.test(propsState.fill) ? propsState.fill : "#4F46E5"}
                             onChange={(e) => {
                               applyProperty("fill", e.target.value);
                               handleUpdateStop(0, "color", e.target.value);
@@ -1822,13 +1966,33 @@ export default function RightSidebar({
                           />
                           <input
                             type="text"
-                            value={propsState.fill}
+                            value={typeof propsState.fill === "string" ? propsState.fill : ""}
                             onChange={(e) => {
                               applyProperty("fill", e.target.value);
                               handleUpdateStop(0, "color", e.target.value);
                             }}
                             className="font-mono text-xs text-gray-800 uppercase font-semibold outline-none flex-1"
                           />
+                        </div>
+
+                        {/* Document Colors for Shape Solid Fill */}
+                        <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                          <span className="text-[10px] text-gray-500 font-semibold mr-0.5">สีในเอกสาร:</span>
+                          {documentColors.map((c) => (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => {
+                                applyProperty("fill", c);
+                                handleUpdateStop(0, "color", c);
+                              }}
+                              className={`w-5 h-5 rounded-full border transition-transform hover:scale-110 cursor-pointer ${
+                                typeof propsState.fill === "string" && propsState.fill.toLowerCase() === c.toLowerCase() ? "ring-2 ring-indigo-600 ring-offset-1 scale-110" : "border-gray-300"
+                              }`}
+                              style={{ backgroundColor: c }}
+                              title={`ใช้สี ${c}`}
+                            />
+                          ))}
                         </div>
                       </div>
                     )}
@@ -1928,12 +2092,12 @@ export default function RightSidebar({
                               >
                                 <input
                                   type="color"
-                                  value={stop.color}
+                                  value={typeof stop.color === "string" && /^#[0-9A-Fa-f]{6}$/.test(stop.color) ? stop.color : "#4F46E5"}
                                   onChange={(e) => handleUpdateStop(idx, "color", e.target.value)}
                                   className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent shrink-0"
                                 />
                                 <span className="font-mono text-[10px] text-gray-600 uppercase w-14 truncate shrink-0">
-                                  {stop.color}
+                                  {typeof stop.color === "string" ? stop.color : ""}
                                 </span>
                                 <input
                                   type="range"
@@ -1967,16 +2131,34 @@ export default function RightSidebar({
 
                   <div className="grid grid-cols-2 gap-2">
 
-                    <div>
+                    <div className="col-span-2">
                       <label className="text-[11px] text-gray-500 mb-1 block">สีเส้นขอบ (Stroke)</label>
                       <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg p-1">
                         <input
                           type="color"
-                          value={propsState.stroke}
+                          value={typeof propsState.stroke === "string" && /^#[0-9A-Fa-f]{6}$/.test(propsState.stroke) ? propsState.stroke : "#000000"}
                           onChange={(e) => applyProperty("stroke", e.target.value)}
                           className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
                         />
-                        <span className="font-mono text-[11px] text-gray-600 uppercase truncate">{propsState.stroke}</span>
+                        <span className="font-mono text-[11px] text-gray-600 uppercase truncate">
+                          {typeof propsState.stroke === "string" ? propsState.stroke : ""}
+                        </span>
+                      </div>
+                      {/* Document Colors for Stroke */}
+                      <div className="flex items-center gap-1.5 flex-wrap pt-1.5">
+                        <span className="text-[10px] text-gray-400 font-medium mr-0.5">สีในเอกสาร:</span>
+                        {documentColors.slice(0, 8).map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => applyProperty("stroke", c)}
+                            className={`w-4.5 h-4.5 rounded-full border transition-transform hover:scale-110 cursor-pointer ${
+                              typeof propsState.stroke === "string" && propsState.stroke.toLowerCase() === c.toLowerCase() ? "ring-2 ring-indigo-600 ring-offset-1 scale-110" : "border-gray-300"
+                            }`}
+                            style={{ backgroundColor: c }}
+                            title={`ขอบสี ${c}`}
+                          />
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -2111,11 +2293,13 @@ export default function RightSidebar({
                             <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1 shadow-2xs">
                               <input
                                 type="color"
-                                value={propsState.shadowColor?.startsWith("#") ? propsState.shadowColor : "#000000"}
+                                value={typeof propsState.shadowColor === "string" && /^#[0-9A-Fa-f]{6}$/.test(propsState.shadowColor) ? propsState.shadowColor : "#000000"}
                                 onChange={(e) => handleShadowChange({ shadowColor: e.target.value })}
                                 className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent"
                               />
-                              <span className="font-mono text-[9.5px] text-gray-600 truncate">{propsState.shadowColor}</span>
+                              <span className="font-mono text-[9.5px] text-gray-600 truncate">
+                                {typeof propsState.shadowColor === "string" ? propsState.shadowColor : ""}
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -2219,9 +2403,30 @@ export default function RightSidebar({
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-[11px] text-gray-500 mb-1">
+                  <div className="flex justify-between items-center text-[11px] text-gray-500 mb-1">
                     <span>ความโปร่งใส (Opacity)</span>
-                    <span className="font-mono font-bold">{Math.round(propsState.opacity * 100)}%</span>
+                    <div className="flex items-center bg-gray-50 hover:bg-white focus-within:bg-white border border-gray-200 focus-within:border-indigo-500 rounded px-1.5 py-0.5 shadow-2xs transition-all">
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={Math.round((propsState.opacity ?? 1) * 100)}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          if (raw === "") {
+                            applyProperty("opacity", 1);
+                            return;
+                          }
+                          const val = Number(raw);
+                          if (!isNaN(val)) {
+                            const clamped = Math.max(0, Math.min(100, Math.round(val)));
+                            applyProperty("opacity", clamped / 100);
+                          }
+                        }}
+                        className="w-8 text-right font-mono text-[11px] font-bold text-gray-800 outline-none bg-transparent"
+                      />
+                      <span className="text-[10px] text-gray-400 font-mono select-none ml-0.5 font-bold">%</span>
+                    </div>
                   </div>
                   <input
                     type="range"
@@ -2264,11 +2469,30 @@ export default function RightSidebar({
                       max="360"
                       value={propsState.angle}
                       onChange={(e) => applyProperty("angle", Number(e.target.value))}
-                      className="w-full accent-indigo-600 cursor-pointer"
+                      className="flex-1 accent-indigo-600 cursor-pointer"
                     />
-                    <span className="font-mono text-xs font-bold text-gray-700 w-10 text-right">
-                      {propsState.angle}°
-                    </span>
+                    <div className="flex items-center bg-gray-50 hover:bg-white focus-within:bg-white border border-gray-200 focus-within:border-indigo-500 rounded-lg px-2 py-1 w-20 shadow-2xs transition-all">
+                      <input
+                        type="number"
+                        min="0"
+                        max="360"
+                        value={propsState.angle ?? 0}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          if (raw === "") {
+                            applyProperty("angle", 0);
+                            return;
+                          }
+                          const val = Number(raw);
+                          if (!isNaN(val)) {
+                            const clamped = Math.max(0, Math.min(360, Math.round(val)));
+                            applyProperty("angle", clamped);
+                          }
+                        }}
+                        className="w-full text-right font-mono text-xs font-bold text-gray-700 outline-none bg-transparent"
+                      />
+                      <span className="text-xs text-gray-400 font-mono ml-0.5 select-none font-bold">°</span>
+                    </div>
                   </div>
 
                   {/* Flip Horizontal / Vertical */}

@@ -8,6 +8,7 @@ import { LEGACY_TEMPLATE_ID_MAP } from "@/lib/templates/templateResolver";
 import DocumentHeader from "@/components/document/DocumentHeader";
 import DocumentFooter from "@/components/document/DocumentFooter";
 import FabricPrintRenderer from "@/components/document/FabricPrintRenderer";
+import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 import "@/app/print/print.css";
 
 function decodeValues(encoded) {
@@ -83,13 +84,22 @@ function PrintContent() {
     }
   }, [entry]);
 
-  // 1. Custom Studio Template Rendering (Docs / Slides)
+  // 1. Custom Studio Template Rendering (Docs / Slides / Custom Presets)
   if (!entry && customTemplate) {
     const isSlide = customTemplate?.canvasPreset === "slide-16-9" || customTemplate?.editorType === "slide";
-    const pageWidth = isSlide ? 1280 : 794;
+    const preset = getCanvasPreset(
+      customTemplate?.canvasPreset || (isSlide ? "slide-16-9" : "a4-portrait")
+    );
+    const pageWidth = preset.width;
+    const pageHeight = preset.height;
 
     return (
-      <div id="print-root" className="bg-white relative" style={{ width: `${pageWidth}px` }}>
+      <div
+        id="print-root"
+        className="bg-white relative"
+        style={{ width: `${pageWidth}px`, minHeight: `${pageHeight}px` }}
+        data-ready={isReady ? "true" : "false"}
+      >
         <FabricPrintRenderer
           template={customTemplate}
           values={values}

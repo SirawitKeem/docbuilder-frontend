@@ -52,10 +52,11 @@ export default function EmailScreen({
     pdf: attachmentBase64 || pdfBase64,
     html: null,
     webp: null,
+    png: null,
   });
   const [loadingFormat, setLoadingFormat] = useState(false);
 
-  const baseFileName = (fileName || schema?.fullName || "document").replace(/\.(pdf|html|webp)$/i, "");
+  const baseFileName = (fileName || schema?.fullName || "document").replace(/\.(pdf|html|webp|png)$/i, "");
   const currentAttachmentName = `${baseFileName}.${selectedFormat}`;
   const activeAttachment = formatAttachments[selectedFormat];
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to);
@@ -129,6 +130,8 @@ export default function EmailScreen({
           contentType:
             selectedFormat === "webp"
               ? "image/webp"
+              : selectedFormat === "png"
+              ? "image/png"
               : selectedFormat === "html"
               ? "text/html"
               : "application/pdf",
@@ -242,8 +245,8 @@ export default function EmailScreen({
                 <p className="text-xs text-gray-500 mt-0.5">เลือกรูปแบบเอกสารที่ต้องการแนบไปกับอีเมล</p>
               </div>
 
-              {/* Format Selector 3 Cards */}
-              <div className="grid grid-cols-3 gap-2.5 mb-3">
+              {/* Format Selector 4 Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
                 {/* 1. PDF */}
                 <button
                   type="button"
@@ -315,6 +318,30 @@ export default function EmailScreen({
                     <p className="text-[10px] text-gray-500 mt-0.5">รูปคมชัด 2x / แชท</p>
                   </div>
                 </button>
+
+                {/* 4. PNG */}
+                <button
+                  type="button"
+                  onClick={() => handleSelectFormat("png")}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    selectedFormat === "png"
+                      ? "border-emerald-500 bg-emerald-50/50 shadow-xs ring-2 ring-emerald-500/20"
+                      : "border-gray-200 bg-white hover:bg-gray-50/80"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                      selectedFormat === "png" ? "bg-emerald-500 text-white" : "bg-emerald-50 text-emerald-600"
+                    }`}>
+                      <ImageIcon size={15} />
+                    </div>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100/80 text-emerald-700">.PNG</span>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-900">PNG Image</p>
+                    <p className="text-[10px] text-gray-500 mt-0.5">รูปคมชัด HD ไม่บีบอัด</p>
+                  </div>
+                </button>
               </div>
 
               {/* Attachment File Card */}
@@ -323,6 +350,7 @@ export default function EmailScreen({
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
                     selectedFormat === "pdf" ? "bg-red-100 text-red-600" :
                     selectedFormat === "html" ? "bg-blue-100 text-blue-600" :
+                    selectedFormat === "png" ? "bg-emerald-100 text-emerald-600" :
                     "bg-purple-100 text-purple-600"
                   }`}>
                     {selectedFormat === "pdf" ? <FileText size={20} /> :
@@ -341,6 +369,7 @@ export default function EmailScreen({
                         <span>
                           {selectedFormat === "pdf" ? t('email.pdfBadge') :
                            selectedFormat === "html" ? "HTML Webpage (Standalone) • พร้อมแนบส่ง" :
+                           selectedFormat === "png" ? "PNG High-Res Image • พร้อมแนบส่ง" :
                            "WebP High-Res Image • พร้อมแนบส่ง"}
                         </span>
                       )}
