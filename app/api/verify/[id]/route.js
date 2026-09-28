@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { documentsRepo } from "@/lib/db/repositories";
+import { documentsRepo, settingsRepo } from "@/lib/db/repositories";
 
 export async function GET(request, { params }) {
   try {
@@ -13,6 +13,13 @@ export async function GET(request, { params }) {
       }, { status: 404 });
     }
 
+    const settings = await settingsRepo.get();
+    const org = settings?.organization || {};
+    const defaultSignatory =
+      settings?.organizationSignatories?.find((s) => s.isDefault)?.name ||
+      org?.signatoryName ||
+      "ผู้มีอำนาจลงนาม";
+
     return NextResponse.json({
       valid: doc.status === "completed",
       status: doc.status,
@@ -23,11 +30,11 @@ export async function GET(request, { params }) {
       createdAt: doc.createdAt,
       createdBy: doc.createdBy || "ผู้จัดทำเอกสาร",
       approvedAt: doc.approvedAt || doc.updatedAt,
-      approvedBy: doc.approvedBy || "นายศรายุทธ โกสิยารักษ์ (กรรมการผู้จัดการ)",
+      approvedBy: doc.approvedBy || doc.approvalChain?.[0]?.signatoryName || defaultSignatory,
       organization: {
-        nameTh: "บริษัท เครสท์ เซนโด จำกัด",
-        nameEn: "CREST ZENDO CO., LTD.",
-        taxId: "0105564088911",
+        nameTh: org.name || "บริษัทของคุณ",
+        nameEn: org.nameEn || "",
+        taxId: org.taxId || "",
       },
     });
   } catch (error) {

@@ -35,5 +35,9 @@ next-env.d.ts
 .idea/
 .vscode/
 
-# Temporary DB files
+# DB backups and temporary files (>100MB)
+data/backups/
+data/*.bak
 data/*.tmp*
+data/db.json.backup
+data/db.snapshot.*

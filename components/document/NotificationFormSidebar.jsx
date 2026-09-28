@@ -291,7 +291,7 @@ export default function NotificationFormSidebar({ template, isOpen }) {
               type="text"
               value={values.signatory_name || ""}
               onChange={(e) => setField("signatory_name", e.target.value)}
-              placeholder="นายศรายุทธ  โกสิยารักษ์"
+              placeholder="เช่น นายสมชาย ใจดี"
               className="w-full h-9 px-3 text-xs rounded-lg border border-gray-200 bg-white focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition-all"
             />
           </div>
@@ -304,7 +304,7 @@ export default function NotificationFormSidebar({ template, isOpen }) {
               type="text"
               value={values.signatory_position || ""}
               onChange={(e) => setField("signatory_position", e.target.value)}
-              placeholder="กรรมการผู้จัดการ / CEO"
+              placeholder="เช่น กรรมการผู้จัดการ"
               className="w-full h-9 px-3 text-xs rounded-lg border border-gray-200 bg-white focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition-all"
             />
           </div>

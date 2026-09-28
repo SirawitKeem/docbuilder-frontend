@@ -11,9 +11,9 @@ export function createSignatureBlock({
   top = 820,
   width = 682,
   primaryColor = "#1E293B",
-  ourCompanyName = "บริษัท เครสท์ เซนโด จำกัด",
-  ourSignatory = "นายศรายุทธ โกสิยารักษ์",
-  ourPosition = "กรรมการผู้จัดการ / CEO",
+  ourCompanyName = "{{company_name}}",
+  ourSignatory = "{{authorized_signatory_name}}",
+  ourPosition = "กรรมการผู้จัดการ",
   counterpartyTitle = "ผู้อนุมัติสั่งซื้อ / ผู้รับข้อมูล",
 }) {
   const elements = [];

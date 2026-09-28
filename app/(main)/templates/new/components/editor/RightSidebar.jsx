@@ -413,11 +413,50 @@ export default function RightSidebar({
           }
           activeObject.dirty = true;
         }
+      } else if (activeObject.type === "rect") {
+        if (key === "width") {
+          const newW = Math.max(5, Number(value));
+          activeObject.set({ width: newW, scaleX: 1 });
+        } else if (key === "height") {
+          const newH = Math.max(5, Number(value));
+          activeObject.set({ height: newH, scaleY: 1 });
+        }
+        activeObject.setCoords();
+        activeObject.dirty = true;
+      } else if (activeObject.type === "circle") {
+        const newD = Math.max(5, Number(value));
+        activeObject.set({ radius: newD / 2, scaleX: 1, scaleY: 1 });
+        activeObject.setCoords();
+        activeObject.dirty = true;
+      } else if (activeObject.type === "ellipse") {
+        if (key === "width") {
+          activeObject.set({ rx: Math.max(2, Number(value) / 2), scaleX: 1 });
+        } else if (key === "height") {
+          activeObject.set({ ry: Math.max(2, Number(value) / 2), scaleY: 1 });
+        }
+        activeObject.setCoords();
+        activeObject.dirty = true;
+      } else if (activeObject.type === "line") {
+        if (key === "width") {
+          const newW = Math.max(5, Number(value));
+          activeObject.set({ x2: (activeObject.x1 || 0) + newW, scaleX: 1 });
+        }
+        activeObject.setCoords();
+        activeObject.dirty = true;
       } else {
         if (key === "width") activeObject.scaleToWidth(Number(value));
         if (key === "height") activeObject.scaleToHeight(Number(value));
+        activeObject.setCoords();
         activeObject.dirty = true;
       }
+    } else if (key === "rx") {
+      const rVal = Math.max(0, Number(value));
+      activeObject.set({ rx: rVal, ry: rVal });
+      activeObject.dirty = true;
+    } else if (key === "strokeWidth") {
+      const sw = Math.max(0, Number(value));
+      activeObject.set({ strokeWidth: sw, strokeUniform: true });
+      activeObject.dirty = true;
     } else if (key === "fontSize") {
       const size = Math.max(1, Number(value));
       activeObject.set({

@@ -26,9 +26,9 @@ export function DynamicContractPage({ templateId, pageNumber, values: propValues
   // --------------------------------------------------------------------------
   if (normalizedId === "nda" || templateId === "nda") {
     const c = ndaContent;
-    const disclosingCompany = values.disclosing_party_name || values.our_company_name || "บริษัท เครสท์ เซนโด จำกัด";
-    const disclosingName = values.disclosing_signatory_name || values.our_signatory_name || "นายศรายุทธ โกสิยารักษ์";
-    const disclosingPos = values.disclosing_signatory_position || values.our_signatory_position || "กรรมการผู้จัดการ / CEO";
+    const disclosingCompany = values.disclosing_party_name || values.our_company_name || values.company_name || "บริษัทผู้เปิดเผยข้อมูล";
+    const disclosingName = values.disclosing_signatory_name || values.our_signatory_name || values.authorized_signatory_name || "ผู้มีอำนาจลงนาม";
+    const disclosingPos = values.disclosing_signatory_position || values.our_signatory_position || values.authorized_signatory_position || "กรรมการผู้จัดการ";
 
     if (pageNumber === 1) {
       const sec1 = c.sections?.[0] || {};
@@ -227,11 +227,11 @@ export function DynamicContractPage({ templateId, pageNumber, values: propValues
   // --------------------------------------------------------------------------
   if (normalizedId === "partner" || templateId === "partner") {
     const c = partnerContent;
-    const ourCompanyName = values.our_company_name || "บริษัท เครสท์ เซนโด จำกัด";
-    const ourTaxId = values.our_tax_id || "0105558073755";
-    const ourAddress = values.our_address || "สำนักงานใหญ่ ตั้งอยู่เลขที่ 8/40 เดอะ คอนเนค 37 ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210";
-    const ourSignatoryName = values.our_signatory_name || "นายศรายุทธ โกสิยารักษ์";
-    const ourSignatoryPos = values.our_signatory_position || "กรรมการผู้จัดการ / CEO";
+    const ourCompanyName = values.our_company_name || values.company_name || "บริษัทของเรา";
+    const ourTaxId = values.our_tax_id || values.company_tax_id || "";
+    const ourAddress = values.our_address || values.company_address || "";
+    const ourSignatoryName = values.our_signatory_name || values.authorized_signatory_name || "ผู้มีอำนาจลงนาม";
+    const ourSignatoryPos = values.our_signatory_position || values.authorized_signatory_position || "กรรมการผู้จัดการ";
 
     if (pageNumber === 1) {
       const sec1 = c.sections?.[0] || {};
@@ -454,8 +454,8 @@ export function DynamicContractPage({ templateId, pageNumber, values: propValues
   // --------------------------------------------------------------------------
   if (normalizedId === "distributor" || templateId === "distributor") {
     const c = distContent;
-    const ourCompanyName = values.our_company_name || "บริษัท เครสท์ เซนโด จำกัด";
-    const ourAddress = values.our_address || "8/40 The Connect 37 ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210";
+    const ourCompanyName = values.our_company_name || values.company_name || "บริษัทของเรา";
+    const ourAddress = values.our_address || values.company_address || "";
 
     if (pageNumber === 1) {
       const sec1 = c.sections?.[0] || {};
@@ -614,8 +614,8 @@ export function DynamicContractPage({ templateId, pageNumber, values: propValues
                 ) : null}
               </div>
               <p className="mb-2">ลงชื่อ ....................................................</p>
-              <p className="font-semibold">({values.our_signatory_name || "นายศรายุทธ โกสิยารักษ์"})</p>
-              <p className="text-gray-600 text-xs">{values.our_signatory_position || "กรรมการผู้จัดการ / CEO"}</p>
+              <p className="font-semibold">({values.our_signatory_name || values.authorized_signatory_name || "ผู้มีอำนาจลงนาม"})</p>
+              <p className="text-gray-600 text-xs">{values.our_signatory_position || values.authorized_signatory_position || "กรรมการผู้จัดการ"}</p>
               {values.company_seal !== false && (
                 <div className="absolute right-2 top-8 pointer-events-none">
                   <CorporateSeal className="w-20 h-20" opacity={0.88} />

@@ -60,6 +60,15 @@ export default function CanvasStage({
     if (targetProto) {
       targetProto.originX = "left";
       targetProto.originY = "top";
+      targetProto.strokeUniform = true; // ✨ Uniform stroke border on all shapes and objects
+      targetProto.cornerStyle = "circle";
+      targetProto.cornerColor = "#6366F1";
+      targetProto.cornerStrokeColor = "#FFFFFF";
+      targetProto.cornerSize = 8;
+      targetProto.transparentCorners = false;
+      targetProto.borderColor = "#6366F1";
+      targetProto.borderScaleFactor = 1.5;
+      targetProto.padding = 4;
 
       if (!targetProto.__customPropsPatched) {
         const origToObject = targetProto.toObject;
@@ -457,7 +466,43 @@ export default function CanvasStage({
       });
     };
     canvas.on("mouse:up", clearGuidesAndAxisLock);
-    canvas.on("object:modified", clearGuidesAndAxisLock);
+    canvas.on("object:modified", (opt) => {
+      clearGuidesAndAxisLock();
+      const target = opt?.target;
+      if (target) {
+        // ✨ Normalize scaling into direct pixel dimensions so borders and rx/ry never distort
+        if (target.type === "rect" && (target.scaleX !== 1 || target.scaleY !== 1)) {
+          const finalW = Math.round(target.width * (target.scaleX || 1));
+          const finalH = Math.round(target.height * (target.scaleY || 1));
+          target.set({
+            width: Math.max(5, finalW),
+            height: Math.max(5, finalH),
+            scaleX: 1,
+            scaleY: 1,
+          });
+          target.setCoords();
+        } else if (target.type === "circle" && (target.scaleX !== 1 || target.scaleY !== 1)) {
+          const avgScale = ((target.scaleX || 1) + (target.scaleY || 1)) / 2;
+          const finalRadius = Math.round(target.radius * avgScale);
+          target.set({
+            radius: Math.max(5, finalRadius),
+            scaleX: 1,
+            scaleY: 1,
+          });
+          target.setCoords();
+        } else if (target.type === "ellipse" && (target.scaleX !== 1 || target.scaleY !== 1)) {
+          const finalRx = Math.round(target.rx * (target.scaleX || 1));
+          const finalRy = Math.round(target.ry * (target.scaleY || 1));
+          target.set({
+            rx: Math.max(2, finalRx),
+            ry: Math.max(2, finalRy),
+            scaleX: 1,
+            scaleY: 1,
+          });
+          target.setCoords();
+        }
+      }
+    });
 
     // Mouse tracking for Ruler indicators
     canvas.on("mouse:move", (opt) => {

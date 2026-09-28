@@ -32,15 +32,14 @@ export default function GeneralSettingsPage() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const [organization, setOrganization] = useState({
-    name: "บริษัท เครสท์ เซนโด จำกัด",
-    nameEn: "Crest Zendo Co., Ltd.",
-    taxId: "0105558073755",
-    branch: "สำนักงานใหญ่",
-    address:
-      "8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
-    phone: "02-123-4567",
-    email: "contact@crestzendo.com",
-    website: "https://crestzendo.com",
+    name: "",
+    nameEn: "",
+    taxId: "",
+    branch: "",
+    address: "",
+    phone: "",
+    email: "",
+    website: "",
     logo: "",
   });
 

@@ -341,9 +341,9 @@ export default function ContractFormSidebar({ template, isOpen }) {
           </div>
 
           <p className="text-[11px] leading-relaxed text-gray-600">
-            <strong>บริษัท เครสท์ เซนโด จำกัด</strong>
+            <strong>{values.our_company_name || values.company_name || "บริษัทของเรา"}</strong>
             <br />
-            ผู้ลงนาม: นายศรายุทธ โกสิยารักษ์ (CEO/Founder)
+            ผู้ลงนาม: {values.our_signatory_name || values.authorized_signatory_name || "ผู้มีอำนาจลงนาม"} {values.our_signatory_position || values.authorized_signatory_position ? `(${values.our_signatory_position || values.authorized_signatory_position})` : ""}
           </p>
 
           {values.our_signature_image ? (
@@ -404,8 +404,8 @@ export default function ContractFormSidebar({ template, isOpen }) {
       {/* Signature Pad Modal */}
       {sigModalTarget && (
         <SignaturePadModal
-          title={sigModalTarget === "our" ? "ลายมือชื่อฝ่ายเรา (Crest Zendo)" : "ลายมือชื่อคู่สัญญา (Counterparty)"}
-          partyName={sigModalTarget === "our" ? "นายศรายุทธ โกสิยารักษ์ (CEO/Founder)" : (values.reseller_signatory_name || values.receiving_signatory_name || "ผู้มีอำนาจลงนาม")}
+          title={sigModalTarget === "our" ? `ลายมือชื่อฝ่ายเรา (${values.our_company_name || values.company_name || "ฝ่ายเรา"})` : "ลายมือชื่อคู่สัญญา (Counterparty)"}
+          partyName={sigModalTarget === "our" ? `${values.our_signatory_name || values.authorized_signatory_name || "ผู้มีอำนาจลงนาม"}${values.our_signatory_position || values.authorized_signatory_position ? ` (${values.our_signatory_position || values.authorized_signatory_position})` : ""}` : (values.reseller_signatory_name || values.receiving_signatory_name || "ผู้มีอำนาจลงนาม")}
           initialImage={sigModalTarget === "our" ? values.our_signature_image : values.counterparty_signature_image}
           onSave={(dataUrl) => {
             if (sigModalTarget === "our") {

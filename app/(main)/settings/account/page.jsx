@@ -34,11 +34,11 @@ export default function AccountSettingsPage() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const [account, setAccount] = useState({
-    fullName: "สิรวิทย์ เพชรจำรัส",
-    email: "keem@crestzendo.com",
-    role: "Owner / Admin",
+    fullName: "",
+    email: "",
+    role: "",
     avatar: "",
-    twoFactorEnabled: true,
+    twoFactorEnabled: false,
   });
 
   const [sessions, setSessions] = useState([

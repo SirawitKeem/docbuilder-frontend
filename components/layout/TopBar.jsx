@@ -55,8 +55,8 @@ export function TopBar() {
   const [openCommand, setOpenCommand] = useState(false);
   const { t } = useLanguage();
   const [userProfile, setUserProfile] = useState({
-    fullName: "สิรวิทย์ เพชรจำรัส",
-    email: "keem@crestzendo.com",
+    fullName: "",
+    email: "",
     avatar: "",
   });
 
@@ -66,8 +66,8 @@ export function TopBar() {
       .then((data) => {
         if (data?.account) {
           setUserProfile({
-            fullName: data.account.fullName || "สิรวิทย์ เพชรจำรัส",
-            email: data.account.email || "keem@crestzendo.com",
+            fullName: data.account.fullName || "",
+            email: data.account.email || "",
             avatar: data.account.avatar || "",
           });
         }
@@ -97,14 +97,12 @@ export function TopBar() {
       fetchNotifications();
     };
     window.addEventListener("docbuilder-notification-update", handleUpdate);
-    window.addEventListener("focus", handleUpdate);
 
     // Poll every 30 seconds
     const interval = setInterval(fetchNotifications, 30000);
 
     return () => {
       window.removeEventListener("docbuilder-notification-update", handleUpdate);
-      window.removeEventListener("focus", handleUpdate);
       clearInterval(interval);
     };
   }, []);
@@ -365,7 +363,7 @@ export function TopBar() {
                     <AvatarImage src={userProfile.avatar} alt={userProfile.fullName} className="object-cover w-full h-full" />
                   ) : null}
                   <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs">
-                    {userProfile.fullName ? userProfile.fullName.slice(0, 2).toUpperCase() : "SP"}
+                    {userProfile.fullName ? userProfile.fullName.slice(0, 2).toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden sm:inline-block text-xs font-semibold text-foreground tracking-tight max-w-[130px] truncate">

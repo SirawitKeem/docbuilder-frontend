@@ -8,11 +8,10 @@ import * as fabric from "fabric";
 export function createCompanyHeaderBlock({
   left = 56,
   top = 56,
-  width = 682,
-  companyName = "บริษัท เดอะ รีโคฟเวอรี่ แอดไวเซอร์ จำกัด",
-  companyAddress = "45 ซอยโกสุมรวมใจ 37 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210",
-  taxId = "0105554007189",
-  phone = "02-1019884",
+  companyName = "{{company_name}}",
+  companyAddress = "{{company_address}}",
+  taxId = "{{company_tax_id}}",
+  phone = "{{company_phone}}",
 }) {
   const elements = [];
 

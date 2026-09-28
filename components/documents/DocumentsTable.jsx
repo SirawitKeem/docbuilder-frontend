@@ -46,6 +46,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { getDocumentEditPath, LEGACY_TEMPLATE_ID_MAP } from "@/lib/templates/templateResolver";
+import FabricPrintRenderer from "@/components/document/FabricPrintRenderer";
+import UniversalTemplateRenderer from "@/components/document/UniversalTemplateRenderer";
 
 const getCounterpartyName = (doc) => {
   if (doc?.values) {
@@ -327,7 +329,8 @@ export default function DocumentsTable({
   const [downloadingDocId, setDownloadingDocId] = useState(null);
 
   const handlePrintOrExport = (doc) => {
-    window.open(`/print/${doc.templateId || "nda"}?id=${doc.id}`, "_blank");
+    const targetTmpl = doc.templateId || "general";
+    window.open(`/print/${targetTmpl}?id=${doc.id}`, "_blank");
     // Record print in audit log
     fetch(`/api/documents/${doc.id}/actions`, {
       method: "POST",
@@ -345,7 +348,7 @@ export default function DocumentsTable({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          templateId: doc.templateId || "nda",
+          templateId: doc.templateId || "general",
           values: doc.values || {},
           quotationData: doc.values || {},
           fileName: doc.name || "document",
@@ -961,8 +964,24 @@ function PreviewModal({ doc, onClose }) {
   const [activeTab, setActiveTab] = useState("preview"); // "preview" | "timeline"
   const [freshDoc, setFreshDoc] = useState(doc);
   const canonicalId = LEGACY_TEMPLATE_ID_MAP[freshDoc?.templateId] || freshDoc?.templateId;
-  const entry = templateRegistry[canonicalId] || templateRegistry[freshDoc?.templateId] || templateRegistry["nda"];
+  const entry = templateRegistry[canonicalId] || templateRegistry[freshDoc?.templateId] || null;
+  const [customTemplate, setCustomTemplate] = useState(null);
+  const [loadingCustom, setLoadingCustom] = useState(false);
   const [modalValues, setModalValues] = useState(freshDoc.values || {});
+
+  // Fetch custom template if not a standard registry template
+  useEffect(() => {
+    if (!entry && freshDoc?.templateId) {
+      setLoadingCustom(true);
+      fetch(`/api/templates/${freshDoc.templateId}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setCustomTemplate(data);
+        })
+        .catch((err) => console.warn("Failed to load custom template for preview:", err))
+        .finally(() => setLoadingCustom(false));
+    }
+  }, [entry, freshDoc?.templateId]);
 
   // Fetch freshest document details on mount
   useEffect(() => {
@@ -1198,6 +1217,68 @@ function PreviewModal({ doc, onClose }) {
                   </div>
                 ))}
               </DocumentFieldsProvider>
+            ) : customTemplate ? (
+              customTemplate.pages && customTemplate.pages.length > 0 ? (
+                <div className="shrink-0 shadow-document bg-white">
+                  <FabricPrintRenderer
+                    template={customTemplate}
+                    values={modalValues}
+                    watermark={freshDoc.watermark}
+                  />
+                </div>
+              ) : Array.isArray(customTemplate.blocks) && customTemplate.blocks.length > 0 ? (
+                <div className="shrink-0 shadow-document bg-white w-[794px] min-h-[1123px]">
+                  <UniversalTemplateRenderer template={customTemplate} scale={1} />
+                </div>
+              ) : (
+                <div className="bg-surface border border-border rounded-2xl shadow-sm p-8 max-w-2xl w-full text-left space-y-6">
+                  <div className="flex items-start justify-between border-b border-border pb-4">
+                    <div>
+                      <h4 className="text-lg font-bold text-foreground">{freshDoc.name}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        เทมเพลต: {freshDoc.templateName || freshDoc.templateId || "Custom Template"}
+                      </p>
+                    </div>
+                    {freshDoc.verificationToken && (
+                      <div className="text-right">
+                        <span className="text-[10px] text-muted-foreground block font-mono">Verification Token</span>
+                        <span className="text-xs font-mono font-semibold text-primary">{freshDoc.verificationToken}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <h5 className="text-xs font-semibold text-foreground uppercase tracking-wider">ข้อมูลที่กรอกไว้ในเอกสาร</h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2">
+                      {Object.entries(freshDoc.values || {}).map(([k, v]) => {
+                        if (typeof v === "object" && v !== null) return null;
+                        return (
+                          <div key={k} className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
+                            <span className="text-[11px] font-medium text-muted-foreground block truncate">{k}</span>
+                            <span className="text-xs font-semibold text-foreground block truncate">{String(v || "-")}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">เอกสารกำหนดเองจาก Template Studio</span>
+                    <Link
+                      href={getDocumentEditPath(freshDoc)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-95 transition-opacity"
+                    >
+                      <Edit3 size={13} />
+                      <span>เปิดแก้ไขใน Studio</span>
+                    </Link>
+                  </div>
+                </div>
+              )
+            ) : loadingCustom ? (
+              <div className="flex flex-col items-center justify-center py-24 text-muted-foreground gap-3">
+                <Loader2 size={32} className="animate-spin text-primary" />
+                <p className="text-xs font-medium">กำลังโหลดตัวอย่างเอกสาร...</p>
+              </div>
             ) : (
               /* Fallback for Studio Custom Documents without standard entry */
               <div className="bg-surface border border-border rounded-2xl shadow-sm p-8 max-w-2xl w-full text-left space-y-6">

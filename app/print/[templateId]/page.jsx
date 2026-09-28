@@ -8,6 +8,7 @@ import { LEGACY_TEMPLATE_ID_MAP } from "@/lib/templates/templateResolver";
 import DocumentHeader from "@/components/document/DocumentHeader";
 import DocumentFooter from "@/components/document/DocumentFooter";
 import FabricPrintRenderer from "@/components/document/FabricPrintRenderer";
+import UniversalTemplateRenderer from "@/components/document/UniversalTemplateRenderer";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 import "@/app/print/print.css";
 
@@ -43,9 +44,12 @@ function PrintContent() {
   const searchParams = useSearchParams();
 
   const [injectedData, setInjectedData] = useState(null);
+  const [docData, setDocData] = useState(null);
   const [customTemplate, setCustomTemplate] = useState(null);
   const [isReady, setIsReady] = useState(false);
   const [loadingCustom, setLoadingCustom] = useState(false);
+
+  const docId = searchParams.get("id") || searchParams.get("docId");
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.__PRINT_DATA__) {
@@ -53,16 +57,29 @@ function PrintContent() {
     }
   }, []);
 
-  const values = injectedData || decodeValues(searchParams.get("data")) || {};
-  const activeWatermark = values.watermark || searchParams.get("watermark");
-  const canonicalId = LEGACY_TEMPLATE_ID_MAP[templateId] || templateId;
-  const entry = templateRegistry[templateId] || templateRegistry[canonicalId];
+  // Fetch document if docId is passed and no injectedData or inline data
+  useEffect(() => {
+    if (docId && !injectedData && !searchParams.get("data")) {
+      fetch(`/api/documents/${docId}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setDocData(data);
+        })
+        .catch((err) => console.warn("Failed to load document for print:", err));
+    }
+  }, [docId, injectedData, searchParams]);
+
+  const values = injectedData || decodeValues(searchParams.get("data")) || docData?.values || {};
+  const activeWatermark = values.watermark || docData?.watermark || searchParams.get("watermark");
+  const effectiveTemplateId = (templateId && templateId !== "nda" && templateId !== "undefined") ? templateId : (docData?.templateId || templateId);
+  const canonicalId = LEGACY_TEMPLATE_ID_MAP[effectiveTemplateId] || effectiveTemplateId;
+  const entry = templateRegistry[effectiveTemplateId] || templateRegistry[canonicalId];
 
   // If not in static registry, fetch custom template from API
   useEffect(() => {
-    if (!entry && templateId) {
+    if (!entry && effectiveTemplateId) {
       setLoadingCustom(true);
-      fetch(`/api/templates/${templateId}`)
+      fetch(`/api/templates/${effectiveTemplateId}`)
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (data) {
@@ -72,7 +89,7 @@ function PrintContent() {
         .catch((err) => console.error("Error fetching custom template:", err))
         .finally(() => setLoadingCustom(false));
     }
-  }, [entry, templateId]);
+  }, [entry, effectiveTemplateId]);
 
   useEffect(() => {
     if (typeof document !== "undefined" && document.fonts) {
@@ -86,6 +103,18 @@ function PrintContent() {
 
   // 1. Custom Studio Template Rendering (Docs / Slides / Custom Presets)
   if (!entry && customTemplate) {
+    if ((!customTemplate.pages || customTemplate.pages.length === 0) && Array.isArray(customTemplate.blocks) && customTemplate.blocks.length > 0) {
+      return (
+        <div
+          id="print-root"
+          className="bg-white relative w-[794px] min-h-[1123px]"
+          data-ready="true"
+        >
+          <UniversalTemplateRenderer template={customTemplate} scale={1} />
+        </div>
+      );
+    }
+
     const isSlide = customTemplate?.canvasPreset === "slide-16-9" || customTemplate?.editorType === "slide";
     const preset = getCanvasPreset(
       customTemplate?.canvasPreset || (isSlide ? "slide-16-9" : "a4-portrait")

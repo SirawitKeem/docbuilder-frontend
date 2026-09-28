@@ -76,7 +76,7 @@ export default function TemplateCard({ template, variant = "compact", onSelect }
 
   const standardHref = ["quotation", "nda", "partner", "distributor"].includes((template.id || "").toLowerCase())
     ? `/create/${template.id}`
-    : `/create/custom?categoryId=${template.id}`;
+    : `/create/custom?templateId=${template.id}`;
 
   return (
     <Link href={template.href || standardHref} className="block group h-full">

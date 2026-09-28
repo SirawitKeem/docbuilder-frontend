@@ -42,7 +42,7 @@ const WATERMARK_OPTIONS = [
 function UniversalDocumentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const templateIdParam = searchParams.get("templateId");
+  const templateIdParam = searchParams.get("templateId") || searchParams.get("categoryId");
   const docIdParam = searchParams.get("id") || searchParams.get("documentId");
 
   const [activeDocId, setActiveDocId] = useState(docIdParam || null);
@@ -149,22 +149,32 @@ function UniversalDocumentContent() {
 
         // Fetch settings & organization to provide dynamic defaults
         let orgData = null;
+        let sJson = null;
         try {
           const sRes = await fetch("/api/settings");
           if (sRes.ok) {
-            const sJson = await sRes.json();
+            sJson = await sRes.json();
             orgData = sJson?.organization;
           }
         } catch {
           // ignore network failure, fallback gracefully
         }
 
-        const defaultOrgName = orgData?.name || "บริษัท เครสท์ เซนโด จำกัด";
-        const defaultOrgNameEn = orgData?.nameEn || "Crest Zendo Co., Ltd.";
-        const defaultOrgTaxId = orgData?.taxId || "0105558073755";
-        const defaultOrgAddress = orgData?.address || "8/40 The Connect 37, ซอยช่างอากาศอุทิศ 10 แยก 1-2 แขวงดอนเมือง เขตดอนเมือง กรุงเทพมหานคร 10210";
-        const defaultOrgPhone = orgData?.phone || "02-123-4567";
-        const defaultOrgEmail = orgData?.email || "contact@crestzendo.com";
+        const defaultOrgName = orgData?.name || "บริษัทของคุณ";
+        const defaultOrgNameEn = orgData?.nameEn || "";
+        const defaultOrgTaxId = orgData?.taxId || "";
+        const defaultOrgAddress = orgData?.address || "";
+        const defaultOrgPhone = orgData?.phone || "";
+        const defaultOrgEmail = orgData?.email || "";
+        const defaultOrgSignatory =
+          orgData?.signatoryName ||
+          sJson?.organizationSignatories?.find((s) => s.isDefault)?.name ||
+          sJson?.account?.fullName ||
+          "ผู้มีอำนาจลงนาม";
+        const defaultOrgSignatoryPosition =
+          orgData?.signatoryPosition ||
+          sJson?.organizationSignatories?.find((s) => s.isDefault)?.position ||
+          "กรรมการผู้จัดการ";
 
         const tmplRes = await fetch(`/api/templates/${activeTmplId}`);
         if (!tmplRes.ok) throw new Error("ไม่พบเทมเพลตนี้ในระบบ");
@@ -189,8 +199,12 @@ function UniversalDocumentContent() {
           our_address: defaultOrgAddress,
           company_phone: defaultOrgPhone,
           company_email: defaultOrgEmail,
-          authorized_signatory_name: "นายศรายุทธ โกสิยารักษ์",
-          authorized_signatory_position: "กรรมการผู้จัดการ / CEO",
+          authorized_signatory_name: defaultOrgSignatory,
+          authorized_signatory_position: defaultOrgSignatoryPosition,
+          sender_name: defaultOrgSignatory,
+          sender_position: defaultOrgSignatoryPosition,
+          sender_email: defaultOrgEmail,
+          sender_phone: defaultOrgPhone,
         };
 
         // Default sample values for detected tokens
@@ -242,8 +256,8 @@ function UniversalDocumentContent() {
           initialVals.old_address_en = initialVals.old_address_en || "45 Soi Kosum Ruam Chai 37, Don Mueang, Don Mueang, Bangkok 10210, Thailand";
           initialVals.new_address_th = initialVals.new_address_th || defaultOrgAddress;
           initialVals.new_address_en = initialVals.new_address_en || "8/40 The Connect 37, Chang Akat Uthit 10 Alley, Don Mueang, Bangkok 10210";
-          initialVals.signatory_name = initialVals.signatory_name || "นายศรายุทธ โกสิยารักษ์";
-          initialVals.signatory_position = initialVals.signatory_position || "กรรมการผู้จัดการ / CEO";
+          initialVals.signatory_name = initialVals.signatory_name || defaultOrgSignatory;
+          initialVals.signatory_position = initialVals.signatory_position || defaultOrgSignatoryPosition;
         }
 
         // If editing existing document, restore all its fields
@@ -431,10 +445,10 @@ function UniversalDocumentContent() {
         "กำหนดยืนราคา 30 วันนับจากวันที่ออกใบเสนอราคา",
         "ราคานี้ยังไม่รวมภาษีมูลค่าเพิ่ม 7% (VAT Excluded)",
       ],
-      senderName: values.authorized_signatory_name || values.sender_name || "นายศรายุทธ โกสิยารักษ์",
-      senderPosition: values.authorized_signatory_position || values.sender_position || "Managing Director",
-      senderEmail: values.sender_email || "contact@crestzendo.com",
-      senderPhone: values.sender_phone || "02-1019884",
+      senderName: values.authorized_signatory_name || values.sender_name || values.our_signatory_name || "ผู้มีอำนาจลงนาม",
+      senderPosition: values.authorized_signatory_position || values.sender_position || values.our_signatory_position || "กรรมการผู้จัดการ",
+      senderEmail: values.sender_email || values.company_email || values.our_company_email || "",
+      senderPhone: values.sender_phone || values.company_phone || values.our_company_phone || "",
     };
   }, [values, tableItems, tableVatRate, activeDocId]);
 

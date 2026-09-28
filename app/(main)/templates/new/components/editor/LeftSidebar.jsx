@@ -30,7 +30,7 @@ import {
   Search,
   Shapes,
 } from "lucide-react";
-import { AVAILABLE_TOKEN_CATEGORIES, fetchCustomTokens, mergeWithCustomTokens } from "@/lib/tokens/tokenEngine";
+import { AVAILABLE_TOKEN_CATEGORIES, fetchCustomTokens, mergeWithCustomTokens, initLiveTokens } from "@/lib/tokens/tokenEngine";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import { VECTOR_ICONS, ICON_CATEGORIES } from "./utils/iconLibrary";
 
@@ -45,6 +45,7 @@ export default function LeftSidebar({
   onAddTable,
   onAddSignature,
   onInsertToken,
+  isReplacingIcon = false,
 }) {
   const isSlide = editorType === "slide";
   const [activeTab, setActiveTab] = useState(isSlide ? "text" : "blocks"); // "blocks" | "tokens" | "text" | "shapes" | "icons" | "uploads"
@@ -73,6 +74,7 @@ export default function LeftSidebar({
     try {
       const tokens = await fetchCustomTokens();
       setCustomTokens(tokens);
+      await initLiveTokens();
     } finally {
       setIsLoadingTokens(false);
     }
@@ -636,57 +638,152 @@ export default function LeftSidebar({
         )}
 
 
-        {/* ── TAB 3: TEXT ── */}
+        {/* ── TAB 3: TEXT & GRAPHIC TYPOGRAPHY ── */}
         {activeTab === "text" && (
           <div className="space-y-4">
             <div>
               <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                เพิ่มข้อความ
+                รูปแบบตัวอักษรกราฟิก (Typography Presets)
               </h2>
               <div className="space-y-2">
+                {/* 1. Display Headline */}
                 <button
                   onClick={() =>
                     onAddText &&
                     onAddText({
-                      text: "หัวข้อเอกสาร (Heading 1)",
-                      fontSize: 22,
-                      fontWeight: "bold",
+                      text: "พาดหัวกราฟิกขนาดใหญ่",
+                      fontSize: 32,
+                      fontWeight: 700,
+                      fill: "#0F172A",
                     })
                   }
-                  className="w-full text-left p-3 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer"
+                  className="w-full text-left p-3 rounded-xl border border-indigo-200 bg-indigo-50/30 hover:bg-indigo-50 hover:border-indigo-400 transition-all cursor-pointer group"
                 >
-                  <p className="font-bold text-base text-gray-900">หัวข้อใหญ่ (H1)</p>
+                  <p className="font-extrabold text-lg text-indigo-950 group-hover:text-indigo-600 transition-colors">
+                    พาดหัวกราฟิกใหญ่ (Display)
+                  </p>
+                  <p className="text-[11px] text-gray-500">32px • ตัวหนาพิเศษ • สไตล์โมเดิร์น</p>
+                </button>
+
+                {/* 2. Heading 1 */}
+                <button
+                  onClick={() =>
+                    onAddText &&
+                    onAddText({
+                      text: "หัวข้อเอกสารหลัก (Heading 1)",
+                      fontSize: 22,
+                      fontWeight: "bold",
+                      fill: "#1E293B",
+                    })
+                  }
+                  className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer bg-white shadow-2xs"
+                >
+                  <p className="font-bold text-base text-gray-900">หัวข้อใหญ่ (Heading 1)</p>
                   <p className="text-[11px] text-gray-400">22px • ตัวหนา (Bold)</p>
                 </button>
 
+                {/* 3. Heading 2 */}
                 <button
                   onClick={() =>
                     onAddText &&
                     onAddText({
                       text: "หัวข้อย่อย (Heading 2)",
                       fontSize: 16,
-                      fontWeight: "bold",
+                      fontWeight: 600,
+                      fill: "#334155",
                     })
                   }
-                  className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer"
+                  className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer bg-white shadow-2xs"
                 >
-                  <p className="font-bold text-sm text-gray-800">หัวข้อย่อย (H2)</p>
-                  <p className="text-[11px] text-gray-400">16px • กึ่งหนา</p>
+                  <p className="font-bold text-sm text-gray-800">หัวข้อย่อย (Heading 2)</p>
+                  <p className="text-[11px] text-gray-400">16px • กึ่งหนา (Semi-Bold)</p>
                 </button>
 
+                {/* 4. Body Text */}
                 <button
                   onClick={() =>
                     onAddText &&
                     onAddText({
-                      text: "ข้อความเนื้อหาเอกสาร รายละเอียด หรือเงื่อนไขต่างๆ...",
+                      text: "ข้อความเนื้อหาเอกสาร รายละเอียด หรือเงื่อนไขต่างๆ เพื่อความชัดเจนและอ่านง่าย...",
                       fontSize: 12,
                       fontWeight: "normal",
+                      fill: "#334155",
+                      lineHeight: 1.5,
                     })
                   }
-                  className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer"
+                  className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer bg-white shadow-2xs"
                 >
                   <p className="text-xs text-gray-700">เนื้อหาเอกสาร (Body Text)</p>
-                  <p className="text-[11px] text-gray-400">12px • ขนาดปกติ</p>
+                  <p className="text-[11px] text-gray-400">12px • ขนาดมาตรฐาน • ระยะบรรทัด 1.5</p>
+                </button>
+
+                {/* 5. Callout Lead */}
+                <button
+                  onClick={() =>
+                    onAddText &&
+                    onAddText({
+                      text: "ข้อความเกริ่นนำหรือประเด็นไฮไลท์สำคัญของเอกสารฉบับนี้",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      fill: "#4338CA",
+                      lineHeight: 1.4,
+                    })
+                  }
+                  className="w-full text-left p-2.5 rounded-xl border border-indigo-200 bg-indigo-50/40 hover:bg-indigo-50 transition-all cursor-pointer"
+                >
+                  <p className="font-semibold text-xs text-indigo-700">ข้อความเน้นนำสายตา (Callout Lead)</p>
+                  <p className="text-[11px] text-indigo-400">14px • กึ่งหนา • สีน้ำเงินเน้นย้ำ</p>
+                </button>
+
+                {/* 6. Metric Stat */}
+                <button
+                  onClick={() =>
+                    onAddText &&
+                    onAddText({
+                      text: "+98.5%",
+                      fontSize: 44,
+                      fontWeight: 800,
+                      fill: "#4F46E5",
+                    })
+                  }
+                  className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer bg-white shadow-2xs"
+                >
+                  <p className="font-extrabold text-2xl text-indigo-600 leading-tight">+98.5%</p>
+                  <p className="text-[11px] text-gray-400">44px • ตัวเลขสถิติเด่น (Metric Stat)</p>
+                </button>
+
+                {/* 7. Step Section Title */}
+                <button
+                  onClick={() =>
+                    onAddText &&
+                    onAddText({
+                      text: "01. ข้อมูลทั่วไปและขอบเขตข้อตกลง",
+                      fontSize: 15,
+                      fontWeight: 700,
+                      fill: "#0F172A",
+                    })
+                  }
+                  className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer bg-white shadow-2xs"
+                >
+                  <p className="font-bold text-xs text-gray-900">01. หัวข้อระบุเลขขั้นตอน (Step)</p>
+                  <p className="text-[11px] text-gray-400">15px • สไตล์รายงานและสัญญามืออาชีพ</p>
+                </button>
+
+                {/* 8. Small Footer Note */}
+                <button
+                  onClick={() =>
+                    onAddText &&
+                    onAddText({
+                      text: "* หมายเหตุ: ข้อกำหนดและเงื่อนไขนี้มีผลบังคับใช้ตั้งแต่วันที่ระบุในสัญญาเป็นต้นไป",
+                      fontSize: 10,
+                      fontStyle: "italic",
+                      fill: "#64748B",
+                    })
+                  }
+                  className="w-full text-left p-2 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all cursor-pointer bg-white shadow-2xs"
+                >
+                  <p className="italic text-[11px] text-gray-500">* หมายเหตุ / คำชี้แจงย่อย (Note)</p>
+                  <p className="text-[10px] text-gray-400">10px • ตัวเอียง • ข้อมูลท้ายเอกสาร</p>
                 </button>
               </div>
             </div>
@@ -864,6 +961,17 @@ export default function LeftSidebar({
         {activeTab === "icons" && (
           <div className="space-y-4">
             <div>
+              {/* 💡 Replace In-Place Indicator Banner */}
+              {isReplacingIcon && (
+                <div className="mb-3 p-2.5 rounded-xl bg-indigo-50/90 border border-indigo-200 text-indigo-950 text-[11px] flex items-center gap-2 animate-fadeIn shadow-2xs">
+                  <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 animate-pulse" />
+                  <div>
+                    <span className="font-bold text-indigo-700">โหมดแทนที่ไอคอน:</span>
+                    <span className="text-indigo-800/90 ml-1">คลิกไอคอนด้านล่างเพื่อเปลี่ยนแทนที่อันเดิมทันที</span>
+                  </div>
+                </div>
+              )}
+
               {/* Search Box */}
               <div className="relative mb-3">
                 <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
@@ -871,7 +979,7 @@ export default function LeftSidebar({
                   type="text"
                   value={iconSearch}
                   onChange={(e) => setIconSearch(e.target.value)}
-                  placeholder="ค้นหาไอคอน (เช่น เป้าหมาย, ปฏิทิน...)"
+                  placeholder="ค้นหาไอคอน (เช่น เงิน, เอกสาร, phone, user...)"
                   className="w-full bg-white border border-gray-200 rounded-xl pl-8 pr-3 py-1.5 text-xs outline-none focus:border-indigo-500"
                 />
               </div>
@@ -884,7 +992,7 @@ export default function LeftSidebar({
                     onClick={() => setSelectedIconCat(cat.id)}
                     className={`px-2 py-1 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer ${
                       selectedIconCat === cat.id
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-indigo-600 text-white shadow-2xs"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                   >
@@ -898,15 +1006,24 @@ export default function LeftSidebar({
                 {VECTOR_ICONS
                   .filter((icon) => {
                     const matchCat = selectedIconCat === "all" || icon.category === selectedIconCat;
-                    const matchSearch = !iconSearch || icon.label.toLowerCase().includes(iconSearch.toLowerCase());
+                    const q = iconSearch.trim().toLowerCase();
+                    const matchSearch =
+                      !q ||
+                      icon.label.toLowerCase().includes(q) ||
+                      icon.id.toLowerCase().includes(q) ||
+                      icon.category.toLowerCase().includes(q);
                     return matchCat && matchSearch;
                   })
                   .map((icon) => (
                     <button
                       key={icon.id}
                       onClick={() => onAddIcon && onAddIcon(icon)}
-                      className="p-2.5 rounded-xl border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/40 flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer bg-white shadow-2xs group"
-                      title={icon.label}
+                      className={`p-2 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs group ${
+                        isReplacingIcon
+                          ? "border-indigo-200 hover:border-indigo-600 hover:bg-indigo-50/80 bg-indigo-50/20"
+                          : "border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/40 bg-white"
+                      }`}
+                      title={isReplacingIcon ? `คลิกเพื่อสลับเป็น ${icon.label}` : icon.label}
                     >
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-700 group-hover:text-indigo-600 group-hover:scale-110 transition-transform">
                         <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">

@@ -13,7 +13,7 @@ import { createDocTable, CUSTOM_CANVAS_PROPS } from "./elements/DocTable";
 import { cloneFabricObject, saveToCrossTemplateStorage, loadFromCrossTemplateStorage } from "./utils/clipboard";
 import { createSignatureBlock } from "./elements/SignatureBlock";
 import { createCompanyHeaderBlock, createPartyInfoGrid, createTermsBox } from "./elements/HeaderBlock";
-import { applyTokensToCanvas, revertTokensInPageJson } from "@/lib/tokens/tokenEngine";
+import { applyTokensToCanvas, revertTokensInPageJson, initLiveTokens } from "@/lib/tokens/tokenEngine";
 import { getCanvasPreset, mmToPx, pxToMm } from "@/lib/editor/canvasPresets";
 
 // Dynamically import CanvasStage with SSR disabled
@@ -152,6 +152,10 @@ export default function DocumentEditor({
       if (isMetric) setMarginMm(pxToMm(Number(initialMarginPx)));
     }
   }, [initialMarginMm, initialMarginPx, isMetric]);
+
+  useEffect(() => {
+    initLiveTokens();
+  }, []);
 
   const handleUpdateMargin = useCallback((value, unit = isMetric ? "mm" : "px") => {
     const num = Math.max(0, Number(value) || 0);
@@ -858,43 +862,101 @@ export default function DocumentEditor({
     hasUnsavedChangesRef.current = true;
   }, [activePageIndex, pages, editorType, preset.id]);
 
+  // 📍 Viewport-aware Coordinate Helper (Places new objects in center of current visible view)
+  const getSpawnCoords = useCallback((width = 200, height = 100) => {
+    const canvas = fabricCanvasRef.current;
+    const pw = preset.width || 794;
+    const ph = preset.height || 1123;
+    let spawnLeft = Math.round(pw / 2);
+    let spawnTop = Math.round(ph / 3);
+
+    if (canvas && canvas.getVpCenter) {
+      const center = canvas.getVpCenter();
+      if (center && !isNaN(center.x) && !isNaN(center.y)) {
+        spawnLeft = Math.round(center.x);
+        spawnTop = Math.round(center.y);
+      }
+    }
+
+    const minX = MARGIN_PX + 20;
+    const maxX = pw - MARGIN_PX - 20 - width;
+    const minY = MARGIN_PX + 20;
+    const maxY = ph - MARGIN_PX - 20 - height;
+
+    const finalLeft = Math.max(minX, Math.min(Math.max(minX, maxX), spawnLeft - width / 2));
+    const finalTop = Math.max(minY, Math.min(Math.max(minY, maxY), spawnTop - height / 2));
+
+    return { left: Math.round(finalLeft), top: Math.round(finalTop) };
+  }, [preset.width, preset.height]);
+
   // 🔤 Add Text
-  const handleAddText = useCallback((options) => {
+  const handleAddText = useCallback((options = {}) => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
 
+    const w = options.width || 320;
+    const h = options.fontSize ? options.fontSize * 2 : 40;
+    const { left, top } = getSpawnCoords(w, h);
+
     const textbox = new fabric.Textbox(options.text || "ข้อความตัวอย่าง", {
-      left: MARGIN_PX + 20,
-      top: MARGIN_PX + 40,
-      width: options.width || 320,
+      left,
+      top,
+      width: w,
       fontSize: options.fontSize || 14,
       fontWeight: options.fontWeight || "normal",
+      fontStyle: options.fontStyle || "normal",
       fill: options.fill || "#111827",
       fontFamily: options.fontFamily || "'Noto Sans Thai', 'Noto Sans', sans-serif",
+      charSpacing: options.charSpacing || 0,
+      lineHeight: options.lineHeight || 1.3,
+      textAlign: options.textAlign || "left",
       splitByGrapheme: true,
       objectCaching: false,
       editable: true,
+      strokeUniform: true,
+      cornerColor: "#6366F1",
+      cornerStrokeColor: "#FFFFFF",
+      cornerStyle: "circle",
+      cornerSize: 8,
+      transparentCorners: false,
+      borderColor: "#6366F1",
     });
 
     canvas.add(textbox);
     canvas.setActiveObject(textbox);
     canvas.renderAll();
     handleHistoryPush(canvas);
-  }, [handleHistoryPush]);
+  }, [getSpawnCoords, handleHistoryPush]);
 
   // 🔷 Add Shape
   const handleAddShape = useCallback((options) => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
 
+    const baseShapeProps = {
+      strokeUniform: true,
+      cornerColor: "#6366F1",
+      cornerStrokeColor: "#FFFFFF",
+      cornerStyle: "circle",
+      cornerSize: 8,
+      transparentCorners: false,
+      borderColor: "#6366F1",
+      borderScaleFactor: 1.5,
+      padding: 4,
+    };
+
     let shapeObj = null;
 
     if (options.type === "rect") {
+      const w = options.width || 240;
+      const h = options.height || 100;
+      const { left, top } = getSpawnCoords(w, h);
       shapeObj = new fabric.Rect({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        width: options.width || 240,
-        height: options.height || 100,
+        ...baseShapeProps,
+        left,
+        top,
+        width: w,
+        height: h,
         fill: options.fill || "#F3F4F6",
         stroke: options.stroke || "#9CA3AF",
         strokeWidth: options.strokeWidth || 1,
@@ -902,11 +964,15 @@ export default function DocumentEditor({
         ry: 0,
       });
     } else if (options.type === "rounded-rect") {
+      const w = options.width || 240;
+      const h = options.height || 110;
+      const { left, top } = getSpawnCoords(w, h);
       shapeObj = new fabric.Rect({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        width: options.width || 240,
-        height: options.height || 110,
+        ...baseShapeProps,
+        left,
+        top,
+        width: w,
+        height: h,
         fill: options.fill || "#F8FAFC",
         stroke: options.stroke || "#CBD5E1",
         strokeWidth: options.strokeWidth || 1.5,
@@ -914,33 +980,44 @@ export default function DocumentEditor({
         ry: options.ry || 12,
       });
     } else if (options.type === "circle") {
+      const radius = options.radius || 48;
+      const { left, top } = getSpawnCoords(radius * 2, radius * 2);
       shapeObj = new fabric.Circle({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        radius: options.radius || 45,
+        ...baseShapeProps,
+        left,
+        top,
+        radius,
         fill: options.fill || "#EEF2FF",
         stroke: options.stroke || "#6366F1",
-        strokeWidth: 2,
+        strokeWidth: options.strokeWidth || 2,
       });
     } else if (options.type === "ellipse") {
+      const rx = options.rx || 65;
+      const ry = options.ry || 40;
+      const { left, top } = getSpawnCoords(rx * 2, ry * 2);
       shapeObj = new fabric.Ellipse({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        rx: options.rx || 65,
-        ry: options.ry || 40,
+        ...baseShapeProps,
+        left,
+        top,
+        rx,
+        ry,
         fill: options.fill || "#F0FDF4",
         stroke: options.stroke || "#10B981",
-        strokeWidth: 2,
+        strokeWidth: options.strokeWidth || 2,
       });
     } else if (options.type === "triangle") {
+      const w = options.width || 90;
+      const h = options.height || 80;
+      const { left, top } = getSpawnCoords(w, h);
       shapeObj = new fabric.Triangle({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        width: options.width || 90,
-        height: options.height || 80,
+        ...baseShapeProps,
+        left,
+        top,
+        width: w,
+        height: h,
         fill: options.fill || "#FEF3C7",
         stroke: options.stroke || "#F59E0B",
-        strokeWidth: 2,
+        strokeWidth: options.strokeWidth || 2,
       });
     } else if (options.type === "star") {
       const starPoints = [
@@ -955,56 +1032,72 @@ export default function DocumentEditor({
         { x: 2, y: 35 },
         { x: 39, y: 35 },
       ];
+      const { left, top } = getSpawnCoords(100, 100);
       shapeObj = new fabric.Polygon(starPoints, {
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        scaleX: 1,
-        scaleY: 1,
+        ...baseShapeProps,
+        left,
+        top,
         fill: options.fill || "#FEF08A",
         stroke: options.stroke || "#CA8A04",
-        strokeWidth: 2,
+        strokeWidth: options.strokeWidth || 2,
       });
     } else if (options.type === "arrow") {
+      const { left, top } = getSpawnCoords(190, 50);
       shapeObj = new fabric.Path("M 0 15 L 140 15 L 140 0 L 190 25 L 140 50 L 140 35 L 0 35 Z", {
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
+        ...baseShapeProps,
+        left,
+        top,
         fill: options.fill || "#6366F1",
         stroke: options.stroke || "#4338CA",
-        strokeWidth: 1,
+        strokeWidth: options.strokeWidth || 1,
       });
     } else if (options.type === "pill") {
+      const w = options.width || 140;
+      const h = options.height || 40;
+      const { left, top } = getSpawnCoords(w, h);
       shapeObj = new fabric.Rect({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        width: options.width || 140,
-        height: options.height || 40,
+        ...baseShapeProps,
+        left,
+        top,
+        width: w,
+        height: h,
         rx: 20,
         ry: 20,
         fill: options.fill || "#EEF2FF",
         stroke: options.stroke || "#6366F1",
-        strokeWidth: 1.5,
+        strokeWidth: options.strokeWidth || 1.5,
       });
     } else if (options.type === "line") {
-      shapeObj = new fabric.Line([0, 0, options.width || 300, 0], {
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 60,
+      const len = options.width || 300;
+      const { left, top } = getSpawnCoords(len, 2);
+      shapeObj = new fabric.Line([0, 0, len, 0], {
+        ...baseShapeProps,
+        left,
+        top,
         stroke: options.stroke || "#9CA3AF",
-        strokeWidth: 1.5,
+        strokeWidth: options.strokeWidth || 1.5,
       });
     } else if (options.type === "dashed-line") {
-      shapeObj = new fabric.Line([0, 0, options.width || 300, 0], {
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 60,
+      const len = options.width || 300;
+      const { left, top } = getSpawnCoords(len, 2);
+      shapeObj = new fabric.Line([0, 0, len, 0], {
+        ...baseShapeProps,
+        left,
+        top,
         stroke: options.stroke || "#64748B",
-        strokeWidth: 1.5,
+        strokeWidth: options.strokeWidth || 1.5,
         strokeDashArray: [6, 4],
       });
     } else if (options.type === "card") {
+      const w = options.width || 340;
+      const h = options.height || 220;
+      const { left, top } = getSpawnCoords(w, h);
       shapeObj = new fabric.Rect({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        width: options.width || 340,
-        height: options.height || 220,
+        ...baseShapeProps,
+        left,
+        top,
+        width: w,
+        height: h,
         fill: options.fill || "#FFFFFF",
         stroke: options.stroke || "#E2E8F0",
         strokeWidth: options.strokeWidth || 1.5,
@@ -1027,19 +1120,25 @@ export default function DocumentEditor({
         { x: w - slant, y: h },
         { x: 0, y: h },
       ];
+      const { left, top } = getSpawnCoords(w, h);
       shapeObj = new fabric.Polygon(points, {
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
+        ...baseShapeProps,
+        left,
+        top,
         fill: options.fill || "#DC2626",
         stroke: options.stroke || "transparent",
         strokeWidth: 0,
       });
     } else if (options.type === "accent-bar") {
+      const w = options.width || 310;
+      const h = options.height || 8;
+      const { left, top } = getSpawnCoords(w, h);
       shapeObj = new fabric.Rect({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
-        width: options.width || 310,
-        height: options.height || 8,
+        ...baseShapeProps,
+        left,
+        top,
+        width: w,
+        height: h,
         fill: options.fill || "#DC2626",
         rx: 4,
         ry: 4,
@@ -1052,9 +1151,11 @@ export default function DocumentEditor({
         { x: size / 2, y: size },
         { x: 0, y: size / 2 },
       ];
+      const { left, top } = getSpawnCoords(size, size);
       shapeObj = new fabric.Polygon(diamondPoints, {
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
+        ...baseShapeProps,
+        left,
+        top,
         fill: options.fill || "#EEF2FF",
         stroke: options.stroke || "#6366F1",
         strokeWidth: 2,
@@ -1069,9 +1170,11 @@ export default function DocumentEditor({
           y: r + r * Math.sin(angle),
         });
       }
+      const { left, top } = getSpawnCoords(r * 2, r * 2);
       shapeObj = new fabric.Polygon(hexPoints, {
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 40,
+        ...baseShapeProps,
+        left,
+        top,
         fill: options.fill || "#ECFDF5",
         stroke: options.stroke || "#10B981",
         strokeWidth: 2,
@@ -1084,32 +1187,95 @@ export default function DocumentEditor({
       canvas.renderAll();
       handleHistoryPush(canvas);
     }
-  }, [handleHistoryPush]);
+  }, [getSpawnCoords, handleHistoryPush]);
 
-  // ✨ Add Vector Icon
+  // ✨ Add or Replace Vector Icon
   const handleAddIcon = useCallback((iconData) => {
     const canvas = fabricCanvasRef.current;
     if (!canvas || !iconData || !iconData.path) return;
 
-    const pathObj = new fabric.Path(iconData.path, {
-      left: MARGIN_PX + 30,
-      top: MARGIN_PX + 50,
-      scaleX: iconData.scale || 2.2,
-      scaleY: iconData.scale || 2.2,
-      fill: iconData.defaultFill || "#DC2626",
-      stroke: "transparent",
-      strokeWidth: 0,
-      selectable: true,
-      isIcon: true,
-      iconId: iconData.id,
-      iconLabel: iconData.label,
-    });
+    const activeObj = canvas.getActiveObject();
+    const isReplacing = Boolean(activeObj && (activeObj.isIcon || activeObj.type === "path"));
 
-    canvas.add(pathObj);
-    canvas.setActiveObject(pathObj);
-    canvas.renderAll();
-    handleHistoryPush(canvas);
-  }, [handleHistoryPush]);
+    if (isReplacing) {
+      // 🔄 Replace selected icon in-place with exact same position, scale, and color
+      const currentLeft = activeObj.left;
+      const currentTop = activeObj.top;
+      const currentScaleX = activeObj.scaleX || 1;
+      const currentScaleY = activeObj.scaleY || 1;
+      const currentFill = activeObj.fill || iconData.defaultFill || "#DC2626";
+      const currentStroke = activeObj.stroke || "transparent";
+      const currentStrokeWidth = activeObj.strokeWidth || 0;
+      const currentAngle = activeObj.angle || 0;
+      const currentOpacity = activeObj.opacity ?? 1;
+      const currentOriginX = activeObj.originX || "left";
+      const currentOriginY = activeObj.originY || "top";
+      const currentFlipX = activeObj.flipX || false;
+      const currentFlipY = activeObj.flipY || false;
+
+      // Find index in canvas to preserve Z-order
+      const objects = canvas.getObjects();
+      const objIndex = objects.indexOf(activeObj);
+
+      const newPathObj = new fabric.Path(iconData.path, {
+        left: currentLeft,
+        top: currentTop,
+        originX: currentOriginX,
+        originY: currentOriginY,
+        scaleX: currentScaleX,
+        scaleY: currentScaleY,
+        fill: currentFill,
+        stroke: currentStroke,
+        strokeWidth: currentStrokeWidth,
+        angle: currentAngle,
+        opacity: currentOpacity,
+        flipX: currentFlipX,
+        flipY: currentFlipY,
+        selectable: true,
+        isIcon: true,
+        iconId: iconData.id,
+        iconLabel: iconData.label,
+      });
+
+      canvas.remove(activeObj);
+      if (objIndex >= 0) {
+        canvas.insertAt(newPathObj, objIndex);
+      } else {
+        canvas.add(newPathObj);
+      }
+      canvas.setActiveObject(newPathObj);
+      canvas.requestRenderAll();
+      handleHistoryPush(canvas);
+      showToast(`✨ สลับไอคอนเป็น "${iconData.label.split(" ")[0]}" สำเร็จ`);
+    } else {
+      // ➕ Add brand new icon at default margin position
+      const { left, top } = getSpawnCoords(50, 50);
+      const pathObj = new fabric.Path(iconData.path, {
+        left,
+        top,
+        scaleX: iconData.scale || 2.2,
+        scaleY: iconData.scale || 2.2,
+        fill: iconData.defaultFill || "#DC2626",
+        stroke: "transparent",
+        strokeWidth: 0,
+        selectable: true,
+        isIcon: true,
+        iconId: iconData.id,
+        iconLabel: iconData.label,
+        cornerColor: "#6366F1",
+        cornerStrokeColor: "#FFFFFF",
+        cornerStyle: "circle",
+        cornerSize: 8,
+        transparentCorners: false,
+        borderColor: "#6366F1",
+      });
+
+      canvas.add(pathObj);
+      canvas.setActiveObject(pathObj);
+      canvas.requestRenderAll();
+      handleHistoryPush(canvas);
+    }
+  }, [getSpawnCoords, handleHistoryPush, showToast]);
 
   // 📁 Add Image / Logo
   const handleAddImage = useCallback((imageUrl) => {
@@ -1122,9 +1288,18 @@ export default function DocumentEditor({
         const scale = maxWidth / img.width;
         img.scale(scale);
       }
+      const imgW = img.getScaledWidth ? img.getScaledWidth() : (img.width || 200);
+      const imgH = img.getScaledHeight ? img.getScaledHeight() : (img.height || 150);
+      const { left, top } = getSpawnCoords(imgW, imgH);
       img.set({
-        left: MARGIN_PX + 20,
-        top: MARGIN_PX + 20,
+        left,
+        top,
+        cornerColor: "#6366F1",
+        cornerStrokeColor: "#FFFFFF",
+        cornerStyle: "circle",
+        cornerSize: 8,
+        transparentCorners: false,
+        borderColor: "#6366F1",
       });
 
       canvas.add(img);
@@ -1144,7 +1319,7 @@ export default function DocumentEditor({
         { crossOrigin: "anonymous" }
       );
     }
-  }, [handleHistoryPush]);
+  }, [getSpawnCoords, handleHistoryPush]);
 
   // 📊 Add Quotation / Pricing Table
   const handleAddTable = useCallback(() => {
@@ -2050,6 +2225,7 @@ export default function DocumentEditor({
           onAddTable={handleAddTable}
           onAddSignature={handleAddSignature}
           onInsertToken={handleInsertToken}
+          isReplacingIcon={Boolean(activeObject && (activeObject.isIcon || activeObject.type === "path"))}
         />
 
         {/* Center Canvas Stage + Bottom Pagination Bar */}

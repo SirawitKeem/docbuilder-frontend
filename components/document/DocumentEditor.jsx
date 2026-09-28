@@ -318,13 +318,13 @@ export default function DocumentEditor({ templateId, profileId, docId }) {
       }
 
       const dynamicOrgDefaults = orgData ? {
-        our_company_name: orgData.name || "บริษัท เครสท์ เซนโด จำกัด",
-        our_company_name_en: orgData.nameEn || "Crest Zendo Co., Ltd.",
-        our_tax_id: orgData.taxId || "0105558073755",
+        our_company_name: orgData.name || "บริษัทของคุณ",
+        our_company_name_en: orgData.nameEn || "",
+        our_tax_id: orgData.taxId || "",
         our_address: orgData.address || "",
         our_phone: orgData.phone || "",
-        our_signatory_name: orgData.authorizedSignatory || "นายศรายุทธ โกสิยารักษ์",
-        our_signatory_position: orgData.signatoryTitle || "กรรมการผู้จัดการ / CEO",
+        our_signatory_name: orgData.authorizedSignatory || orgData.signatoryName || "ผู้มีอำนาจลงนาม",
+        our_signatory_position: orgData.signatoryTitle || orgData.signatoryPosition || "กรรมการผู้จัดการ",
       } : {};
 
       // 1. หากเป็นการเปิดแก้ไขเอกสารเดิมที่เคยบันทึกไว้ (มี docId)
