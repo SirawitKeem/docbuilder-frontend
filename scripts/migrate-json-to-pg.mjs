@@ -5,6 +5,23 @@ import { getPool, query, withTransaction } from "../lib/db/adapters/postgres/poo
 
 const isDryRun = process.argv.includes("--dry-run");
 
+// Auto-load .env for standalone script execution
+const envPath = path.join(process.cwd(), ".env");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#") && trimmed.includes("=")) {
+      const idx = trimmed.indexOf("=");
+      const key = trimmed.slice(0, idx).trim();
+      const val = trimmed.slice(idx + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
 const DB_JSON_PATH = path.join(process.cwd(), "data", "db.json");
 const STORAGE_ASSETS_DIR = path.join(process.cwd(), "storage", "assets");
 
@@ -208,23 +225,61 @@ async function runMigration() {
     // Counterparties
     for (const cp of dbData.counterparties || []) {
       await query(
-        `INSERT INTO counterparties (id, org_id, name, tax_id, address, phone, email, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `INSERT INTO counterparties (
+           id, org_id, linked_org_id, party_type, company_name_th, company_name_en,
+           registration_number, branch, address_th, address_en, phone, email,
+           created_by_user_id, created_at, updated_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
          ON CONFLICT (id) DO UPDATE SET 
-           name = EXCLUDED.name, tax_id = EXCLUDED.tax_id, address = EXCLUDED.address, phone = EXCLUDED.phone, email = EXCLUDED.email, updated_at = CURRENT_TIMESTAMP;`,
-        [cp.id, cp.orgId || "org-crestzendo", cp.name, cp.taxId || "", cp.address || "", cp.phone || "", cp.email || "", cp.createdAt || new Date(), cp.updatedAt || new Date()]
+           company_name_th = EXCLUDED.company_name_th,
+           company_name_en = EXCLUDED.company_name_en,
+           registration_number = EXCLUDED.registration_number,
+           branch = EXCLUDED.branch,
+           address_th = EXCLUDED.address_th,
+           address_en = EXCLUDED.address_en,
+           phone = EXCLUDED.phone,
+           email = EXCLUDED.email,
+           updated_at = CURRENT_TIMESTAMP;`,
+        [
+          cp.id,
+          cp.orgId || "org-crestzendo",
+          cp.linkedOrgId || null,
+          cp.partyType || "client",
+          cp.companyNameTh || cp.name || "",
+          cp.companyNameEn || null,
+          cp.registrationNumber || cp.taxId || "",
+          cp.branch || "สำนักงานใหญ่",
+          cp.addressTh || cp.address || "",
+          cp.addressEn || null,
+          cp.phone || null,
+          cp.email || null,
+          cp.createdByUserId || "usr-admin",
+          cp.createdAt || new Date(),
+          cp.updatedAt || new Date(),
+        ]
       );
       counts.counterparties++;
     }
 
-    // Counterparty Signatories
+    // Counterparty Signatories (note: table has no updated_at)
     for (const cs of dbData.counterpartySignatories || []) {
       await query(
-        `INSERT INTO counterparty_signatories (id, counterparty_id, full_name, position, is_primary, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO counterparty_signatories (
+           id, counterparty_id, full_name, position, signature_text, signature_image_url, is_primary, created_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          ON CONFLICT (id) DO UPDATE SET 
-           full_name = EXCLUDED.full_name, position = EXCLUDED.position, updated_at = CURRENT_TIMESTAMP;`,
-        [cs.id, cs.counterpartyId, cs.fullName, cs.position || "", cs.isPrimary || false, cs.createdAt || new Date(), cs.updatedAt || new Date()]
+           full_name = EXCLUDED.full_name,
+           position = EXCLUDED.position;`,
+        [
+          cs.id,
+          cs.counterpartyId,
+          cs.fullName,
+          cs.position || "",
+          cs.signatureText || null,
+          cs.signatureImageUrl || null,
+          cs.isPrimary || false,
+          cs.createdAt || new Date(),
+        ]
       );
       counts.counterpartySignatories++;
     }
@@ -232,11 +287,27 @@ async function runMigration() {
     // Categories (Preserve existing 8 categories in Postgres, merge db.json 6)
     for (const cat of dbData.categories || []) {
       await query(
-        `INSERT INTO categories (id, name, slug, icon, description, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO categories (
+           id, name, full_name, description, icon, color, badge, sort_order, created_at, updated_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
          ON CONFLICT (id) DO UPDATE SET 
-           name = EXCLUDED.name, icon = EXCLUDED.icon, description = EXCLUDED.description, updated_at = CURRENT_TIMESTAMP;`,
-        [cat.id, cat.name, cat.slug || cat.name.toLowerCase().replace(/\s+/g, "-"), cat.icon || "", cat.description || "", cat.createdAt || new Date(), cat.updatedAt || new Date()]
+           name = EXCLUDED.name,
+           full_name = EXCLUDED.full_name,
+           icon = EXCLUDED.icon,
+           description = EXCLUDED.description,
+           updated_at = CURRENT_TIMESTAMP;`,
+        [
+          cat.id,
+          cat.name,
+          cat.fullName || cat.name,
+          cat.description || "",
+          cat.icon || "FileText",
+          cat.color || "purple",
+          cat.badge || "ทั่วไป",
+          cat.sortOrder || cat.order || 0,
+          cat.createdAt || new Date(),
+          cat.updatedAt || new Date(),
+        ]
       );
       counts.categories++;
     }
@@ -260,7 +331,16 @@ async function runMigration() {
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          ON CONFLICT (id) DO UPDATE SET 
            title = EXCLUDED.title, message = EXCLUDED.message, is_read = EXCLUDED.is_read;`,
-        [notif.id, notif.userId || "usr-admin", notif.title, notif.message, notif.type || "info", notif.isRead || false, notif.linkUrl || null, notif.createdAt || new Date()]
+        [
+          notif.id,
+          notif.userId || "usr-admin",
+          notif.title,
+          notif.message || notif.description || notif.title || "",
+          notif.type || "info",
+          notif.isRead !== undefined ? notif.isRead : (notif.read !== undefined ? notif.read : false),
+          notif.linkUrl || notif.link || null,
+          notif.createdAt || new Date(),
+        ]
       );
       counts.notifications++;
     }
@@ -333,7 +413,7 @@ async function runMigration() {
           tmpl.editorType || "document",
           tmpl.canvasPreset || "a4-portrait",
           tmpl.orientation || "portrait",
-          tmpl.theme || "modern",
+          typeof tmpl.theme === "string" ? tmpl.theme.slice(0, 50) : (tmpl.theme?.name || "modern"),
           tmpl.status || "published",
           tmpl.isCustom !== undefined ? tmpl.isCustom : true,
           tmpl.isStandard || false,
@@ -350,8 +430,22 @@ async function runMigration() {
     }
 
     // Documents (With extracted lightweight values JSONB)
+    const existingNumsRes = await query("SELECT id, document_number FROM documents WHERE document_number IS NOT NULL;");
+    const existingDocNumMap = new Map();
+    for (const r of existingNumsRes.rows) {
+      existingDocNumMap.set(r.document_number, r.id);
+    }
+
     for (const doc of processedDocuments) {
-      const docNumber = doc.documentNumber || doc.documentNo || (doc.values && doc.values.quotationNo) || null;
+      let docNumber = doc.documentNumber || doc.documentNo || (doc.values && doc.values.quotationNo) || null;
+      if (docNumber) {
+        const ownerId = existingDocNumMap.get(docNumber);
+        if (ownerId && ownerId !== doc.id) {
+          // Document number collision across different legacy draft copies
+          docNumber = `${docNumber}-${doc.id.replace(/^qt-|^doc-/, "")}`;
+        }
+        existingDocNumMap.set(docNumber, doc.id);
+      }
       await query(
         `INSERT INTO documents (
            id, org_id, template_id, template_version_id, counterparty_id, our_signatory_id,
