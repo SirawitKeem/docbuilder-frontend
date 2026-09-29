@@ -1,4 +1,4 @@
-import { documentsRepo, notificationsRepo } from "@/lib/db/repositories";
+import { documentsRepo, notificationsRepo, settingsRepo, organizationsRepo } from "@/lib/db/repositories";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -22,6 +22,31 @@ export async function POST(request) {
       return Response.json(updated);
     }
   }
+
+  // Snapshot Issuer into values so historical documents retain organization state at creation time
+  const values = { ...(body.values || {}) };
+  if (!values.issuer || !values.issuer.snapshottedAt) {
+    try {
+      const settings = await settingsRepo.get();
+      const org = settings?.organization || (await organizationsRepo.getPrimary()) || {};
+      values.issuer = {
+        name: values.issuer?.name || org.nameEn || org.name || "",
+        nameTh: values.issuer?.nameTh || org.name || "",
+        taxId: values.issuer?.taxId || values.issuer?.taxIdNumber || org.taxId || "",
+        branch: values.issuer?.branch || values.issuer?.taxBranch || org.branch || "สำนักงานใหญ่",
+        address: values.issuer?.address || org.address || "",
+        phone: values.issuer?.phone || org.phone || "",
+        email: values.issuer?.email || org.email || "",
+        website: values.issuer?.website || org.website || "",
+        logoUrl: values.issuer?.logoUrl || org.logoUrl || "",
+        snapshottedAt: new Date().toISOString(),
+      };
+    } catch (e) {
+      console.warn("Could not snapshot issuer:", e);
+    }
+  }
+  body.values = values;
+
   const record = await documentsRepo.create(body);
   try {
     await notificationsRepo.create({

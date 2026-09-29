@@ -383,6 +383,46 @@ export default function DocumentsTable({
     }
   };
 
+  const handleApprovalAction = async (doc, action, defaultComment = "") => {
+    setOpenMenuId(null);
+    let comment = defaultComment;
+    if (action === "reject") {
+      const reason = window.prompt("ระบุเหตุผลการปฏิเสธ (Reject Reason):", "ไม่ผ่านการตรวจสอบ");
+      if (reason === null) return; // User cancelled
+      comment = reason;
+    }
+
+    try {
+      const res = await fetch(`/api/documents/${doc.id}/actions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action,
+          performedBy: "ผู้ใช้งาน (Admin)",
+          comment,
+          reason: comment,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Action failed");
+      }
+      setToast({
+        message:
+          action === "submit_approval"
+            ? "ส่งเอกสารเพื่อขออนุมัติแล้ว (Pending Approval)"
+            : action === "approve"
+            ? "อนุมัติเอกสารเรียบร้อยแล้ว (Approved)"
+            : "ปฏิเสธเอกสารเรียบร้อยแล้ว (Rejected)",
+      });
+      setTimeout(() => setToast(null), 3500);
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      console.error("Approval action error:", err);
+      alert(err.message || "Failed to perform approval action");
+    }
+  };
+
   return (
     <>
       {/* Toast Notification with Quick Action */}
@@ -514,11 +554,43 @@ export default function DocumentsTable({
                               <Pencil size={11} />
                             </button>
                           </div>
-                          {meta.docNumber ? (
-                            <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                              {meta.docNumber}
-                            </p>
-                          ) : null}
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            {meta.docNumber ? (
+                              <p className="text-xs text-muted-foreground truncate">
+                                {meta.docNumber}
+                              </p>
+                            ) : null}
+                            <span
+                              className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold leading-none ${
+                                meta.status === "completed"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
+                                  : meta.status === "pending_approval"
+                                  ? "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800"
+                                  : meta.status === "rejected"
+                                  ? "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800"
+                                  : "bg-muted/70 text-muted-foreground border border-border"
+                              }`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                  meta.status === "completed"
+                                    ? "bg-emerald-500"
+                                    : meta.status === "pending_approval"
+                                    ? "bg-amber-500 animate-pulse"
+                                    : meta.status === "rejected"
+                                    ? "bg-rose-500"
+                                    : "bg-gray-400"
+                                }`}
+                              />
+                              {meta.status === "completed"
+                                ? (t('status.approved') || "อนุมัติแล้ว")
+                                : meta.status === "pending_approval"
+                                ? (t('status.pendingApproval') || "รออนุมัติ")
+                                : meta.status === "rejected"
+                                ? (t('status.rejected') || "ไม่อนุมัติ")
+                                : (t('status.draft') || "ร่าง")}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -696,6 +768,46 @@ export default function DocumentsTable({
                                 </>
                               )}
   
+                              {/* Approval Workflow Actions */}
+                              <div className="border-t border-border/50 my-1 pt-1">
+                                {meta.status === "draft" && (
+                                  <button
+                                    onClick={() => handleApprovalAction(doc, "submit_approval")}
+                                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 flex items-center gap-2.5 transition-colors whitespace-nowrap cursor-pointer"
+                                  >
+                                    <ShieldCheck size={14} className="text-amber-600 shrink-0" />
+                                    <span>ส่งขออนุมัติ (Submit Approval)</span>
+                                  </button>
+                                )}
+                                {meta.status === "pending_approval" && (
+                                  <>
+                                    <button
+                                      onClick={() => handleApprovalAction(doc, "approve", "Approved by reviewer")}
+                                      className="w-full text-left px-3.5 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 flex items-center gap-2.5 transition-colors whitespace-nowrap cursor-pointer"
+                                    >
+                                      <CheckCircle2 size={14} className="text-emerald-600 shrink-0" />
+                                      <span>อนุมัติเอกสาร (Approve)</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleApprovalAction(doc, "reject")}
+                                      className="w-full text-left px-3.5 py-2 text-xs font-medium text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center gap-2.5 transition-colors whitespace-nowrap cursor-pointer"
+                                    >
+                                      <AlertCircle size={14} className="text-rose-600 shrink-0" />
+                                      <span>ปฏิเสธเอกสาร (Reject)</span>
+                                    </button>
+                                  </>
+                                )}
+                                {meta.status === "rejected" && (
+                                  <button
+                                    onClick={() => handleApprovalAction(doc, "submit_approval", "Re-submitted after revision")}
+                                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 flex items-center gap-2.5 transition-colors whitespace-nowrap cursor-pointer"
+                                  >
+                                    <ShieldCheck size={14} className="text-amber-600 shrink-0" />
+                                    <span>ส่งขออนุมัติใหม่ (Re-submit)</span>
+                                  </button>
+                                )}
+                              </div>
+
                               {/* 📥 Unified Export Item (Click to expand 3 formats) */}
                               <div className="border-t border-border/50 my-1 pt-1">
                                 <button

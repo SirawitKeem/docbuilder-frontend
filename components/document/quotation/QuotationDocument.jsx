@@ -480,7 +480,7 @@ export default function QuotationDocument({ quotation: propQuotation, currentPag
 
                         {/* Line 3: Address */}
                         <InlineTextField
-                          value={currentIssuer.address || "The Connect 37, 8/40 Soi Chang Akat Uthit 10 Yaek 1-2, Donmueang, Bangkok 10210"}
+                          value={currentIssuer.address || ""}
                           onChange={(v) => updateIssuer("address", v)}
                           readOnly={readOnly}
                           className="text-gray-600 tracking-tight whitespace-nowrap block w-full leading-none font-medium"
@@ -495,7 +495,7 @@ export default function QuotationDocument({ quotation: propQuotation, currentPag
                             style={{ backgroundColor: "#0F4C35", fontSize: 9 }}
                           >
                             <InlineTextField
-                              value={currentIssuer.taxIdNumber || "0105558073755"}
+                              value={currentIssuer.taxIdNumber || ""}
                               onChange={(v) => updateIssuer("taxIdNumber", v)}
                               readOnly={readOnly}
                               className="font-semibold text-white tracking-normal text-center w-[75px] p-0 leading-none"
