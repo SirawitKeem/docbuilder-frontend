@@ -41,3 +41,8 @@ data/*.bak
 data/*.tmp*
 data/db.json.backup
 data/db.snapshot.*
+*.dump
+
+# Local persistent asset storage
+storage/
+
