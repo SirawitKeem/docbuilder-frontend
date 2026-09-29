@@ -45,4 +45,5 @@ data/db.snapshot.*
 
 # Local persistent asset storage
 storage/
+scratch/
 
