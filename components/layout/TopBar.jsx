@@ -217,7 +217,7 @@ export function TopBar() {
     "/settings/email": t('nav.settings') || "Settings",
     "/settings/preferences": t('nav.settings') || "Settings",
   };
-  const title = pageTitles[pathname] || "DocBuilder Workspace";
+  const title = pageTitles[pathname] || "Ally Doc Workspace";
 
   return (
     <>

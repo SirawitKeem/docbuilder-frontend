@@ -22,6 +22,7 @@ import {
   Check,
   X,
   FolderSymlink,
+  Share2,
 } from "lucide-react";
 import CategoryManagerModal, { ICON_MAP, COLOR_MAP } from "@/components/templates/CategoryManagerModal";
 import CreateCategoryModal, { EXTENDED_ICON_MAP } from "@/components/templates/CreateCategoryModal";
@@ -30,6 +31,7 @@ import NewTemplateTypeModal from "@/components/templates/NewTemplateTypeModal";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import MoveCategoryModal from "@/components/templates/MoveCategoryModal";
 import EditTemplateModal from "@/components/templates/EditTemplateModal";
+import TemplateShareModal from "@/components/templates/TemplateShareModal";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 export default function TemplatesHubPage() {
@@ -61,6 +63,9 @@ export default function TemplatesHubPage() {
 
   // Move Category State
   const [templateToMove, setTemplateToMove] = useState(null);
+
+  // Share & Permissions State
+  const [templateToShare, setTemplateToShare] = useState(null);
 
   const handleSelectType = (editorType, customOptions = null) => {
     setIsTypeModalOpen(false);
@@ -470,23 +475,30 @@ export default function TemplatesHubPage() {
                         <div className="w-8 h-8 rounded-[6px] bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0 shadow-2xs">
                           <FormatIcon size={16} />
                         </div>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setTemplateToEdit(tmpl);
-                          }}
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border transition-all cursor-pointer hover:opacity-80 select-none ${
-                            tmpl.badge === "Standard" || tmpl.badge === "มาตรฐาน"
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800"
-                              : tmpl.badge === "Custom" || tmpl.badge === "กำหนดเอง"
-                              ? "bg-primary/10 text-primary border-primary/20"
-                              : "border-border bg-muted/70 text-muted-foreground"
-                          }`}
-                          title="คลิกเพื่อแก้ไขประเภทเทมเพลต (Click to change badge / type)"
-                        >
-                          {tmpl.badge || (isSheet ? "Sheet" : isSlide ? "Slide" : "A4")}
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          {Array.isArray(tmpl.pages) && tmpl.pages.length > 1 && (
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800 select-none">
+                              {tmpl.pages.length} {isSlide ? "สไลด์" : "หน้า"}
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTemplateToEdit(tmpl);
+                            }}
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border transition-all cursor-pointer hover:opacity-80 select-none ${
+                              tmpl.badge === "Standard" || tmpl.badge === "มาตรฐาน"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800"
+                                : tmpl.badge === "Custom" || tmpl.badge === "กำหนดเอง"
+                                ? "bg-primary/10 text-primary border-primary/20"
+                                : "border-border bg-muted/70 text-muted-foreground"
+                            }`}
+                            title="คลิกเพื่อแก้ไขประเภทเทมเพลต (Click to change badge / type)"
+                          >
+                            {tmpl.badge || (isSheet ? "Sheet" : isSlide ? "Slide" : "A4")}
+                          </button>
+                        </div>
                       </div>
 
                       {/* Title & Edit */}
@@ -523,6 +535,15 @@ export default function TemplatesHubPage() {
                       </button>
 
                       <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setTemplateToShare(tmpl)}
+                          className="size-7 rounded-[6px] hover:bg-primary/10 text-muted-foreground hover:text-primary flex items-center justify-center transition-colors cursor-pointer"
+                          title="แชร์และกำหนดสิทธิ์ (Share & Permissions)"
+                        >
+                          <Share2 size={13} />
+                        </button>
+
                         <button
                           type="button"
                           onClick={() => setTemplateToEdit(tmpl)}
@@ -610,11 +631,24 @@ export default function TemplatesHubPage() {
         </ErrorBoundary>
       )}
 
-      {/* Template Detail / Preview Modal */}
+      {/* Template Detail / Preview Modal with Error Boundary */}
       {previewTemplate && (
-        <TemplateDetailModal
-          template={previewTemplate}
-          onClose={() => setPreviewTemplate(null)}
+        <ErrorBoundary title="เกิดข้อผิดพลาดในการแสดงตัวอย่างเทมเพลต">
+          <TemplateDetailModal
+            template={previewTemplate}
+            onClose={() => setPreviewTemplate(null)}
+            onOpenShare={(tmpl) => setTemplateToShare(tmpl)}
+          />
+        </ErrorBoundary>
+      )}
+
+      {/* Template Share & Permissions Modal */}
+      {templateToShare && (
+        <TemplateShareModal
+          isOpen={Boolean(templateToShare)}
+          onClose={() => setTemplateToShare(null)}
+          template={templateToShare}
+          onUpdated={loadData}
         />
       )}
 

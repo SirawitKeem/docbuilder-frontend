@@ -25,6 +25,7 @@ import {
   Hash,
   Copy,
   ClipboardPaste,
+  Share2,
 } from "lucide-react";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 
@@ -33,6 +34,7 @@ export default function TopToolbar({
   onUpdateTemplateName,
   categoryName,
   editorType = "document",
+  onOpenShare = null,
   zoom,
   onZoomIn,
   onZoomOut,
@@ -575,6 +577,19 @@ export default function TopToolbar({
               <Download className="w-4 h-4 text-primary" />
             )}
             <span>{isExportingPdf ? "กำลังสร้าง PDF..." : "ดาวน์โหลด PDF"}</span>
+          </button>
+        )}
+
+        {/* ── Share & Permissions Button ── */}
+        {onOpenShare && (
+          <button
+            type="button"
+            onClick={onOpenShare}
+            className="flex items-center gap-1.5 h-9 px-3.5 border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 rounded-[8px] text-xs font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer"
+            title="แชร์และกำหนดสิทธิ์เทมเพลต (Share & Permissions)"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>แชร์</span>
           </button>
         )}
 

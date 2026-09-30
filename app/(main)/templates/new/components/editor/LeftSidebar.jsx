@@ -29,14 +29,18 @@ import {
   Users,
   Search,
   Shapes,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
-import { AVAILABLE_TOKEN_CATEGORIES, fetchCustomTokens, mergeWithCustomTokens, initLiveTokens } from "@/lib/tokens/tokenEngine";
+import { AVAILABLE_TOKEN_CATEGORIES, fetchCustomTokens, mergeWithCustomTokens, initLiveTokens, extractTokensFromTemplate } from "@/lib/tokens/tokenEngine";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import { VECTOR_ICONS, ICON_CATEGORIES } from "./utils/iconLibrary";
 
 
 export default function LeftSidebar({
   editorType = "document",
+  templateId = null,
+  pages = null,
   onAddText,
   onAddShape,
   onAddIcon,
@@ -68,17 +72,19 @@ export default function LeftSidebar({
   const [isSavingToken, setIsSavingToken] = useState(false);
   const [tokenError, setTokenError] = useState("");
 
-  // Load custom tokens when tokens tab is opened
+  const [isStandardTokensOpen, setIsStandardTokensOpen] = useState(false);
+
+  // Load custom tokens when tokens tab is opened (filtered by templateId)
   const loadCustomTokens = useCallback(async () => {
     setIsLoadingTokens(true);
     try {
-      const tokens = await fetchCustomTokens();
+      const tokens = await fetchCustomTokens(templateId);
       setCustomTokens(tokens);
       await initLiveTokens();
     } finally {
       setIsLoadingTokens(false);
     }
-  }, []);
+  }, [templateId]);
 
   useEffect(() => {
     if (activeTab === "tokens") {
@@ -97,7 +103,13 @@ export default function LeftSidebar({
       const res = await fetch("/api/custom-tokens", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: cleanKey, label: newTokenLabel.trim(), example: newTokenExample.trim(), scope: newTokenScope }),
+        body: JSON.stringify({
+          key: cleanKey,
+          label: newTokenLabel.trim(),
+          example: newTokenExample.trim(),
+          scope: newTokenScope,
+          templateId: templateId || null,
+        }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -133,8 +145,51 @@ export default function LeftSidebar({
     }
   };
 
-  // All token categories (built-in + custom)
-  const allTokenCategories = mergeWithCustomTokens(customTokens);
+  // 🔍 Extract tokens actually present on template pages
+  const activeTemplateTokens = React.useMemo(() => {
+    return extractTokensFromTemplate({ pages });
+  }, [pages]);
+
+  // Combine custom tokens and active template tokens
+  const templateScopedTokens = React.useMemo(() => {
+    const seen = new Set();
+    const list = [];
+
+    // 1. Custom tokens scoped to this template or created here
+    customTokens.forEach((t) => {
+      const clean = (t.key || "").replace(/^\{\{|\}\}$/g, "");
+      if (clean && !seen.has(clean)) {
+        seen.add(clean);
+        list.push({
+          key: `{{${clean}}}`,
+          rawKey: clean,
+          label: t.label,
+          example: t.example || `[${t.label}]`,
+          scope: t.scope,
+          id: t.id,
+          isCustom: true,
+        });
+      }
+    });
+
+    // 2. Tokens actually detected in template canvas pages
+    activeTemplateTokens.forEach((t) => {
+      const clean = (t.key || t.rawKey || "").replace(/^\{\{|\}\}$/g, "");
+      if (clean && !seen.has(clean)) {
+        seen.add(clean);
+        list.push({
+          key: `{{${clean}}}`,
+          rawKey: clean,
+          label: t.label || clean,
+          example: t.example || "",
+          scope: "template",
+          isCustom: false,
+        });
+      }
+    });
+
+    return list;
+  }, [customTokens, activeTemplateTokens]);
 
   // Handle local image file upload
   const handleFileChange = (e) => {
@@ -587,15 +642,28 @@ export default function LeftSidebar({
               </div>
             )}
 
-            {/* Token Categories List */}
-            {allTokenCategories.map((cat, idx) => (
-              <div key={idx} className="space-y-2">
-                <h3 className="text-[11px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                  {cat.tokens[0]?.isCustom && <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[9px] font-bold normal-case">Custom</span>}
-                  {cat.category}
+            {/* 1. Template-Scoped Variables */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[11px] font-bold text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>ตัวแปรในเทมเพลตนี้</span>
                 </h3>
+                <span className="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-bold">
+                  {templateScopedTokens.length} ตัวแปร
+                </span>
+              </div>
+
+              {templateScopedTokens.length === 0 ? (
+                <div className="p-3.5 rounded-xl border border-dashed border-gray-200 text-center bg-gray-50/60">
+                  <p className="text-[11px] text-gray-600 font-medium">ยังไม่มีตัวแปรเฉพาะในเทมเพลตนี้</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">
+                    คลิก "+ สร้างตัวแปรใหม่" ด้านบน หรือเลือกแทรกตัวแปรมาตรฐานส่วนกลาง
+                  </p>
+                </div>
+              ) : (
                 <div className="space-y-1.5">
-                  {cat.tokens.map((tok) => (
+                  {templateScopedTokens.map((tok) => (
                     <div key={tok.key} className="group relative">
                       <button
                         onClick={() => onInsertToken && onInsertToken(tok.key, tok.example)}
@@ -606,18 +674,17 @@ export default function LeftSidebar({
                             {tok.key}
                           </span>
                           <div className="flex items-center gap-1">
-                            {tok.isCustom && tok.scope === "entity" && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">ลูกค้า</span>
+                            {tok.isCustom && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold">สร้างเอง</span>
                             )}
-                            {tok.isCustom && tok.scope === "document" && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold">เอกสาร</span>
-                            )}
-                            <span className="text-[10px] text-gray-500">{tok.label}</span>
+                            <span className="text-[10px] text-gray-600 font-medium truncate max-w-[100px]">{tok.label}</span>
                           </div>
                         </div>
-                        <div className="text-[10px] text-gray-400 truncate mt-0.5">
-                          ตัวอย่าง: {tok.example}
-                        </div>
+                        {tok.example && (
+                          <div className="text-[10px] text-gray-400 truncate mt-0.5">
+                            ตัวอย่าง: {tok.example}
+                          </div>
+                        )}
                       </button>
                       {/* Delete button for custom tokens */}
                       {tok.isCustom && (
@@ -632,8 +699,54 @@ export default function LeftSidebar({
                     </div>
                   ))}
                 </div>
-              </div>
-            ))}
+              )}
+            </div>
+
+            {/* 2. Standard Common Variables (Collapsible Accordion) */}
+            <div className="pt-2 border-t border-gray-200/80">
+              <button
+                type="button"
+                onClick={() => setIsStandardTokensOpen(!isStandardTokensOpen)}
+                className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-gray-100/70 text-left transition-colors cursor-pointer bg-gray-50/50 border border-gray-200/60"
+              >
+                <div className="flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="text-[11px] font-bold text-gray-700">ตัวแปรพื้นฐานส่วนกลาง</span>
+                </div>
+                <div className="flex items-center gap-1 text-gray-400">
+                  <span className="text-[10px] text-gray-400">มาตรฐาน</span>
+                  {isStandardTokensOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                </div>
+              </button>
+
+              {isStandardTokensOpen && (
+                <div className="space-y-3 pt-2.5 pl-1 animate-in fade-in duration-150">
+                  {AVAILABLE_TOKEN_CATEGORIES.map((cat, idx) => (
+                    <div key={idx} className="space-y-1.5">
+                      <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                        {cat.category}
+                      </h4>
+                      <div className="space-y-1">
+                        {cat.tokens.map((tok) => (
+                          <button
+                            key={tok.key}
+                            onClick={() => onInsertToken && onInsertToken(tok.key, tok.example)}
+                            className="w-full text-left p-1.5 rounded-lg border border-gray-200/70 hover:border-indigo-300 hover:bg-indigo-50/40 transition-all cursor-pointer bg-white"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-[11px] font-semibold text-indigo-600">
+                                {tok.key}
+                              </span>
+                              <span className="text-[9.5px] text-gray-500">{tok.label}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 

@@ -10,6 +10,7 @@ import {
   Edit3,
   ChevronLeft,
   ChevronRight,
+  Share2,
 } from "lucide-react";
 import { ICON_MAP } from "./CategoryManagerModal";
 import UniversalTemplateRenderer from "@/components/document/UniversalTemplateRenderer";
@@ -20,6 +21,7 @@ import QuotationDocument from "@/components/document/quotation/QuotationDocument
 import { DocumentFieldsProvider } from "@/context/DocumentFieldsContext";
 import DocumentHeader from "@/components/document/DocumentHeader";
 import DocumentFooter from "@/components/document/DocumentFooter";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 import { DynamicContractPage } from "@/components/document/DynamicContractPage";
 
@@ -267,7 +269,7 @@ function AuthenticDocumentPreview({ template, currentPage = 1, totalPages = 1, s
   );
 }
 
-export default function TemplateDetailModal({ template: initialTemplate, onClose }) {
+export default function TemplateDetailModal({ template: initialTemplate, onClose, onOpenShare }) {
   const [template, setTemplate] = useState(initialTemplate);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -327,12 +329,28 @@ export default function TemplateDetailModal({ template: initialTemplate, onClose
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted flex items-center justify-center transition-colors cursor-pointer"
-          >
-            <X size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            {onOpenShare && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenShare(template);
+                }}
+                className="h-8 px-3 rounded-lg bg-purple-50 hover:bg-purple-100 text-[#7C3AED] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer border border-purple-200 shadow-2xs"
+                title="แชร์และกำหนดสิทธิ์เทมเพลต"
+              >
+                <Share2 size={13} />
+                <span>แชร์ & สิทธิ์</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Modal Body: 2-Column Split */}
@@ -400,7 +418,9 @@ export default function TemplateDetailModal({ template: initialTemplate, onClose
 
             {/* Render Canvas */}
             <div className="p-4 rounded-2xl bg-gray-200/60 border border-gray-300/80 flex justify-center shadow-inner overflow-hidden">
-              <AuthenticDocumentPreview template={template} currentPage={currentPage} totalPages={totalPages} scale={0.58} />
+              <ErrorBoundary title="ไม่สามารถแสดงตัวอย่างเอกสารนี้ได้">
+                <AuthenticDocumentPreview template={template} currentPage={currentPage} totalPages={totalPages} scale={0.58} />
+              </ErrorBoundary>
             </div>
           </div>
 

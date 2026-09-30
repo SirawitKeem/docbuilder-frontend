@@ -28,7 +28,7 @@ export default function GoogleFontPickerModal({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [previewFont, setPreviewFont] = useState(CURATED_THAI_FONTS[0]);
-  const [customSampleText, setCustomSampleText] = useState("แบบอักษรภาษาไทย ทดสอบ ๑๒๓ | DocBuilder 2026");
+  const [customSampleText, setCustomSampleText] = useState("แบบอักษรภาษาไทย ทดสอบ ๑๒๓ | Ally Doc 2026");
   const [isInstalling, setIsInstalling] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
 
@@ -305,7 +305,7 @@ export default function GoogleFontPickerModal({
                       className="text-xl font-bold text-gray-900 leading-snug truncate"
                       style={{ fontFamily: previewFont.cssStack }}
                     >
-                      {customSampleText || "แบบอักษรภาษาไทย DocBuilder"}
+                      {customSampleText || "แบบอักษรภาษาไทย Ally Doc"}
                     </h1>
                   </div>
 

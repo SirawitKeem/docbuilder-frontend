@@ -6,7 +6,7 @@ import * as fabric from "fabric";
 import TopToolbar from "./TopToolbar";
 import LeftSidebar from "./LeftSidebar";
 import RightSidebar from "./RightSidebar";
-import PagePaginationBar from "./PagePaginationBar";
+import { ChevronUp, ChevronDown, Copy, Trash2, Plus, Minus } from "lucide-react";
 import { useHistory } from "./hooks/useHistory";
 import { A4_WIDTH, MARGIN_PX } from "./CanvasStage";
 import { createDocTable, CUSTOM_CANVAS_PROPS } from "./elements/DocTable";
@@ -15,6 +15,7 @@ import { createSignatureBlock } from "./elements/SignatureBlock";
 import { createCompanyHeaderBlock, createPartyInfoGrid, createTermsBox } from "./elements/HeaderBlock";
 import { applyTokensToCanvas, revertTokensInPageJson, initLiveTokens } from "@/lib/tokens/tokenEngine";
 import { getCanvasPreset, mmToPx, pxToMm } from "@/lib/editor/canvasPresets";
+import TemplateShareModal from "@/components/templates/TemplateShareModal";
 
 // Dynamically import CanvasStage with SSR disabled
 const CanvasStage = dynamic(() => import("./CanvasStage"), {
@@ -29,6 +30,11 @@ const CanvasStage = dynamic(() => import("./CanvasStage"), {
   ),
 });
 
+// Dynamically import StaticPagePreview with SSR disabled
+const StaticPagePreview = dynamic(() => import("./StaticPagePreview"), {
+  ssr: false,
+});
+
 /**
  * Automatically updates or adds the dynamic Page Number indicator at the bottom right of the page/slide
  */
@@ -36,7 +42,11 @@ function syncPageNumberOnCanvas(canvas, pageIdx, totalPages, editorType = "docum
   if (!canvas) return;
   const p = preset || { width: 794, height: 1123, marginPx: 56 };
   const objs = canvas.getObjects();
-  const pageNumObjs = objs.filter((o) => o.isPageFooterNumber || o.name === "pageFooterNumber");
+  const pageNumObjs = objs.filter((o) =>
+    o.isPageFooterNumber ||
+    o.name === "pageFooterNumber" ||
+    (o.text && typeof o.text === "string" && (/^page \d+ of \d+$/i.test(o.text.trim()) || /^หน้า \d+ (จาก|\/) \d+$/i.test(o.text.trim())))
+  );
 
   // 🛡️ When page numbers are toggled OFF, remove all page number objects from canvas
   if (!showPageNumber) {
@@ -110,6 +120,7 @@ function ensureUnselectableObjectsAreNotEvented(canvas) {
 }
 
 export default function DocumentEditor({
+  templateId = null,
   templateName = "เทมเพลตเอกสารใหม่ (A4)",
   categoryName = "Notification Letter",
   onSave,
@@ -121,6 +132,7 @@ export default function DocumentEditor({
   editorType = "document",
   canvasPreset = null,
 }) {
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const effectivePresetKey = canvasPreset || (editorType === "slide" ? "slide-16-9" : "a4-portrait");
   const preset = getCanvasPreset(effectivePresetKey);
   const isMetric = Boolean(preset.mmWidth);
@@ -211,7 +223,7 @@ export default function DocumentEditor({
     }
   }, [isHandToolActive, isSpaceActive]);
 
-  const [showRuler, setShowRuler] = useState(true);
+  const [showRuler, setShowRuler] = useState(false);
   const [showMargin, setShowMargin] = useState(true);
   const [activeObject, setActiveObject] = useState(null);
   const [canvasInstance, setCanvasInstance] = useState(null);
@@ -420,16 +432,22 @@ export default function DocumentEditor({
       ? pages
       : null;
 
-    if (pagesToLoad && pagesToLoad[0]?.json) {
-      const parsedFirst = typeof pagesToLoad[0].json === "string" ? JSON.parse(pagesToLoad[0].json) : pagesToLoad[0].json;
-      canvas.loadFromJSON(parsedFirst).then(() => {
+    if (pagesToLoad && pagesToLoad.length > 0) {
+      if (pagesToLoad[0]?.json) {
+        const parsedFirst = typeof pagesToLoad[0].json === "string" ? JSON.parse(pagesToLoad[0].json) : pagesToLoad[0].json;
+        canvas.loadFromJSON(parsedFirst).then(() => {
+          syncPageNumberOnCanvas(canvas, 0, pagesToLoad.length, editorType, preset, showPageNumberRef.current);
+          ensureThaiTextWrapping(canvas);
+          ensureUnselectableObjectsAreNotEvented(canvas);
+          canvas.renderAll();
+          initHistory(canvas);
+          hasUnsavedChangesRef.current = false;
+        });
+      } else {
         syncPageNumberOnCanvas(canvas, 0, pagesToLoad.length, editorType, preset, showPageNumberRef.current);
-        ensureThaiTextWrapping(canvas);
-        ensureUnselectableObjectsAreNotEvented(canvas);
-        canvas.renderAll();
         initHistory(canvas);
         hasUnsavedChangesRef.current = false;
-      });
+      }
       setPages(pagesToLoad);
     } else {
       // Embed initial page footer number
@@ -523,45 +541,17 @@ export default function DocumentEditor({
         e.preventDefault();
         e.stopPropagation();
 
-        const rect = container.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
         const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
         const curZoom = zoomRef.current;
-        const newZoom = Math.min(4.0, Math.max(0.15, Number((curZoom * zoomFactor).toFixed(3))));
+        const newZoom = Math.min(4.0, Math.max(0.2, Number((curZoom * zoomFactor).toFixed(3))));
 
         if (newZoom === curZoom) return;
-
-        const k = newZoom / curZoom;
-        const curPan = panRef.current;
-
-        // Formula to keep mouse pointer stationary relative to canvas content
-        const cx = mouseX - centerX;
-        const cy = mouseY - centerY;
-        const newPanX = cx - (cx - curPan.x) * k;
-        const newPanY = cy - (cy - curPan.y) * k;
-
         setZoom(newZoom);
-        setPan({ x: Math.round(newPanX * 10) / 10, y: Math.round(newPanY * 10) / 10 });
         return;
       }
 
-      // 2. Pan with normal wheel or Shift+wheel
-      e.preventDefault();
-      const curPan = panRef.current;
-      if (e.shiftKey) {
-        const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
-        setPan((p) => ({ ...p, x: Math.round(p.x - delta) }));
-      } else {
-        setPan((p) => ({
-          x: Math.round(p.x - e.deltaX),
-          y: Math.round(p.y - e.deltaY),
-        }));
-      }
+      // 2. Normal wheel: Allow natural vertical scroll of the multi-page stack
+      // Do not preventDefault, container handles overflow-y-auto with clean boundaries!
     };
 
     container.addEventListener("wheel", handleWheel, { passive: false });
@@ -850,7 +840,8 @@ export default function DocumentEditor({
 
   // 5. Move Page Order
   const handleMovePage = useCallback((currentIndex, direction) => {
-    const targetIndex = currentIndex + direction;
+    const delta = typeof direction === "number" ? direction : direction === "up" ? -1 : 1;
+    const targetIndex = currentIndex + delta;
     if (targetIndex < 0 || targetIndex >= pages.length) return;
     const canvas = fabricCanvasRef.current;
 
@@ -871,6 +862,37 @@ export default function DocumentEditor({
     }
     hasUnsavedChangesRef.current = true;
   }, [activePageIndex, pages, editorType, preset.id]);
+
+  // 6. Canva-Style Add Page Between
+  const handleAddPageBetween = useCallback((targetIndex) => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas) return;
+
+    if (isPreviewTokens) {
+      applyTokensToCanvas(canvas, false);
+      setIsPreviewTokens(false);
+    }
+
+    const currentJson = canvas.toJSON(CUSTOM_CANVAS_PROPS);
+    const newPageId = `page-${Date.now()}`;
+    const blankJson = { version: "6.5.0", objects: [] };
+
+    const updatedPages = [...pages];
+    updatedPages[activePageIndex] = { ...updatedPages[activePageIndex], json: currentJson };
+    const insertAt = targetIndex + 1;
+    updatedPages.splice(insertAt, 0, { id: newPageId, json: blankJson });
+
+    setPages(updatedPages);
+    setActivePageIndex(insertAt);
+    setActiveObject(null);
+
+    canvas.clear();
+    canvas.backgroundColor = "#FFFFFF";
+    syncPageNumberOnCanvas(canvas, insertAt, updatedPages.length, editorType, preset, showPageNumberRef.current);
+    canvas.renderAll();
+    initHistory(canvas);
+    hasUnsavedChangesRef.current = true;
+  }, [activePageIndex, pages, initHistory, isPreviewTokens, editorType, preset.id]);
 
   // 📍 Viewport-aware Coordinate Helper (Places new objects in center of current visible view)
   const getSpawnCoords = useCallback((width = 200, height = 100) => {
@@ -2170,7 +2192,7 @@ export default function DocumentEditor({
   };
 
   return (
-    <div className="min-h-screen bg-[#F1F3F6] flex flex-col overflow-hidden">
+    <div className="h-screen bg-[#F1F3F6] flex flex-col overflow-hidden">
       {/* ── TOP TOOLBAR ── */}
       <TopToolbar
         templateName={currentTitle}
@@ -2211,6 +2233,7 @@ export default function DocumentEditor({
         }}
         onSave={handleSaveAll}
         saving={saving}
+        onOpenShare={templateId ? () => setIsShareModalOpen(true) : null}
         showPageNumber={showPageNumber}
         onTogglePageNumber={handleTogglePageNumber}
         isPreviewTokens={isPreviewTokens}
@@ -2227,6 +2250,8 @@ export default function DocumentEditor({
         {/* Left Tool Sidebar */}
         <LeftSidebar
           editorType={editorType}
+          templateId={templateId}
+          pages={pages}
           onAddText={handleAddText}
           onAddShape={handleAddShape}
           onAddIcon={handleAddIcon}
@@ -2238,60 +2263,202 @@ export default function DocumentEditor({
           isReplacingIcon={Boolean(activeObject && (activeObject.isIcon || activeObject.type === "path"))}
         />
 
-        {/* Center Canvas Stage + Bottom Pagination Bar */}
+        {/* Center Canvas Stage (Canva-Style Vertical Multi-Page View) */}
         <div className="flex-1 flex flex-col overflow-hidden bg-[#F1F3F6] relative">
           <main
             ref={mainContainerRef}
             tabIndex={0}
-            className={`flex-1 overflow-hidden relative flex items-center justify-center outline-none select-none ${
-              isPanning
-                ? "cursor-grabbing"
-                : isSpaceActive || isHandToolActive
-                ? "cursor-grab"
-                : "cursor-default"
-            }`}
-            style={{ touchAction: "none" }}
+            className="flex-1 overflow-y-auto overflow-x-hidden relative flex flex-col items-center py-8 px-4 outline-none select-none scroll-smooth bg-[#F1F3F6]"
           >
-            <CanvasStage
-              zoom={zoom}
-              pan={pan}
-              isPanning={isPanning}
-              isSpaceActive={isSpaceActive}
-              isHandToolActive={isHandToolActive}
-              showRuler={showRuler}
-              showMargin={showMargin}
-              marginPx={marginPx}
-              marginMm={marginMm}
-              canvasPreset={preset.id}
-              onCanvasReady={handleCanvasReady}
-              onHistoryPush={handleHistoryPush}
-              onSelectionChange={setActiveObject}
-            />
+            <div className="flex flex-col items-center w-full space-y-6">
+              {pages.map((p, idx) => {
+                const isActive = idx === activePageIndex;
+                return (
+                  <div
+                    key={p.id || `page-${idx}`}
+                    className="flex flex-col items-center w-full"
+                    style={{ maxWidth: Math.round(preset.width * zoom) + 24 }}
+                  >
+                    {/* 📄 Page Header Bar (Canva Style) */}
+                    <div
+                      className="w-full flex items-center justify-between pb-2 px-1 select-none"
+                      style={{ maxWidth: Math.round(preset.width * zoom) }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-xs font-bold px-2 py-0.5 rounded-md transition-colors ${
+                            isActive
+                              ? "bg-indigo-600 text-white shadow-2xs"
+                              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          }`}
+                        >
+                          หน้า {idx + 1}
+                        </span>
+                        <span className="text-[11px] text-gray-500 font-medium">
+                          {isActive ? "• กำลังแก้ไข" : `จาก ${pages.length} หน้า`}
+                        </span>
+                      </div>
 
-            {/* 💡 Floating Viewport Navigation Shortcut Chip */}
-            <div className="absolute bottom-3 left-4 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-xs border border-gray-200/80 shadow-xs rounded-full px-3 py-1 text-[11px] text-gray-600 select-none pointer-events-none">
-              <span className="flex items-center gap-1.5 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                <span><kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">Space</kbd> + ลาก หรือ <kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">เมาส์กลาง</kbd> เพื่อ Pan</span>
-                <span className="text-gray-300">•</span>
-                <span><kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">Ctrl + Wheel</kbd> เพื่อ Zoom</span>
-                <span className="text-gray-300">•</span>
-                <span><kbd className="font-mono bg-gray-100 text-gray-700 px-1 py-0.5 rounded text-[10px]">Shift+1</kbd> พอดีจอ</span>
+                      <div className="flex items-center gap-1">
+                        {/* Move Up */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMovePage(idx, "up");
+                          }}
+                          disabled={idx === 0}
+                          title="เลื่อนหน้าขึ้น"
+                          className="p-1 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 disabled:opacity-25 disabled:pointer-events-none cursor-pointer transition-colors"
+                        >
+                          <ChevronUp className="w-4 h-4" />
+                        </button>
+
+                        {/* Move Down */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMovePage(idx, "down");
+                          }}
+                          disabled={idx === pages.length - 1}
+                          title="เลื่อนหน้าลง"
+                          className="p-1 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 disabled:opacity-25 disabled:pointer-events-none cursor-pointer transition-colors"
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </button>
+
+                        {/* Duplicate */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDuplicatePage(idx);
+                          }}
+                          title="ทำซ้ำหน้านี้ (Duplicate)"
+                          className="p-1 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 cursor-pointer transition-colors"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+
+                        {/* Delete */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeletePage(idx);
+                          }}
+                          disabled={pages.length <= 1}
+                          title="ลบหน้านี้"
+                          className="p-1 rounded-md hover:bg-red-50 text-gray-400 hover:text-red-600 disabled:opacity-25 disabled:pointer-events-none cursor-pointer transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 🎨 Canvas or Static Preview */}
+                    {isActive ? (
+                      <CanvasStage
+                        zoom={zoom}
+                        pan={pan}
+                        isPanning={isPanning}
+                        isSpaceActive={isSpaceActive}
+                        isHandToolActive={isHandToolActive}
+                        showRuler={showRuler}
+                        showMargin={showMargin}
+                        marginPx={marginPx}
+                        marginMm={marginMm}
+                        canvasPreset={preset.id}
+                        onCanvasReady={handleCanvasReady}
+                        onHistoryPush={handleHistoryPush}
+                        onSelectionChange={setActiveObject}
+                      />
+                    ) : (
+                      <StaticPagePreview
+                        page={p}
+                        pageIndex={idx}
+                        totalPages={pages.length}
+                        zoom={zoom}
+                        preset={preset}
+                        onClick={() => handleSelectPage(idx)}
+                      />
+                    )}
+
+                    {/* ➕ Canva Between-Page Divider */}
+                    {idx < pages.length - 1 && (
+                      <div
+                        className="w-full flex items-center justify-center pt-8 pb-2 group/divider relative"
+                        style={{ maxWidth: Math.round(preset.width * zoom) }}
+                      >
+                        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-dashed border-gray-300 group-hover/divider:border-indigo-400 transition-colors" />
+                        <button
+                          type="button"
+                          onClick={() => handleAddPageBetween(idx)}
+                          className="relative z-10 px-3.5 py-1 bg-white hover:bg-indigo-50 border border-gray-300 hover:border-indigo-400 text-gray-600 hover:text-indigo-600 rounded-full text-xs font-semibold shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>เพิ่มหน้าระหว่างนี้</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* ➕ Canva Bottom Add Page Button */}
+              <div
+                className="w-full flex flex-col items-center justify-center pt-4 pb-16"
+                style={{ maxWidth: Math.round(preset.width * zoom) }}
+              >
+                <button
+                  type="button"
+                  onClick={handleAddPage}
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-dashed border-indigo-300 hover:border-indigo-500 bg-white/90 hover:bg-indigo-50 text-indigo-700 font-bold text-xs shadow-2xs hover:shadow-md transition-all cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ เพิ่มหน้าใหม่ (หน้าที่ {pages.length + 1})</span>
+                </button>
+                <span className="text-[11px] text-gray-400 mt-2">
+                  เอกสารทั้งหมด {pages.length} หน้า • เลื่อนขึ้น-ลงเพื่อดูทุกหน้า
+                </span>
+              </div>
+            </div>
+
+            {/* 💡 Floating Viewport Status & Zoom Bar (Canva Style) */}
+            <div className="fixed bottom-4 right-8 z-30 flex items-center gap-2 bg-white/95 backdrop-blur-md border border-gray-200/90 shadow-lg rounded-full px-3.5 py-1.5 text-xs text-gray-700 select-none">
+              <span className="font-semibold text-gray-600 text-[11px] pr-2 border-r border-gray-200">
+                หน้า {activePageIndex + 1} / {pages.length}
               </span>
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                className="p-1 hover:bg-gray-100 rounded-md cursor-pointer text-gray-600 hover:text-gray-900 transition-colors"
+                title="ย่อ (Ctrl + -)"
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+              <span className="font-mono font-bold text-xs text-indigo-700 min-w-[36px] text-center">
+                {Math.round(zoom * 100)}%
+              </span>
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                className="p-1 hover:bg-gray-100 rounded-md cursor-pointer text-gray-600 hover:text-gray-900 transition-colors"
+                title="ขยาย (Ctrl + +)"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={handleFitToScreen}
+                className="ml-1 px-2.5 py-0.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-[10px] font-semibold cursor-pointer transition-colors"
+                title="พอดีจอ (Shift+1)"
+              >
+                พอดีจอ
+              </button>
             </div>
           </main>
-
-          {/* 📑 Bottom Multi-Page Pagination Bar */}
-          <PagePaginationBar
-            pages={pages}
-            activePageIndex={activePageIndex}
-            editorType={editorType}
-            onSelectPage={handleSelectPage}
-            onAddPage={handleAddPage}
-            onDuplicatePage={handleDuplicatePage}
-            onDeletePage={handleDeletePage}
-            onMovePage={handleMovePage}
-          />
         </div>
 
         {/* Right Properties & Layers Sidebar */}
@@ -2313,6 +2480,15 @@ export default function DocumentEditor({
         <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-slate-900/95 backdrop-blur-md text-white px-4 py-2 rounded-full shadow-2xl text-xs font-semibold animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-none border border-white/10">
           <span>{toastMessage}</span>
         </div>
+      )}
+
+      {/* 🛡️ Template Share & Permissions Modal */}
+      {isShareModalOpen && templateId && (
+        <TemplateShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          template={{ id: templateId, name: currentTitle }}
+        />
       )}
     </div>
   );

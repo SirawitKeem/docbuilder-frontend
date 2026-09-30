@@ -17,7 +17,7 @@ const notoSansThai = Noto_Sans_Thai({
 });
 
 export const metadata = {
-  title: "DocBuilder Workspace | Crest Zendo",
+  title: "Ally Doc Workspace | Crest Zendo",
   description: "ระบบสร้างและจัดการเอกสารสัญญาและใบเสนอราคาสำหรับธุรกิจ",
 };
 

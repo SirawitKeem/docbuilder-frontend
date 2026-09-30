@@ -338,7 +338,7 @@ export default function AccountSettingsPage() {
           <div>
             <SettingsSectionHeading
               title={t("account.activeSessions") || "Active Sessions"}
-              description="อุปกรณ์และเว็บเบราว์เซอร์ที่กำลังล็อกอินและใช้งานระบบ DocBuilder"
+              description="อุปกรณ์และเว็บเบราว์เซอร์ที่กำลังล็อกอินและใช้งานระบบ Ally Doc"
             />
             <SettingsCard className="p-6 space-y-4">
               <div className="divide-y divide-border/50">

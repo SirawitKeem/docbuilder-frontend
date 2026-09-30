@@ -6,7 +6,27 @@ import { TopBar } from "./TopBar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import { usePathname } from "next/navigation";
+
 export default function LayoutShell({ children }) {
+  const pathname = usePathname();
+  const isStudio = Boolean(pathname?.startsWith("/templates/new"));
+
+  if (isStudio) {
+    return (
+      <TooltipProvider>
+        <SidebarProvider defaultOpen={false}>
+          <AppSidebar />
+          <SidebarInset className="h-screen overflow-hidden bg-sidebar text-foreground">
+            <main className="flex-1 h-screen overflow-hidden flex flex-col p-0 w-full bg-[#F1F3F6]">
+              {children}
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
+      </TooltipProvider>
+    );
+  }
+
   return (
     <TooltipProvider>
       <SidebarProvider>

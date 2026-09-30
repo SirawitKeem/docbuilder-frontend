@@ -80,7 +80,7 @@ export default function PreferencesPage() {
             title={t("preferences.appearanceTheme") || "Appearance theme"}
             description={
               t("preferences.themeDescription") ||
-              "Select how the DocBuilder workspace looks to you."
+              "Select how the Ally Doc workspace looks to you."
             }
           />
           <SettingsCard className="p-6 space-y-4">

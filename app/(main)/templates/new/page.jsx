@@ -73,6 +73,7 @@ function TemplateBuilderContent() {
   useEffect(() => {
     if (editId) {
       setCurrentEditId(editId);
+      setLoadingTemplate(true);
     }
   }, [editId]);
 
@@ -248,12 +249,14 @@ function TemplateBuilderContent() {
     }
   };
 
-  if (loadingTemplate) {
+  const isWaitingForTemplate = Boolean(editId && (loadingTemplate || (editorType !== "sheet" && !initialPages)));
+
+  if (isWaitingForTemplate) {
     return (
       <div className="flex items-center justify-center min-h-[85vh] bg-[#F1F3F6]">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm font-semibold text-gray-700">กำลังเตรียม Document Studio...</p>
+          <p className="text-sm font-semibold text-gray-700">กำลังเตรียม Document Studio ({templateName})...</p>
         </div>
       </div>
     );
@@ -263,6 +266,7 @@ function TemplateBuilderContent() {
     <>
       {editorType === "sheet" ? (
         <SheetEditor
+          key={`sheet-${currentEditId || editId || "new"}`}
           templateName={templateName}
           categoryName={categoryName}
           initialSheetData={initialSheetData}
@@ -271,6 +275,8 @@ function TemplateBuilderContent() {
         />
       ) : (
         <DocumentEditor
+          key={`editor-${currentEditId || editId || "new"}-${initialPages?.length || 0}`}
+          templateId={currentEditId}
           templateName={templateName}
           categoryName={categoryName}
           editorType={editorType}
