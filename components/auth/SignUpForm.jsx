@@ -57,15 +57,23 @@ export default function SignUpForm() {
   return (
     <div className="w-full">
       {/* Top Logo */}
-      <div className="mb-6">
-        <Image
-          src="/logo_ally.png"
-          alt="Ally Doc"
-          width={92}
-          height={40}
-          priority
-          className="h-9 w-auto object-contain select-none"
-        />
+      <div className="mb-6 flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="ally-brand-tile grid size-10 shrink-0 place-items-center rounded-[10px]"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/ally-mark-white.svg"
+            alt="Ally Doc"
+            width={92}
+            height={40}
+            className="relative z-10 size-7 select-none object-contain"
+          />
+        </span>
+        <span className="text-[22px] font-black tracking-tight text-gray-900 font-sans">
+          Ally DOC
+        </span>
       </div>
 
       {/* Title & Subtitle */}

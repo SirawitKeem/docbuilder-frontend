@@ -68,6 +68,10 @@ function AuthenticDocumentPreview({ template, currentPage = 1, totalPages = 1, s
     const targetWidth = isSquare ? 430 : (preset.width > 900 ? 470 : 430);
     const canvasScale = targetWidth / preset.width;
 
+    const pageIndex = Math.max(0, Math.min(currentPage - 1, template.pages.length - 1));
+    const activePages = template.pages[pageIndex] ? [template.pages[pageIndex]] : template.pages;
+    const singlePageTemplate = { ...template, pages: activePages };
+
     return (
       <div
         className="origin-top rounded-sm shadow-xl border border-gray-300 overflow-hidden bg-white"
@@ -85,7 +89,7 @@ function AuthenticDocumentPreview({ template, currentPage = 1, totalPages = 1, s
           }}
         >
           <FabricPrintRenderer
-            template={template}
+            template={singlePageTemplate}
             values={{}}
             watermark="none"
           />
@@ -263,8 +267,24 @@ function AuthenticDocumentPreview({ template, currentPage = 1, totalPages = 1, s
   );
 }
 
-export default function TemplateDetailModal({ template, onClose }) {
+export default function TemplateDetailModal({ template: initialTemplate, onClose }) {
+  const [template, setTemplate] = useState(initialTemplate);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Ensure full template pages are loaded from PostgreSQL if missing
+  React.useEffect(() => {
+    setTemplate(initialTemplate);
+    if (initialTemplate?.id && (!initialTemplate.pages || initialTemplate.pages.length === 0)) {
+      fetch(`/api/templates/${initialTemplate.id}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && Array.isArray(data.pages) && data.pages.length > 0) {
+            setTemplate(data);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [initialTemplate]);
 
   if (!template) return null;
 
@@ -486,6 +506,12 @@ export default function TemplateDetailModal({ template, onClose }) {
           </button>
 
           <div className="flex items-center gap-2">
+            <Link
+              href={`/create/custom?templateId=${template.id}&categoryId=${template.categoryId || "general"}`}
+              className="inline-flex items-center gap-1.5 h-9 px-4 rounded-[8px] border border-purple-200 bg-purple-50 hover:bg-purple-100 text-[#7C3AED] text-xs font-bold transition-all cursor-pointer shadow-2xs"
+            >
+              <span>ใช้สร้างเอกสารนี้</span>
+            </Link>
             <Link
               href={`/templates/new?edit=${template.id}`}
               className="primary-button inline-flex items-center gap-2 h-9 px-4 rounded-[8px] text-white text-xs font-medium shadow-xs hover:opacity-95 transition-all cursor-pointer"

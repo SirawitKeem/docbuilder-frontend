@@ -1076,24 +1076,36 @@ function PreviewModal({ doc, onClose }) {
   const [activeTab, setActiveTab] = useState("preview"); // "preview" | "timeline"
   const [freshDoc, setFreshDoc] = useState(doc);
   const canonicalId = LEGACY_TEMPLATE_ID_MAP[freshDoc?.templateId] || freshDoc?.templateId;
+  const targetTemplateId = freshDoc?.templateId || canonicalId;
   const entry = templateRegistry[canonicalId] || templateRegistry[freshDoc?.templateId] || null;
   const [customTemplate, setCustomTemplate] = useState(null);
-  const [loadingCustom, setLoadingCustom] = useState(false);
+  const [loadingCustom, setLoadingCustom] = useState(Boolean(targetTemplateId));
   const [modalValues, setModalValues] = useState(freshDoc.values || {});
 
-  // Fetch custom template if not a standard registry template
+  // Always fetch canonical template from PostgreSQL API
   useEffect(() => {
-    if (!entry && freshDoc?.templateId) {
-      setLoadingCustom(true);
-      fetch(`/api/templates/${freshDoc.templateId}`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data) setCustomTemplate(data);
-        })
-        .catch((err) => console.warn("Failed to load custom template for preview:", err))
-        .finally(() => setLoadingCustom(false));
-    }
-  }, [entry, freshDoc?.templateId]);
+    if (!targetTemplateId) return;
+    let active = true;
+    fetch(`/api/templates/${targetTemplateId}`)
+      .then((res) => {
+        if (res.ok) return res.json();
+        if (canonicalId && canonicalId !== targetTemplateId) {
+          return fetch(`/api/templates/${canonicalId}`).then((r) => (r.ok ? r.json() : null));
+        }
+        return null;
+      })
+      .then((data) => {
+        if (active && data) setCustomTemplate(data);
+      })
+      .catch((err) => console.warn("Failed to load template for preview:", err))
+      .finally(() => {
+        if (active) setLoadingCustom(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [targetTemplateId, canonicalId]);
 
   // Fetch freshest document details on mount
   useEffect(() => {
@@ -1292,7 +1304,19 @@ function PreviewModal({ doc, onClose }) {
         {activeTab === "preview" ? (
           <ErrorBoundary title="ไม่สามารถแสดงตัวอย่างเอกสารนี้ได้">
             <div className="flex-1 overflow-auto bg-muted p-8 flex flex-col items-center gap-8">
-              {isQuotation ? (
+              {customTemplate && Array.isArray(customTemplate.pages) && customTemplate.pages.length > 0 && customTemplate.pages[0]?.json ? (
+                <div className="shrink-0 shadow-document bg-white">
+                  <FabricPrintRenderer
+                    template={customTemplate}
+                    values={{
+                      ...modalValues,
+                      table_items: freshDoc.tableItems || modalValues.table_items || modalValues.lineItems || [],
+                      table_vatRate: freshDoc.tableVatRate !== undefined ? freshDoc.tableVatRate : (modalValues.table_vatRate ?? 7),
+                    }}
+                    watermark={freshDoc.watermark}
+                  />
+                </div>
+              ) : isQuotation ? (
                 Array.from({ length: quotationPageCount }, (_, i) => (
                   <div key={i} className="shrink-0">
                     <QuotationDocument quotation={modalValues} currentPage={i + 1} />
@@ -1329,63 +1353,10 @@ function PreviewModal({ doc, onClose }) {
                   </div>
                 ))}
               </DocumentFieldsProvider>
-            ) : customTemplate ? (
-              customTemplate.pages && customTemplate.pages.length > 0 ? (
-                <div className="shrink-0 shadow-document bg-white">
-                  <FabricPrintRenderer
-                    template={customTemplate}
-                    values={modalValues}
-                    watermark={freshDoc.watermark}
-                  />
-                </div>
-              ) : Array.isArray(customTemplate.blocks) && customTemplate.blocks.length > 0 ? (
-                <div className="shrink-0 shadow-document bg-white w-[794px] min-h-[1123px]">
-                  <UniversalTemplateRenderer template={customTemplate} scale={1} />
-                </div>
-              ) : (
-                <div className="bg-surface border border-border rounded-2xl shadow-sm p-8 max-w-2xl w-full text-left space-y-6">
-                  <div className="flex items-start justify-between border-b border-border pb-4">
-                    <div>
-                      <h4 className="text-lg font-bold text-foreground">{freshDoc.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        เทมเพลต: {freshDoc.templateName || freshDoc.templateId || "Custom Template"}
-                      </p>
-                    </div>
-                    {freshDoc.verificationToken && (
-                      <div className="text-right">
-                        <span className="text-[10px] text-muted-foreground block font-mono">Verification Token</span>
-                        <span className="text-xs font-mono font-semibold text-primary">{freshDoc.verificationToken}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-3">
-                    <h5 className="text-xs font-semibold text-foreground uppercase tracking-wider">ข้อมูลที่กรอกไว้ในเอกสาร</h5>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2">
-                      {Object.entries(freshDoc.values || {}).map(([k, v]) => {
-                        if (typeof v === "object" && v !== null) return null;
-                        return (
-                          <div key={k} className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                            <span className="text-[11px] font-medium text-muted-foreground block truncate">{k}</span>
-                            <span className="text-xs font-semibold text-foreground block truncate">{String(v || "-")}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">เอกสารกำหนดเองจาก Template Studio</span>
-                    <Link
-                      href={getDocumentEditPath(freshDoc)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-95 transition-opacity"
-                    >
-                      <Edit3 size={13} />
-                      <span>เปิดแก้ไขใน Studio</span>
-                    </Link>
-                  </div>
-                </div>
-              )
+            ) : customTemplate && Array.isArray(customTemplate.blocks) && customTemplate.blocks.length > 0 ? (
+              <div className="shrink-0 shadow-document bg-white w-[794px] min-h-[1123px]">
+                <UniversalTemplateRenderer template={customTemplate} scale={1} />
+              </div>
             ) : loadingCustom ? (
               <div className="flex flex-col items-center justify-center py-24 text-muted-foreground gap-3">
                 <Loader2 size={32} className="animate-spin text-primary" />

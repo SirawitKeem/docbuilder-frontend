@@ -80,8 +80,11 @@ function CustomFabricTemplatePreview({ templateId, scale = 0.151, fallback }) {
     };
   }, [templateId]);
 
-  const width = 794 * scale;
-  const height = 1123 * scale;
+  const preset = getCanvasPreset(
+    loadedTemplate?.canvasPreset || (loadedTemplate?.editorType === "slide" ? "slide-16-9" : "a4-portrait")
+  );
+  const width = (preset?.width || 794) * scale;
+  const height = (preset?.height || 1123) * scale;
 
   if (loading) {
     return (
@@ -108,8 +111,8 @@ function CustomFabricTemplatePreview({ templateId, scale = 0.151, fallback }) {
         <div
           className="origin-top-left pointer-events-none select-none"
           style={{
-            width: 794,
-            height: 1123,
+            width: preset.width,
+            height: preset.height,
             transform: `scale(${scale})`,
           }}
         >
@@ -128,8 +131,8 @@ function CustomFabricTemplatePreview({ templateId, scale = 0.151, fallback }) {
       <div
         className="origin-top-left pointer-events-none select-none"
         style={{
-          width: 794,
-          height: 1123,
+          width: preset.width,
+          height: preset.height,
           transform: `scale(${scale})`,
         }}
       >
@@ -142,77 +145,7 @@ function CustomFabricTemplatePreview({ templateId, scale = 0.151, fallback }) {
   );
 }
 
-/**
- * Authentic Document Preview rendered directly from the real Document Component
- */
-function RealTemplatePreview({ categoryId, templateItem = null, scale = 0.151 }) {
-  const width = 794 * scale;
-  const height = 1123 * scale;
-
-  // Check if this is a custom template from studio
-  const isCustom = Boolean(
-    templateItem &&
-    (templateItem.isCustom ||
-      (templateItem.id && String(templateItem.id).startsWith("tmpl-")) ||
-      (Array.isArray(templateItem.pages) && templateItem.pages.length > 0))
-  );
-
-  const fallbackSkeleton = (
-    <div
-      className="overflow-hidden rounded-md shadow-xs border border-gray-200 bg-white relative shrink-0"
-      style={{ width, height }}
-    >
-      <div
-        className="origin-top-left pointer-events-none select-none"
-        style={{
-          width: 794,
-          height: 1123,
-          transform: `scale(${scale})`,
-        }}
-      >
-        <div style={{ width: 794, height: 1123 }} className="bg-white text-left font-sans p-10 flex flex-col justify-between overflow-hidden">
-          <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-[#7C3AED] flex items-center justify-center text-white font-bold text-xs">
-                CZ
-              </div>
-              <div>
-                <p className="font-bold text-gray-900 text-xs">Crest Zendo Co., Ltd.</p>
-                <p className="text-[10px] text-gray-500">CREST ZENDO CO., LTD.</p>
-              </div>
-            </div>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-[#7C3AED] font-bold border border-purple-100">
-              Official Document
-            </span>
-          </div>
-          <div className="flex-1 py-6 space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto" />
-            <div className="h-2.5 bg-gray-100 rounded w-full" />
-            <div className="h-2.5 bg-gray-100 rounded w-5/6" />
-            <div className="h-2.5 bg-gray-100 rounded w-4/6" />
-          </div>
-          <div className="border-t border-gray-100 pt-4 flex justify-between">
-            <div className="h-8 border-b border-gray-300 w-28" />
-            <div className="h-8 border-b border-gray-300 w-28" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const effectiveCategory = (templateItem?.categoryId || categoryId || "").toLowerCase();
-  const isStandardCategory = ["quotation", "nda", "partner", "distributor", "notification"].includes(effectiveCategory);
-
-  if (!isStandardCategory && isCustom && templateItem?.id) {
-    return (
-      <CustomFabricTemplatePreview
-        templateId={templateItem.id}
-        scale={scale}
-        fallback={fallbackSkeleton}
-      />
-    );
-  }
-
+function LegacyStaticPreview({ effectiveCategory, scale, width, height }) {
   const content = useMemo(() => {
     if (effectiveCategory === "quotation") {
       return (
@@ -325,6 +258,77 @@ function RealTemplatePreview({ categoryId, templateItem = null, scale = 0.151 })
   );
 }
 
+/**
+ * Authentic Document Preview rendered directly from the real Document Component
+ */
+function RealTemplatePreview({ categoryId, templateItem = null, scale = 0.151 }) {
+  const width = 794 * scale;
+  const height = 1123 * scale;
+
+  const fallbackSkeleton = (
+    <div
+      className="overflow-hidden rounded-md shadow-xs border border-gray-200 bg-white relative shrink-0"
+      style={{ width, height }}
+    >
+      <div
+        className="origin-top-left pointer-events-none select-none"
+        style={{
+          width: 794,
+          height: 1123,
+          transform: `scale(${scale})`,
+        }}
+      >
+        <div style={{ width: 794, height: 1123 }} className="bg-white text-left font-sans p-10 flex flex-col justify-between overflow-hidden">
+          <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-[#7C3AED] flex items-center justify-center text-white font-bold text-xs">
+                CZ
+              </div>
+              <div>
+                <p className="font-bold text-gray-900 text-xs">Crest Zendo Co., Ltd.</p>
+                <p className="text-[10px] text-gray-500">CREST ZENDO CO., LTD.</p>
+              </div>
+            </div>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-[#7C3AED] font-bold border border-purple-100">
+              Official Document
+            </span>
+          </div>
+          <div className="flex-1 py-6 space-y-3">
+            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto" />
+            <div className="h-2.5 bg-gray-100 rounded w-full" />
+            <div className="h-2.5 bg-gray-100 rounded w-5/6" />
+            <div className="h-2.5 bg-gray-100 rounded w-4/6" />
+          </div>
+          <div className="border-t border-gray-100 pt-4 flex justify-between">
+            <div className="h-8 border-b border-gray-300 w-28" />
+            <div className="h-8 border-b border-gray-300 w-28" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (templateItem?.id) {
+    return (
+      <CustomFabricTemplatePreview
+        templateId={templateItem.id}
+        scale={scale}
+        fallback={fallbackSkeleton}
+      />
+    );
+  }
+
+  const effectiveCategory = (templateItem?.categoryId || categoryId || "").toLowerCase();
+  return (
+    <LegacyStaticPreview
+      effectiveCategory={effectiveCategory}
+      scale={scale}
+      width={width}
+      height={height}
+    />
+  );
+}
+
 export default function TemplateSelectModal({ category, onClose }) {
   const router = useRouter();
   const { t } = useLanguage();
@@ -373,22 +377,7 @@ export default function TemplateSelectModal({ category, onClose }) {
   const handleUseTemplate = () => {
     if (!selectedTemplate || !category?.id) return;
     onClose?.();
-    const catId = category.id.toLowerCase();
-    const standardCategories = ["quotation", "nda", "partner", "distributor", "notification"];
-    const isSpecialEditor = selectedTemplate.editorType === "slide" || selectedTemplate.editorType === "sheet";
-    const isStandard = standardCategories.includes(catId) && !isSpecialEditor && (
-      selectedTemplate.isSystem ||
-      selectedTemplate.badge === "Standard" ||
-      selectedTemplate.badge === "มาตรฐาน" ||
-      selectedTemplate.tag === "มาตรฐาน" ||
-      !selectedTemplate.isCustom
-    );
-
-    if (isStandard) {
-      router.push(`/create/${catId}`);
-    } else {
-      router.push(`/create/custom?templateId=${selectedTemplate.id}&categoryId=${category.id}`);
-    }
+    router.push(`/create/custom?templateId=${selectedTemplate.id}&categoryId=${category.id}`);
   };
 
   if (!category) return null;

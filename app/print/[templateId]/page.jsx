@@ -75,58 +75,52 @@ function PrintContent() {
   const canonicalId = LEGACY_TEMPLATE_ID_MAP[effectiveTemplateId] || effectiveTemplateId;
   const entry = templateRegistry[effectiveTemplateId] || templateRegistry[canonicalId];
 
-  // If not in static registry, fetch custom template from API
+  // Always fetch canonical template from PostgreSQL API first
   useEffect(() => {
-    if (!entry && effectiveTemplateId) {
+    const targetId = effectiveTemplateId || canonicalId;
+    if (targetId) {
       setLoadingCustom(true);
-      fetch(`/api/templates/${effectiveTemplateId}`)
-        .then((res) => (res.ok ? res.json() : null))
+      fetch(`/api/templates/${targetId}`)
+        .then((res) => {
+          if (res.ok) return res.json();
+          if (canonicalId && canonicalId !== targetId) {
+            return fetch(`/api/templates/${canonicalId}`).then((r) => (r.ok ? r.json() : null));
+          }
+          return null;
+        })
         .then((data) => {
           if (data) {
             setCustomTemplate(data);
           }
         })
-        .catch((err) => console.error("Error fetching custom template:", err))
+        .catch((err) => console.error("Error fetching template from API:", err))
         .finally(() => setLoadingCustom(false));
     }
-  }, [entry, effectiveTemplateId]);
+  }, [effectiveTemplateId, canonicalId]);
 
   useEffect(() => {
     if (typeof document !== "undefined" && document.fonts) {
       document.fonts.ready.then(() => {
-        if (entry) setIsReady(true);
+        if (entry && !customTemplate) setIsReady(true);
       });
     } else {
-      if (entry) setIsReady(true);
+      if (entry && !customTemplate) setIsReady(true);
     }
-  }, [entry]);
+  }, [entry, customTemplate]);
 
-  // 1. Custom Studio Template Rendering (Docs / Slides / Custom Presets)
-  if (!entry && customTemplate) {
-    if ((!customTemplate.pages || customTemplate.pages.length === 0) && Array.isArray(customTemplate.blocks) && customTemplate.blocks.length > 0) {
-      return (
-        <div
-          id="print-root"
-          className="bg-white relative w-[794px] min-h-[1123px]"
-          data-ready="true"
-        >
-          <UniversalTemplateRenderer template={customTemplate} scale={1} />
-        </div>
-      );
-    }
-
+  // 1. PostgreSQL Fabric Canvas Template Rendering (100% Vector PDF)
+  if (customTemplate && Array.isArray(customTemplate.pages) && customTemplate.pages.length > 0 && customTemplate.pages[0]?.json) {
     const isSlide = customTemplate?.canvasPreset === "slide-16-9" || customTemplate?.editorType === "slide";
     const preset = getCanvasPreset(
       customTemplate?.canvasPreset || (isSlide ? "slide-16-9" : "a4-portrait")
     );
     const pageWidth = preset.width;
-    const pageHeight = preset.height;
 
     return (
       <div
         id="print-root"
         className="bg-white relative"
-        style={{ width: `${pageWidth}px`, minHeight: `${pageHeight}px` }}
+        style={{ width: `${pageWidth}px` }}
         data-ready={isReady ? "true" : "false"}
       >
         <FabricPrintRenderer
@@ -139,7 +133,20 @@ function PrintContent() {
     );
   }
 
-  if (!entry && loadingCustom) {
+  // 2. Block-based custom template fallback
+  if (customTemplate && Array.isArray(customTemplate.blocks) && customTemplate.blocks.length > 0) {
+    return (
+      <div
+        id="print-root"
+        className="bg-white relative w-[794px] min-h-[1123px]"
+        data-ready="true"
+      >
+        <UniversalTemplateRenderer template={customTemplate} scale={1} />
+      </div>
+    );
+  }
+
+  if (loadingCustom && !entry) {
     return (
       <div className="p-8 text-center text-xs text-gray-500 font-sans">
         กำลังโหลดเทมเพลตสำหรับพิมพ์...
@@ -151,7 +158,7 @@ function PrintContent() {
     return <p className="p-8 text-red-500 font-sans">ไม่พบเทมเพลต: {templateId}</p>;
   }
 
-  const { schema, pages, DocumentComponent } = entry;
+  const { schema, pages, DocumentComponent } = entry || {};
 
   if (schema?.type === "quotation" || DocumentComponent) {
     const QuotationComp = DocumentComponent;

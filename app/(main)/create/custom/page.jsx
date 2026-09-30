@@ -617,7 +617,13 @@ function UniversalDocumentContent() {
   const renderDocumentPage = () => {
     const pageContent = (
       <div className="origin-top shadow-xl border border-gray-300 rounded-sm overflow-hidden bg-white print-paper-shadow">
-        {isNotification ? (
+        {isFabricTemplate ? (
+          <FabricPrintRenderer
+            template={template}
+            values={values}
+            watermark={watermark}
+          />
+        ) : isNotification ? (
           <DocumentFieldsProvider initialValues={values} defaultReadOnly={true}>
             <div style={{ width: 794, minHeight: 1123 }} className="bg-white overflow-hidden text-left font-noto-looped">
               <DynamicContractPage templateId="notification" pageNumber={1} />
@@ -629,17 +635,15 @@ function UniversalDocumentContent() {
               <QuotationDocument currentPage={1} />
             </div>
           </QuotationDataProvider>
-        ) : isFabricTemplate ? (
-          <FabricPrintRenderer
-            template={template}
-            values={values}
-            watermark={watermark}
-          />
         ) : (
           <UniversalTemplateRenderer template={template} scale={1} />
         )}
       </div>
     );
+
+    const pageCount = (template?.pages && Array.isArray(template.pages) && template.pages.length > 0)
+      ? template.pages.length
+      : 1;
 
     if (previewScale < 1) {
       return (
@@ -647,7 +651,7 @@ function UniversalDocumentContent() {
           className="print-scale-wrapper transition-all"
           style={{
             width: `${Math.round(currentPreset.width * previewScale)}px`,
-            height: `${Math.round(currentPreset.height * previewScale)}px`,
+            height: `${Math.round(currentPreset.height * pageCount * previewScale)}px`,
             overflow: "hidden",
           }}
         >
@@ -655,7 +659,7 @@ function UniversalDocumentContent() {
             className="print-scale-inner origin-top-left"
             style={{
               width: `${currentPreset.width}px`,
-              height: `${currentPreset.height}px`,
+              height: `${currentPreset.height * pageCount}px`,
               transform: `scale(${previewScale})`,
               transformOrigin: "top left",
             }}

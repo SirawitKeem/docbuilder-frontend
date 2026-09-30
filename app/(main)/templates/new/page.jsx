@@ -62,6 +62,7 @@ function TemplateBuilderContent() {
     }
     return "เทมเพลตเอกสารใหม่ (A4)";
   });
+  const [loadingTemplate, setLoadingTemplate] = useState(Boolean(editId));
   const [initialPages, setInitialPages] = useState(null);
   const [initialSheetData, setInitialSheetData] = useState(null);
   const [initialMarginMm, setInitialMarginMm] = useState(null);
@@ -100,6 +101,7 @@ function TemplateBuilderContent() {
   useEffect(() => {
     // 1. If edit mode (load existing template from Database)
     if (editId) {
+      setLoadingTemplate(true);
       fetch(`/api/templates/${editId}`)
         .then((res) => (res.ok ? res.json() : null))
         .then((tmpl) => {
@@ -134,7 +136,10 @@ function TemplateBuilderContent() {
               .catch((err) => console.error("Error fetching categories for edit:", err));
           }
         })
-        .catch((err) => console.error("Error fetching template:", err));
+        .catch((err) => console.error("Error fetching template:", err))
+        .finally(() => {
+          setLoadingTemplate(false);
+        });
     } else {
       // 2. New template mode: Fetch Category details from query param
       fetch("/api/categories")
@@ -242,6 +247,17 @@ function TemplateBuilderContent() {
       setSaving(false);
     }
   };
+
+  if (loadingTemplate) {
+    return (
+      <div className="flex items-center justify-center min-h-[85vh] bg-[#F1F3F6]">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-semibold text-gray-700">กำลังเตรียม Document Studio...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

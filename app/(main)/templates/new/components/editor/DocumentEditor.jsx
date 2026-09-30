@@ -396,7 +396,8 @@ export default function DocumentEditor({
     if (initialPages && Array.isArray(initialPages) && initialPages.length > 0) {
       setPages(initialPages);
       if (fabricCanvasRef.current && initialPages[0]?.json) {
-        fabricCanvasRef.current.loadFromJSON(initialPages[0].json).then(() => {
+        const parsedFirst = typeof initialPages[0].json === "string" ? JSON.parse(initialPages[0].json) : initialPages[0].json;
+        fabricCanvasRef.current.loadFromJSON(parsedFirst).then(() => {
           syncPageNumberOnCanvas(fabricCanvasRef.current, 0, initialPages.length, editorType, preset, showPageNumberRef.current);
           ensureThaiTextWrapping(fabricCanvasRef.current);
           ensureUnselectableObjectsAreNotEvented(fabricCanvasRef.current);
@@ -413,15 +414,23 @@ export default function DocumentEditor({
     fabricCanvasRef.current = canvas;
     setCanvasInstance(canvas);
 
-    if (initialPages && Array.isArray(initialPages) && initialPages.length > 0 && initialPages[0]?.json) {
-      canvas.loadFromJSON(initialPages[0].json).then(() => {
-        syncPageNumberOnCanvas(canvas, 0, initialPages.length, editorType, preset, showPageNumberRef.current);
+    const pagesToLoad = (initialPages && Array.isArray(initialPages) && initialPages.length > 0)
+      ? initialPages
+      : (pages && Array.isArray(pages) && pages.length > 0 && pages[0]?.json)
+      ? pages
+      : null;
+
+    if (pagesToLoad && pagesToLoad[0]?.json) {
+      const parsedFirst = typeof pagesToLoad[0].json === "string" ? JSON.parse(pagesToLoad[0].json) : pagesToLoad[0].json;
+      canvas.loadFromJSON(parsedFirst).then(() => {
+        syncPageNumberOnCanvas(canvas, 0, pagesToLoad.length, editorType, preset, showPageNumberRef.current);
         ensureThaiTextWrapping(canvas);
         ensureUnselectableObjectsAreNotEvented(canvas);
         canvas.renderAll();
         initHistory(canvas);
         hasUnsavedChangesRef.current = false;
       });
+      setPages(pagesToLoad);
     } else {
       // Embed initial page footer number
       syncPageNumberOnCanvas(canvas, 0, 1, editorType, preset, showPageNumberRef.current);
@@ -436,7 +445,7 @@ export default function DocumentEditor({
       window.__DOC_EDITOR_PUSH_HISTORY__ = handleHistoryPush;
       window.__DOC_EDITOR_CANVAS__ = canvas;
     }
-  }, [initialPages, initHistory, editorType, preset.id, handleHistoryPush]);
+  }, [initialPages, pages, initHistory, editorType, preset.id, handleHistoryPush]);
 
   // 🔍 Figma-style Viewport Zoom & Pan Handlers
   const handleZoomIn = useCallback(() => {
@@ -711,7 +720,8 @@ export default function DocumentEditor({
     // Load target page
     const targetPageJson = updatedPages[targetIndex].json;
     if (targetPageJson) {
-      canvas.loadFromJSON(targetPageJson).then(() => {
+      const parsedTarget = typeof targetPageJson === "string" ? JSON.parse(targetPageJson) : targetPageJson;
+      canvas.loadFromJSON(parsedTarget).then(() => {
         syncPageNumberOnCanvas(canvas, targetIndex, updatedPages.length, editorType, preset, showPageNumberRef.current);
         ensureThaiTextWrapping(canvas);
         ensureUnselectableObjectsAreNotEvented(canvas);
