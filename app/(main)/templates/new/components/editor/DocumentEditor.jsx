@@ -6,7 +6,7 @@ import * as fabric from "fabric";
 import TopToolbar from "./TopToolbar";
 import LeftSidebar from "./LeftSidebar";
 import RightSidebar from "./RightSidebar";
-import { ChevronUp, ChevronDown, Copy, Trash2, Plus, Minus } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Copy, Trash2, Plus, Minus } from "lucide-react";
 import { useHistory } from "./hooks/useHistory";
 import { A4_WIDTH, MARGIN_PX } from "./CanvasStage";
 import { createDocTable, CUSTOM_CANVAS_PROPS } from "./elements/DocTable";
@@ -2283,24 +2283,45 @@ export default function DocumentEditor({
       />
 
       {/* ── MAIN STUDIO BODY: LEFT SIDEBAR + CANVAS + RIGHT SIDEBAR ── */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Tool Sidebar */}
-        {isLeftSidebarOpen && (
-          <LeftSidebar
-            editorType={editorType}
-            templateId={templateId}
-            pages={pages}
-            onAddText={handleAddText}
-            onAddShape={handleAddShape}
-            onAddIcon={handleAddIcon}
-            onAddImage={handleAddImage}
-            onAddPreset={handleAddPreset}
-            onAddTable={handleAddTable}
-            onAddSignature={handleAddSignature}
-            onInsertToken={handleInsertToken}
-            isReplacingIcon={Boolean(activeObject && (activeObject.isIcon || activeObject.type === "path"))}
-            onClose={() => setIsLeftSidebarOpen(false)}
-          />
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Left Tool Sidebar with attached Collapse Button on its right edge */}
+        {isLeftSidebarOpen ? (
+          <div className="relative shrink-0 flex z-20">
+            <LeftSidebar
+              editorType={editorType}
+              templateId={templateId}
+              pages={pages}
+              onAddText={handleAddText}
+              onAddShape={handleAddShape}
+              onAddIcon={handleAddIcon}
+              onAddImage={handleAddImage}
+              onAddPreset={handleAddPreset}
+              onAddTable={handleAddTable}
+              onAddSignature={handleAddSignature}
+              onInsertToken={handleInsertToken}
+              isReplacingIcon={Boolean(activeObject && (activeObject.isIcon || activeObject.type === "path"))}
+            />
+            {/* ◀ Collapse Button attached to the right border of sidebar */}
+            <button
+              type="button"
+              onClick={() => setIsLeftSidebarOpen(false)}
+              className="absolute top-3 -right-3.5 z-30 size-7 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center text-gray-500 hover:text-indigo-600 hover:border-indigo-300 transition-all cursor-pointer group hover:scale-105"
+              title="ยุบเก็บแถบเครื่องมือ (Collapse)"
+            >
+              <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+            </button>
+          </div>
+        ) : (
+          /* ▶ Expand Button attached to the far left border */
+          <button
+            type="button"
+            onClick={() => setIsLeftSidebarOpen(true)}
+            className="absolute top-3 left-0 z-30 h-8 pl-1.5 pr-2.5 bg-white border border-gray-200 border-l-0 rounded-r-lg shadow-md flex items-center gap-1 text-gray-600 hover:text-indigo-600 hover:border-indigo-300 transition-all cursor-pointer group hover:pl-2"
+            title="เปิดแถบเครื่องมือ (Expand tools)"
+          >
+            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 transition-transform group-hover:translate-x-0.5" />
+            <span className="text-[11px] font-semibold tracking-wide">เครื่องมือ</span>
+          </button>
         )}
 
         {/* Center Canvas Stage (Canva-Style Vertical Multi-Page View) */}

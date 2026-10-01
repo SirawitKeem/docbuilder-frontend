@@ -26,7 +26,6 @@ import {
   Copy,
   ClipboardPaste,
   Share2,
-  PanelLeft,
 } from "lucide-react";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 
@@ -72,8 +71,6 @@ export default function TopToolbar({
   isExportingPptx = false,
   onExportPdf,
   isExportingPdf = false,
-  isLeftSidebarOpen = false,
-  onToggleLeftSidebar = null,
 }) {
   const preset = getCanvasPreset(canvasPreset);
   const isSlide = editorType === "slide";
@@ -182,22 +179,6 @@ export default function TopToolbar({
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
-
-        {onToggleLeftSidebar && (
-          <button
-            type="button"
-            onClick={onToggleLeftSidebar}
-            className={`flex items-center gap-1.5 h-8 px-2.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
-              isLeftSidebarOpen
-                ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-2xs"
-                : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`}
-            title={isLeftSidebarOpen ? "ซ่อนเครื่องมือ (Hide tools)" : "แสดงเครื่องมือ (Show tools)"}
-          >
-            <PanelLeft className="w-3.5 h-3.5" />
-            <span>เครื่องมือ</span>
-          </button>
-        )}
 
         <div className="flex items-center gap-2">
           <div>

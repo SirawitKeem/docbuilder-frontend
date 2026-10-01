@@ -57,7 +57,6 @@ export default function LeftSidebar({
   onAddSignature,
   onInsertToken,
   isReplacingIcon = false,
-  onClose = null,
 }) {
   const isSlide = editorType === "slide";
   const fileInputRef = useRef(null);
@@ -272,8 +271,8 @@ export default function LeftSidebar({
   return (
     <aside className="w-80 bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-53px)] select-none z-20 shrink-0 shadow-xs overflow-hidden">
       {/* ── TOP SEGMENTED CONTROL: [ Templates ] | [ Elements ] ── */}
-      <div className="p-2.5 border-b border-gray-100 bg-gray-50/70 shrink-0 flex items-center gap-2">
-        <div className="grid grid-cols-2 p-1 bg-gray-200/80 rounded-xl gap-1 flex-1">
+      <div className="p-3 border-b border-gray-100 bg-gray-50/70 shrink-0">
+        <div className="grid grid-cols-2 p-1 bg-gray-200/80 rounded-xl gap-1">
           <button
             type="button"
             onClick={() => setTopTab("templates")}
@@ -297,16 +296,6 @@ export default function LeftSidebar({
             Elements
           </button>
         </div>
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="size-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-200/70 transition-colors cursor-pointer shrink-0"
-            title="ซ่อนเครื่องมือ (Hide tools)"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
       </div>
 
       {/* ── TAB CONTENT ── */}
