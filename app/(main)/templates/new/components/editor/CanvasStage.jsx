@@ -17,7 +17,7 @@ export default function CanvasStage({
   isPanning = false,
   isSpaceActive = false,
   isHandToolActive = false,
-  showRuler = true,
+  showRuler = false,
   showMargin = true,
   marginPx = null,
   marginMm = null,

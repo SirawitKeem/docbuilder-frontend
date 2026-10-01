@@ -47,14 +47,14 @@ export default function ResetPasswordForm() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/ally-mark-white.svg"
-            alt="Ally Doc"
+            alt="DocBuilder"
             width={92}
             height={40}
             className="relative z-10 size-7 select-none object-contain"
           />
         </span>
         <span className="text-[22px] font-black tracking-tight text-gray-900 font-sans">
-          Ally DOC
+          DocBuilder
         </span>
       </div>
 

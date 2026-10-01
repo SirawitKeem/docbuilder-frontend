@@ -78,7 +78,7 @@ export function AppSidebar() {
             >
               <BrandMark />
               <span className="text-base font-medium leading-5 text-sidebar-foreground tracking-tight">
-                Ally Doc
+                DocBuilder
               </span>
             </Link>
             <button

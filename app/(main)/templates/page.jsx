@@ -535,23 +535,6 @@ export default function TemplatesHubPage() {
                       </button>
 
                       <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => setTemplateToShare(tmpl)}
-                          className="size-7 rounded-[6px] hover:bg-primary/10 text-muted-foreground hover:text-primary flex items-center justify-center transition-colors cursor-pointer"
-                          title="แชร์และกำหนดสิทธิ์ (Share & Permissions)"
-                        >
-                          <Share2 size={13} />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setTemplateToEdit(tmpl)}
-                          className="size-7 rounded-[6px] hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
-                          title="ตั้งค่า/แก้ไขเทมเพลต (Edit template info & badge)"
-                        >
-                          <Settings size={13} />
-                        </button>
 
                         <button
                           type="button"

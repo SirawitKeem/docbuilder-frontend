@@ -37,7 +37,7 @@
     "title": "Preferences",
     "description": "Customize your interface appearance, display theme, and workspace defaults.",
     "appearanceTheme": "Appearance theme",
-    "themeDescription": "Select how the Ally Doc workspace looks to you.",
+    "themeDescription": "Select how the DocBuilder workspace looks to you.",
     "light": "Light",
     "dark": "Dark",
     "system": "System",

@@ -3,7 +3,7 @@
 import AuthBackButton from "@/components/ui/AuthBackButton";
 import Antigravity from "@/components/auth/Antigravity";
 
-// Dual Sparkle Stars above Ally DOC Header (matches image reference)
+// Dual Sparkle Stars above DocBuilder Header (matches image reference)
 function DualSparkleIcon({ className = "w-6 h-6 text-primary" }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -121,7 +121,7 @@ export default function AuthLayoutShell({
             <div>
               <div className="flex items-center gap-1.5 mb-3.5">
                 <span className="text-[30px] sm:text-[34px] font-black tracking-tight text-gray-900 font-sans">
-                  Ally DOC
+                  DocBuilder
                 </span>
                 <DualSparkleIcon className="w-6 h-6 text-primary shrink-0 mb-3.5" />
               </div>

@@ -225,6 +225,8 @@ export default function DocumentEditor({
 
   const [showRuler, setShowRuler] = useState(false);
   const [showMargin, setShowMargin] = useState(true);
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+  const pageRefs = useRef({});
   const [activeObject, setActiveObject] = useState(null);
   const [canvasInstance, setCanvasInstance] = useState(null);
   const [isPreviewTokens, setIsPreviewTokens] = useState(false);
@@ -348,6 +350,14 @@ export default function DocumentEditor({
     return [{ id: "page-1", json: null }];
   });
   const [activePageIndex, setActivePageIndex] = useState(0);
+
+  // Smooth scroll to active page in vertical multi-page view
+  useEffect(() => {
+    const el = pageRefs.current[activePageIndex];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [activePageIndex]);
 
   const isPosterOrSquare = preset.width === preset.height || (canvasPreset && canvasPreset.includes("poster"));
   const [showPageNumber, setShowPageNumber] = useState(() => {
@@ -2265,6 +2275,8 @@ export default function DocumentEditor({
         onTogglePreviewTokens={handleTogglePreviewTokens}
         onExportPptx={handleExportPptx}
         isExportingPptx={isExportingPptx}
+        isLeftSidebarOpen={isLeftSidebarOpen}
+        onToggleLeftSidebar={() => setIsLeftSidebarOpen((prev) => !prev)}
         canCopy={Boolean(activeObject)}
         onCopy={handleCopy}
         onPaste={handlePaste}
@@ -2273,20 +2285,23 @@ export default function DocumentEditor({
       {/* ── MAIN STUDIO BODY: LEFT SIDEBAR + CANVAS + RIGHT SIDEBAR ── */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Tool Sidebar */}
-        <LeftSidebar
-          editorType={editorType}
-          templateId={templateId}
-          pages={pages}
-          onAddText={handleAddText}
-          onAddShape={handleAddShape}
-          onAddIcon={handleAddIcon}
-          onAddImage={handleAddImage}
-          onAddPreset={handleAddPreset}
-          onAddTable={handleAddTable}
-          onAddSignature={handleAddSignature}
-          onInsertToken={handleInsertToken}
-          isReplacingIcon={Boolean(activeObject && (activeObject.isIcon || activeObject.type === "path"))}
-        />
+        {isLeftSidebarOpen && (
+          <LeftSidebar
+            editorType={editorType}
+            templateId={templateId}
+            pages={pages}
+            onAddText={handleAddText}
+            onAddShape={handleAddShape}
+            onAddIcon={handleAddIcon}
+            onAddImage={handleAddImage}
+            onAddPreset={handleAddPreset}
+            onAddTable={handleAddTable}
+            onAddSignature={handleAddSignature}
+            onInsertToken={handleInsertToken}
+            isReplacingIcon={Boolean(activeObject && (activeObject.isIcon || activeObject.type === "path"))}
+            onClose={() => setIsLeftSidebarOpen(false)}
+          />
+        )}
 
         {/* Center Canvas Stage (Canva-Style Vertical Multi-Page View) */}
         <div className="flex-1 flex flex-col overflow-hidden bg-[#F1F3F6] relative">
@@ -2301,6 +2316,9 @@ export default function DocumentEditor({
                 return (
                   <div
                     key={p.id || `page-${idx}`}
+                    ref={(el) => {
+                      pageRefs.current[idx] = el;
+                    }}
                     className="flex flex-col items-center w-full"
                     style={{ maxWidth: Math.round(preset.width * zoom) + 24 }}
                   >

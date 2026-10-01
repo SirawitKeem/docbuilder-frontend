@@ -37,7 +37,7 @@
     "title": "การตั้งค่า",
     "description": "ปรับแต่งรูปลักษณ์ ธีม และค่าเริ่มต้นของเวิร์คสเปซ",
     "appearanceTheme": "ธีมหน้าตา",
-    "themeDescription": "เลือกรูปแบบการแสดงผลของ Ally Doc",
+    "themeDescription": "เลือกรูปแบบการแสดงผลของ DocBuilder",
     "light": "สว่าง",
     "dark": "มืด",
     "system": "ตามระบบ",
