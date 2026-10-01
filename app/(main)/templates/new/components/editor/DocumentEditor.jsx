@@ -6,7 +6,7 @@ import * as fabric from "fabric";
 import TopToolbar from "./TopToolbar";
 import LeftSidebar from "./LeftSidebar";
 import RightSidebar from "./RightSidebar";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Copy, Trash2, Plus, Minus } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Copy, Trash2, Plus, Minus, MoreHorizontal } from "lucide-react";
 import { useHistory } from "./hooks/useHistory";
 import { A4_WIDTH, MARGIN_PX } from "./CanvasStage";
 import { createDocTable, CUSTOM_CANVAS_PROPS } from "./elements/DocTable";
@@ -190,6 +190,15 @@ export default function DocumentEditor({
   const [isPanning, setIsPanning] = useState(false);
   const [isSpaceActive, setIsSpaceActive] = useState(false);
   const [isHandToolActive, setIsHandToolActive] = useState(false);
+  const [openPageMenuIdx, setOpenPageMenuIdx] = useState(null);
+
+  // Close page action popover when clicking anywhere outside
+  useEffect(() => {
+    if (openPageMenuIdx === null) return;
+    const handleCloseMenu = () => setOpenPageMenuIdx(null);
+    window.addEventListener("click", handleCloseMenu);
+    return () => window.removeEventListener("click", handleCloseMenu);
+  }, [openPageMenuIdx]);
 
   const zoomRef = useRef(zoom);
   const panRef = useRef(pan);
@@ -535,7 +544,7 @@ export default function DocumentEditor({
     const panY = -(objCenterY - pageCenterY) * targetZoom;
 
     setZoom(targetZoom);
-    setPan({ x: Math.round(panX), y: Math.round(panY) });
+    setPan({ x: 0, y: Math.round(panY) });
   }, [handleFitToScreen, preset.width, preset.height]);
 
   const handleZoomReset = handleFitToScreen;
@@ -570,7 +579,7 @@ export default function DocumentEditor({
     };
   }, []);
 
-  // 🖐️ Middle Click (Mouse 3) & Spacebar + Left Click Canvas Drag (Pan)
+  // 🖐️ Middle Click (Mouse 3) & Spacebar + Left Click Canvas Drag (Vertical Pan only)
   useEffect(() => {
     const container = mainContainerRef.current;
     if (!container) return;
@@ -587,7 +596,7 @@ export default function DocumentEditor({
         dragStartPosRef.current = {
           x: e.clientX,
           y: e.clientY,
-          panX: panRef.current.x,
+          panX: 0,
           panY: panRef.current.y,
         };
         setIsPanning(true);
@@ -597,10 +606,9 @@ export default function DocumentEditor({
     const handlePointerMove = (e) => {
       if (!isDraggingPanRef.current) return;
       e.preventDefault();
-      const dx = e.clientX - dragStartPosRef.current.x;
       const dy = e.clientY - dragStartPosRef.current.y;
       setPan({
-        x: Math.round(dragStartPosRef.current.panX + dx),
+        x: 0,
         y: Math.round(dragStartPosRef.current.panY + dy),
       });
     };
@@ -2305,10 +2313,10 @@ export default function DocumentEditor({
             <button
               type="button"
               onClick={() => setIsLeftSidebarOpen(false)}
-              className="absolute top-3 -right-3.5 z-30 size-7 bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-center text-gray-500 hover:text-indigo-600 hover:border-indigo-300 transition-all cursor-pointer group hover:scale-105"
-              title="ยุบเก็บแถบเครื่องมือ (Collapse)"
+              className="absolute top-4 -right-3 z-30 w-5 h-8 bg-white border border-gray-200 border-l-0 rounded-r-md shadow-xs flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-gray-50 transition-all cursor-pointer group"
+              title="ยุบเก็บแถบเครื่องมือ"
             >
-              <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+              <ChevronLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
             </button>
           </div>
         ) : (
@@ -2316,11 +2324,10 @@ export default function DocumentEditor({
           <button
             type="button"
             onClick={() => setIsLeftSidebarOpen(true)}
-            className="absolute top-3 left-0 z-30 h-8 pl-1.5 pr-2.5 bg-white border border-gray-200 border-l-0 rounded-r-lg shadow-md flex items-center gap-1 text-gray-600 hover:text-indigo-600 hover:border-indigo-300 transition-all cursor-pointer group hover:pl-2"
-            title="เปิดแถบเครื่องมือ (Expand tools)"
+            className="absolute top-4 left-0 z-30 w-5 h-8 bg-white border border-gray-200 border-l-0 rounded-r-md shadow-xs flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-gray-50 transition-all cursor-pointer group"
+            title="เปิดแถบเครื่องมือ"
           >
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 transition-transform group-hover:translate-x-0.5" />
-            <span className="text-[11px] font-semibold tracking-wide">เครื่องมือ</span>
+            <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
           </button>
         )}
 
@@ -2329,7 +2336,7 @@ export default function DocumentEditor({
           <main
             ref={mainContainerRef}
             tabIndex={0}
-            className="flex-1 overflow-y-auto overflow-x-hidden relative flex flex-col items-center py-8 px-4 outline-none select-none scroll-smooth bg-[#F1F3F6]"
+            className="flex-1 overflow-y-auto overflow-x-hidden relative flex flex-col items-center py-4 px-4 outline-none select-none scroll-smooth bg-[#F1F3F6]"
           >
             <div className="flex flex-col items-center w-full space-y-6">
               {pages.map((p, idx) => {
@@ -2343,77 +2350,111 @@ export default function DocumentEditor({
                     className="flex flex-col items-center w-full"
                     style={{ maxWidth: Math.round(preset.width * zoom) + 24 }}
                   >
-                    {/* 📄 Page Header Bar (Canva Style) */}
+                    {/* 📄 Page Header Bar (Canva Minimalist Style: Page X of Y ••• +) */}
                     <div
-                      className="w-full flex items-center justify-between pb-2 px-1 select-none"
+                      className="w-full flex items-center justify-between pb-1 px-1 select-none"
                       style={{ maxWidth: Math.round(preset.width * zoom) }}
                     >
                       <div className="flex items-center gap-2">
-                        <span
-                          className={`text-xs font-semibold px-2.5 py-0.5 rounded-full transition-colors ${
-                            isActive
-                              ? "bg-indigo-600 text-white shadow-2xs"
-                              : "bg-gray-200/80 text-gray-700 hover:bg-gray-300"
-                          }`}
-                        >
-                          หน้า {idx + 1}
-                        </span>
+                        {p.title ? (
+                          <span className="text-xs font-medium text-gray-700 truncate max-w-[200px]">
+                            {p.title}
+                          </span>
+                        ) : (
+                          <span className="text-xs font-semibold text-gray-400">
+                            หน้า {idx + 1}
+                          </span>
+                        )}
                       </div>
 
-                      <div className="flex items-center gap-1">
-                        {/* Move Up */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleMovePage(idx, "up");
-                          }}
-                          disabled={idx === 0}
-                          title="เลื่อนหน้าขึ้น"
-                          className="p-1 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 disabled:opacity-25 disabled:pointer-events-none cursor-pointer transition-colors"
-                        >
-                          <ChevronUp className="w-4 h-4" />
-                        </button>
+                      <div className="flex items-center gap-1.5 text-gray-500">
+                        {/* Page X of Y */}
+                        <span className="text-xs font-normal text-gray-500 pr-0.5 select-none">
+                          Page {idx + 1} of {pages.length}
+                        </span>
 
-                        {/* Move Down */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleMovePage(idx, "down");
-                          }}
-                          disabled={idx === pages.length - 1}
-                          title="เลื่อนหน้าลง"
-                          className="p-1 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 disabled:opacity-25 disabled:pointer-events-none cursor-pointer transition-colors"
-                        >
-                          <ChevronDown className="w-4 h-4" />
-                        </button>
+                        {/* ••• More Actions Popover */}
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenPageMenuIdx(openPageMenuIdx === idx ? null : idx);
+                            }}
+                            className="p-1 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-200/80 transition-colors cursor-pointer"
+                            title="ตัวเลือกหน้าเพิ่มเติม"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
 
-                        {/* Duplicate */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDuplicatePage(idx);
-                          }}
-                          title="ทำซ้ำหน้านี้ (Duplicate)"
-                          className="p-1 rounded-md hover:bg-gray-200 text-gray-600 hover:text-gray-900 cursor-pointer transition-colors"
-                        >
-                          <Copy className="w-4 h-4" />
-                        </button>
+                          {openPageMenuIdx === idx && (
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              className="absolute right-0 top-full mt-1 w-44 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-40 text-xs text-gray-700 animate-in fade-in zoom-in-95 duration-100"
+                            >
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleMovePage(idx, "up");
+                                  setOpenPageMenuIdx(null);
+                                }}
+                                disabled={idx === 0}
+                                className="w-full px-3 py-1.5 flex items-center gap-2 hover:bg-gray-50 disabled:opacity-35 disabled:hover:bg-transparent text-left cursor-pointer"
+                              >
+                                <ChevronUp className="w-3.5 h-3.5 text-gray-400" />
+                                <span>เลื่อนขึ้น (Move up)</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleMovePage(idx, "down");
+                                  setOpenPageMenuIdx(null);
+                                }}
+                                disabled={idx === pages.length - 1}
+                                className="w-full px-3 py-1.5 flex items-center gap-2 hover:bg-gray-50 disabled:opacity-35 disabled:hover:bg-transparent text-left cursor-pointer"
+                              >
+                                <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                                <span>เลื่อนลง (Move down)</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleDuplicatePage(idx);
+                                  setOpenPageMenuIdx(null);
+                                }}
+                                className="w-full px-3 py-1.5 flex items-center gap-2 hover:bg-gray-50 text-left cursor-pointer"
+                              >
+                                <Copy className="w-3.5 h-3.5 text-gray-400" />
+                                <span>ทำซ้ำหน้า (Duplicate)</span>
+                              </button>
+                              <div className="border-t border-gray-100 my-1" />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleDeletePage(idx);
+                                  setOpenPageMenuIdx(null);
+                                }}
+                                disabled={pages.length <= 1}
+                                className="w-full px-3 py-1.5 flex items-center gap-2 hover:bg-red-50 text-red-600 disabled:opacity-35 disabled:hover:bg-transparent text-left cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                                <span>ลบหน้านี้ (Delete)</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
 
-                        {/* Delete */}
+                        {/* + Add Page Immediately After */}
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeletePage(idx);
+                            handleAddPageBetween(idx);
                           }}
-                          disabled={pages.length <= 1}
-                          title="ลบหน้านี้"
-                          className="p-1 rounded-md hover:bg-red-50 text-gray-400 hover:text-red-600 disabled:opacity-25 disabled:pointer-events-none cursor-pointer transition-colors"
+                          className="p-1 rounded-md text-gray-500 hover:text-indigo-600 hover:bg-gray-200/80 transition-colors cursor-pointer"
+                          title="เพิ่มหน้าใหม่ (+)"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Plus className="w-4 h-4" />
                         </button>
                       </div>
                     </div>

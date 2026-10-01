@@ -657,7 +657,7 @@ export default function CanvasStage({
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-start select-none py-6 transition-transform ${
+      className={`relative flex flex-col items-center justify-start select-none pt-0 pb-1 transition-transform ${
         isPanning
           ? "cursor-grabbing"
           : isSpaceActive || isHandToolActive
@@ -665,7 +665,7 @@ export default function CanvasStage({
           : ""
       }`}
       style={{
-        transform: `translate3d(${pan?.x || 0}px, ${pan?.y || 0}px, 0)`,
+        transform: `translate3d(0, ${pan?.y || 0}px, 0)`,
         transition: isPanning ? "none" : "transform 0.05s ease-out",
       }}
     >
