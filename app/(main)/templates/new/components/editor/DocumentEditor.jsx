@@ -2486,42 +2486,12 @@ export default function DocumentEditor({
                         onClick={() => handleSelectPage(idx)}
                       />
                     )}
-
-                    {/* ➕ Canva Between-Page Divider */}
-                    {idx < pages.length - 1 && (
-                      <div
-                        className="w-full flex items-center justify-center pt-8 pb-2 group/divider relative"
-                        style={{ maxWidth: Math.round(preset.width * zoom) }}
-                      >
-                        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-dashed border-gray-300 group-hover/divider:border-indigo-400 transition-colors" />
-                        <button
-                          type="button"
-                          onClick={() => handleAddPageBetween(idx)}
-                          className="relative z-10 px-3.5 py-1 bg-white hover:bg-indigo-50 border border-gray-300 hover:border-indigo-400 text-gray-600 hover:text-indigo-600 rounded-full text-xs font-medium shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>เพิ่มหน้า</span>
-                        </button>
-                      </div>
-                    )}
                   </div>
                 );
               })}
 
-              {/* ➕ Canva Bottom Add Page Button */}
-              <div
-                className="w-full flex flex-col items-center justify-center pt-4 pb-16"
-                style={{ maxWidth: Math.round(preset.width * zoom) }}
-              >
-                <button
-                  type="button"
-                  onClick={handleAddPage}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-dashed border-indigo-300 hover:border-indigo-500 bg-white hover:bg-indigo-50/60 text-indigo-700 font-semibold text-xs shadow-2xs hover:shadow-xs transition-all cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>เพิ่มหน้าใหม่</span>
-                </button>
-              </div>
+              {/* Bottom Spacing */}
+              <div className="w-full h-16 shrink-0" />
             </div>
 
             {/* 💡 Floating Viewport Status & Zoom Bar (Canva Style) */}
