@@ -1583,6 +1583,31 @@ export default function DocumentEditor({
       const t2 = new fabric.IText("✔ 2. ทิศทางการพัฒนาเทคโนโลยีและระบบอัตโนมัติ", { left: 120, top: 280, fontSize: 24, fontWeight: "bold", fill: "#1E293B" });
       const t3 = new fabric.IText("✔ 3. แผนการวัดผลและการรักษาเสถียรภาพระบบ 24/7", { left: 120, top: 360, fontSize: 24, fontWeight: "bold", fill: "#1E293B" });
       group = new fabric.Group([t1, t2, t3], { left: 120, top: 200 });
+    } else if (presetKey === "checkbox") {
+      const box = new fabric.Rect({ left: 0, top: 2, width: 16, height: 16, fill: "#FFFFFF", stroke: "#4B5563", strokeWidth: 1.5, rx: 3, ry: 3 });
+      const label = new fabric.IText("ระบุตัวเลือกข้อความ (Checkbox)", { left: 24, top: 0, fontSize: 13, fill: "#1F2937", fontFamily: "'Noto Sans Thai', sans-serif" });
+      group = new fabric.Group([box, label], { left: currentMargin, top: currentMargin + 80 });
+    } else if (presetKey === "radio") {
+      const outerCircle = new fabric.Circle({ left: 0, top: 2, radius: 8, fill: "#FFFFFF", stroke: "#4B5563", strokeWidth: 1.5 });
+      const innerDot = new fabric.Circle({ left: 4, top: 6, radius: 4, fill: "#4F46E5" });
+      const radioLabel = new fabric.IText("ระบุตัวเลือกข้อความ (Radio)", { left: 24, top: 0, fontSize: 13, fill: "#1F2937", fontFamily: "'Noto Sans Thai', sans-serif" });
+      group = new fabric.Group([outerCircle, innerDot, radioLabel], { left: currentMargin, top: currentMargin + 80 });
+    } else if (presetKey === "dropdown") {
+      const ddBg = new fabric.Rect({ left: 0, top: 0, width: 220, height: 34, fill: "#F9FAFB", stroke: "#D1D5DB", strokeWidth: 1.2, rx: 6, ry: 6 });
+      const ddText = new fabric.IText("เลือกรายการ...  ▾", { left: 12, top: 8, fontSize: 12, fill: "#6B7280", fontFamily: "'Noto Sans Thai', sans-serif" });
+      group = new fabric.Group([ddBg, ddText], { left: currentMargin, top: currentMargin + 80 });
+    } else if (presetKey === "attachment") {
+      const attachBg = new fabric.Rect({ left: 0, top: 0, width: 240, height: 44, fill: "#F8FAFC", stroke: "#CBD5E1", strokeWidth: 1.5, rx: 8, ry: 8 });
+      const attachText = new fabric.IText("📎 เอกสารแนบ (คลิกเพื่อดูไฟล์)", { left: 14, top: 13, fontSize: 12, fill: "#334155", fontWeight: "bold", fontFamily: "'Noto Sans Thai', sans-serif" });
+      group = new fabric.Group([attachBg, attachText], { left: currentMargin, top: currentMargin + 100 });
+    } else if (presetKey === "approve_stamp") {
+      const stampBg = new fabric.Rect({ left: 0, top: 0, width: 170, height: 42, fill: "#ECFDF5", stroke: "#10B981", strokeWidth: 2, rx: 8, ry: 8 });
+      const stampText = new fabric.IText("✔ อนุมัติแล้ว (APPROVED)", { left: 14, top: 12, fontSize: 12, fill: "#047857", fontWeight: "bold", fontFamily: "'Noto Sans Thai', sans-serif" });
+      group = new fabric.Group([stampBg, stampText], { left: currentMargin, top: currentMargin + 120 });
+    } else if (presetKey === "decline_stamp") {
+      const decBg = new fabric.Rect({ left: 0, top: 0, width: 160, height: 42, fill: "#FEF2F2", stroke: "#EF4444", strokeWidth: 2, rx: 8, ry: 8 });
+      const decText = new fabric.IText("✖ ปฏิเสธ (DECLINED)", { left: 16, top: 12, fontSize: 12, fill: "#B91C1C", fontWeight: "bold", fontFamily: "'Noto Sans Thai', sans-serif" });
+      group = new fabric.Group([decBg, decText], { left: currentMargin, top: currentMargin + 120 });
     }
 
     if (group) {
@@ -2286,16 +2311,13 @@ export default function DocumentEditor({
                     >
                       <div className="flex items-center gap-2">
                         <span
-                          className={`text-xs font-bold px-2 py-0.5 rounded-md transition-colors ${
+                          className={`text-xs font-semibold px-2.5 py-0.5 rounded-full transition-colors ${
                             isActive
                               ? "bg-indigo-600 text-white shadow-2xs"
-                              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                              : "bg-gray-200/80 text-gray-700 hover:bg-gray-300"
                           }`}
                         >
                           หน้า {idx + 1}
-                        </span>
-                        <span className="text-[11px] text-gray-500 font-medium">
-                          {isActive ? "• กำลังแก้ไข" : `จาก ${pages.length} หน้า`}
                         </span>
                       </div>
 
@@ -2395,10 +2417,10 @@ export default function DocumentEditor({
                         <button
                           type="button"
                           onClick={() => handleAddPageBetween(idx)}
-                          className="relative z-10 px-3.5 py-1 bg-white hover:bg-indigo-50 border border-gray-300 hover:border-indigo-400 text-gray-600 hover:text-indigo-600 rounded-full text-xs font-semibold shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
+                          className="relative z-10 px-3.5 py-1 bg-white hover:bg-indigo-50 border border-gray-300 hover:border-indigo-400 text-gray-600 hover:text-indigo-600 rounded-full text-xs font-medium shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
-                          <span>เพิ่มหน้าระหว่างนี้</span>
+                          <span>เพิ่มหน้า</span>
                         </button>
                       </div>
                     )}
@@ -2414,14 +2436,11 @@ export default function DocumentEditor({
                 <button
                   type="button"
                   onClick={handleAddPage}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-dashed border-indigo-300 hover:border-indigo-500 bg-white/90 hover:bg-indigo-50 text-indigo-700 font-bold text-xs shadow-2xs hover:shadow-md transition-all cursor-pointer"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-dashed border-indigo-300 hover:border-indigo-500 bg-white hover:bg-indigo-50/60 text-indigo-700 font-semibold text-xs shadow-2xs hover:shadow-xs transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>+ เพิ่มหน้าใหม่ (หน้าที่ {pages.length + 1})</span>
+                  <span>เพิ่มหน้าใหม่</span>
                 </button>
-                <span className="text-[11px] text-gray-400 mt-2">
-                  เอกสารทั้งหมด {pages.length} หน้า • เลื่อนขึ้น-ลงเพื่อดูทุกหน้า
-                </span>
               </div>
             </div>
 

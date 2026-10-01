@@ -15,14 +15,9 @@ export default function LayoutShell({ children }) {
   if (isStudio) {
     return (
       <TooltipProvider>
-        <SidebarProvider defaultOpen={false}>
-          <AppSidebar />
-          <SidebarInset className="h-screen overflow-hidden bg-sidebar text-foreground">
-            <main className="flex-1 h-screen overflow-hidden flex flex-col p-0 w-full bg-[#F1F3F6]">
-              {children}
-            </main>
-          </SidebarInset>
-        </SidebarProvider>
+        <div className="h-screen w-screen overflow-hidden flex flex-col bg-[#F1F3F6]">
+          {children}
+        </div>
       </TooltipProvider>
     );
   }

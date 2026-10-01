@@ -227,11 +227,11 @@ export default function TopToolbar({
       {/* ── CENTER: History & Zoom & View Guides ── */}
       <div className="flex items-center gap-2">
         {/* Undo / Redo */}
-        <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-0.5">
+        <div className="flex items-center h-9 bg-gray-50 border border-gray-200 rounded-lg p-0.5">
           <button
             onClick={onUndo}
             disabled={!canUndo}
-            className="p-1.5 rounded-md text-gray-700 hover:bg-white disabled:opacity-35 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="h-full px-2 rounded-md text-gray-700 hover:bg-white disabled:opacity-35 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center justify-center"
             title="เลิกทำ (Undo - Ctrl+Z)"
           >
             <Undo2 className="w-4 h-4" />
@@ -239,7 +239,7 @@ export default function TopToolbar({
           <button
             onClick={onRedo}
             disabled={!canRedo}
-            className="p-1.5 rounded-md text-gray-700 hover:bg-white disabled:opacity-35 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="h-full px-2 rounded-md text-gray-700 hover:bg-white disabled:opacity-35 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center justify-center"
             title="ทำซ้ำ (Redo - Ctrl+Y)"
           >
             <Redo2 className="w-4 h-4" />
@@ -247,12 +247,12 @@ export default function TopToolbar({
         </div>
 
         {/* 📋 Copy / Paste (Cross-Template) */}
-        <div className="flex items-center bg-gray-50 border border-gray-200 rounded-lg p-0.5">
+        <div className="flex items-center h-9 bg-gray-50 border border-gray-200 rounded-lg p-0.5">
           <button
             type="button"
             onClick={onCopy}
             disabled={!canCopy}
-            className="p-1.5 rounded-md text-gray-700 hover:bg-white disabled:opacity-35 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors cursor-pointer"
+            className="h-full px-2 rounded-md text-gray-700 hover:bg-white disabled:opacity-35 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors cursor-pointer flex items-center justify-center"
             title="คัดลอกวัตถุข้ามโปรเจกต์ (Copy - Ctrl+C)"
           >
             <Copy className="w-4 h-4" />
@@ -260,7 +260,7 @@ export default function TopToolbar({
           <button
             type="button"
             onClick={onPaste}
-            className="p-1.5 rounded-md text-gray-700 hover:bg-white transition-colors cursor-pointer"
+            className="h-full px-2 rounded-md text-gray-700 hover:bg-white transition-colors cursor-pointer flex items-center justify-center"
             title="วางวัตถุข้ามโปรเจกต์ (Paste - Ctrl+V)"
           >
             <ClipboardPaste className="w-4 h-4" />
@@ -268,13 +268,13 @@ export default function TopToolbar({
         </div>
 
         {/* Zoom & Viewport Navigation Controls */}
-        <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-lg p-0.5 text-gray-700 text-xs font-medium" ref={zoomMenuRef}>
+        <div className="relative flex items-center h-9 bg-gray-50 border border-gray-200 rounded-lg p-0.5 text-gray-700 text-xs font-medium" ref={zoomMenuRef}>
           {/* Hand Tool Toggle Button */}
           {onToggleHandTool && (
             <button
               type="button"
               onClick={onToggleHandTool}
-              className={`p-1.5 rounded-md transition-colors cursor-pointer mr-0.5 ${
+              className={`h-full px-2 rounded-md transition-colors cursor-pointer mr-0.5 flex items-center justify-center ${
                 isHandToolActive
                   ? "bg-indigo-600 text-white shadow-xs"
                   : "hover:bg-white text-gray-700"
@@ -287,7 +287,7 @@ export default function TopToolbar({
 
           <button
             onClick={onZoomOut}
-            className="p-1.5 hover:bg-white rounded-md transition-colors cursor-pointer"
+            className="h-full px-2 hover:bg-white rounded-md transition-colors cursor-pointer flex items-center justify-center"
             title="ย่อขนาด (Ctrl + -)"
           >
             <ZoomOut className="w-4 h-4" />
@@ -297,7 +297,7 @@ export default function TopToolbar({
           <button
             type="button"
             onClick={() => setShowZoomMenu(!showZoomMenu)}
-            className="px-1.5 py-1 hover:bg-white rounded-md transition-colors cursor-pointer flex items-center gap-1 font-mono font-bold text-xs text-gray-800"
+            className="h-full px-2 hover:bg-white rounded-md transition-colors cursor-pointer flex items-center gap-1 font-mono font-bold text-xs text-gray-800"
             title="เลือกระดับการซูม (คลิกเพื่อดูตัวเลือก)"
           >
             <span>{Math.round(zoom * 100)}%</span>
@@ -306,7 +306,7 @@ export default function TopToolbar({
 
           <button
             onClick={onZoomIn}
-            className="p-1.5 hover:bg-white rounded-md transition-colors cursor-pointer"
+            className="h-full px-2 hover:bg-white rounded-md transition-colors cursor-pointer flex items-center justify-center"
             title="ขยายขนาด (Ctrl + +)"
           >
             <ZoomIn className="w-4 h-4" />
@@ -314,7 +314,7 @@ export default function TopToolbar({
 
           <button
             onClick={onFitToScreen || onZoomReset}
-            className="p-1.5 hover:bg-white rounded-md transition-colors border-l border-gray-200 ml-0.5 cursor-pointer"
+            className="h-full px-2 hover:bg-white rounded-md transition-colors border-l border-gray-200 ml-0.5 cursor-pointer flex items-center justify-center"
             title="พอดีหน้าจอ Fit to Screen (Shift + 1)"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -420,7 +420,7 @@ export default function TopToolbar({
         <div className="flex items-center gap-1.5 ml-1">
           <button
             onClick={onToggleRuler}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 h-9 px-3 text-xs font-medium rounded-lg border transition-colors cursor-pointer ${
               showRuler
                 ? "bg-slate-800 text-white border-slate-800 shadow-xs"
                 : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
@@ -433,10 +433,10 @@ export default function TopToolbar({
 
           {/* ── Direct Inline Margin Control (No Dropdown) ── */}
           <div
-            className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${
+            className={`flex items-center gap-1.5 h-9 px-2.5 rounded-lg border transition-all ${
               currentVal > 0 && showMargin
-                ? "bg-rose-50/70 border-rose-200 text-rose-800"
-                : "bg-white border-gray-200 text-gray-600"
+                ? "bg-indigo-50/60 border-indigo-200 text-indigo-900"
+                : "bg-white border-gray-200 text-gray-700"
             }`}
             title={
               currentVal === 0
@@ -451,7 +451,7 @@ export default function TopToolbar({
               onClick={onToggleMargin}
               className={`text-xs select-none cursor-pointer flex items-center gap-1 transition-colors ${
                 currentVal > 0 && showMargin
-                  ? "text-rose-700 hover:text-rose-900 font-semibold"
+                  ? "text-indigo-700 hover:text-indigo-900 font-semibold"
                   : "text-gray-500 hover:text-gray-800 font-medium"
               }`}
               title={
@@ -488,7 +488,7 @@ export default function TopToolbar({
                 onBlur={handleInputBlur}
                 onKeyDown={handleInputKeyDown}
                 onFocus={(e) => e.target.select()}
-                className="w-10 h-6 text-center font-mono font-bold text-xs bg-white border border-gray-300 rounded focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none text-gray-900 shadow-2xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-10 h-6 text-center font-mono font-bold text-xs bg-gray-50 border border-gray-300 rounded focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-gray-900 shadow-2xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 title="คลิกเพื่อพิมพ์ตัวเลขระยะขอบที่ต้องการ (0 = ไม่มีเส้นขอบ)"
               />
             </div>
@@ -514,7 +514,7 @@ export default function TopToolbar({
             <button
               type="button"
               onClick={onTogglePageNumber}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 h-9 px-3 text-xs font-medium rounded-lg border transition-colors cursor-pointer ${
                 showPageNumber
                   ? "bg-slate-800 text-white border-slate-800 shadow-xs"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
@@ -534,7 +534,7 @@ export default function TopToolbar({
         {onTogglePreviewTokens && (
           <button
             onClick={onTogglePreviewTokens}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 h-9 px-3.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
               isPreviewTokens
                 ? "bg-amber-500 text-white border-amber-600 shadow-xs animate-pulse"
                 : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
@@ -551,7 +551,7 @@ export default function TopToolbar({
           <button
             onClick={onExportPptx}
             disabled={isExportingPptx}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs sm:text-sm font-semibold shadow-xs hover:shadow transition-all disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-1.5 h-9 px-3.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold shadow-xs hover:shadow transition-all disabled:opacity-50 cursor-pointer"
             title="ดาวน์โหลดงานนำเสนอเป็นไฟล์ Microsoft PowerPoint (.pptx)"
           >
             {isExportingPptx ? (
