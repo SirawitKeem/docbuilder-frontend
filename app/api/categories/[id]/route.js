@@ -27,22 +27,29 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     const { id } = await params;
+    const url = new URL(req.url);
+    const cascade = url.searchParams.get("cascade") === "true";
+    const reassignTo = url.searchParams.get("reassignTo");
 
-    // Check if category is built-in protected
-    if (["quotation", "nda", "partner", "distributor", "notification", "contracts", "partnerships", "finance"].includes(id.toLowerCase())) {
-      return NextResponse.json(
-        { error: "ไม่สามารถลบหมวดหมู่พื้นฐานของระบบได้" },
-        { status: 400 }
-      );
-    }
-
-    // Check if any custom templates are linked
+    // Check if any templates are linked to this category
     const templates = await customTemplatesRepo.getAll({ categoryId: id });
     if (templates.length > 0) {
-      return NextResponse.json(
-        { error: `ยังมีเทมเพลตอยู่ในหมวดหมู่นี้ ${templates.length} รายการ กรุณาย้ายหรือลบเทมเพลตก่อน` },
-        { status: 400 }
-      );
+      if (reassignTo) {
+        // Reassign templates to target category
+        for (const tmpl of templates) {
+          await customTemplatesRepo.update(tmpl.id, { categoryId: reassignTo });
+        }
+      } else if (cascade) {
+        // Soft delete all templates in this category
+        for (const tmpl of templates) {
+          await customTemplatesRepo.delete(tmpl.id);
+        }
+      } else {
+        return NextResponse.json(
+          { error: `ยังมีเทมเพลตอยู่ในหมวดหมู่นี้ ${templates.length} รายการ กรุณาย้ายหรือลบเทมเพลตก่อน` },
+          { status: 400 }
+        );
+      }
     }
 
     const result = await categoriesRepo.delete(id);

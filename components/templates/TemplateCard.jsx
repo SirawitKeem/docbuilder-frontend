@@ -74,12 +74,14 @@ export default function TemplateCard({ template, variant = "compact", onSelect }
     );
   }
 
-  const standardHref = ["quotation", "nda", "partner", "distributor"].includes((template.id || "").toLowerCase())
-    ? `/create/${template.id}`
-    : `/create/custom?templateId=${template.id}`;
+  const standardHref =
+    template.href ||
+    (["quotation", "nda", "partner", "distributor", "notification"].includes((template.id || "").toLowerCase())
+      ? `/create/${template.id.toLowerCase()}`
+      : `/create/custom?templateId=${template.id}`);
 
   return (
-    <Link href={template.href || standardHref} className="block group h-full">
+    <Link href={standardHref} className="block group h-full">
       {cardInner}
     </Link>
   );

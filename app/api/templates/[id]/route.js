@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { customTemplatesRepo } from "@/lib/db/repositories";
 import { synthesizeCanvasPagesFromTemplate } from "@/lib/templates/blockToCanvas";
-import { SYSTEM_DEFAULT_TEMPLATES } from "@/lib/templates/catalog";
 
 export async function GET(req, { params }) {
   try {
@@ -10,19 +9,9 @@ export async function GET(req, { params }) {
       ? "tmpl-notification-standard"
       : rawId;
     let template = await customTemplatesRepo.getById(effectiveId);
-    const sysMatch = SYSTEM_DEFAULT_TEMPLATES.find((t) => t.id === effectiveId || t.id === rawId);
 
     if (!template) {
-      if (sysMatch) {
-        template = { ...sysMatch };
-      } else {
-        return NextResponse.json({ error: "ไม่พบเทมเพลตนี้" }, { status: 404 });
-      }
-    } else if (sysMatch) {
-      // If template in DB has fewer blocks than canonical system definition, augment it
-      if (!template.blocks || template.blocks.length < (sysMatch.blocks?.length || 0)) {
-        template.blocks = sysMatch.blocks;
-      }
+      return NextResponse.json({ error: "ไม่พบเทมเพลตนี้" }, { status: 404 });
     }
 
     // Check if template has rich valid canvas objects

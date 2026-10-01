@@ -562,26 +562,22 @@ export default function TemplatesHubPage() {
                           <Copy size={13} />
                         </button>
 
-                        {(!tmpl.isSystem && tmpl.badge !== "มาตรฐาน" && tmpl.badge !== "Standard") && (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => setTemplateToMove(tmpl)}
-                              className="size-7 rounded-[6px] hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
-                              title="ย้ายหมวดหมู่ (Move category)"
-                            >
-                              <FolderSymlink size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setTemplateToDelete(tmpl)}
-                              className="size-7 rounded-[6px] hover:bg-destructive/10 text-muted-foreground hover:text-destructive flex items-center justify-center transition-colors cursor-pointer"
-                              title="Delete template"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => setTemplateToMove(tmpl)}
+                          className="size-7 rounded-[6px] hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
+                          title="ย้ายหมวดหมู่ (Move category)"
+                        >
+                          <FolderSymlink size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setTemplateToDelete(tmpl)}
+                          className="size-7 rounded-[6px] hover:bg-destructive/10 text-muted-foreground hover:text-destructive flex items-center justify-center transition-colors cursor-pointer"
+                          title="Delete template"
+                        >
+                          <Trash2 size={13} />
+                        </button>
 
                         <Link
                           href={`/templates/new?edit=${tmpl.id}`}

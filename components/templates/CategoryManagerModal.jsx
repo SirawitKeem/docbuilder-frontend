@@ -124,10 +124,6 @@ export default function CategoryManagerModal({
   };
 
   const handleDelete = (cat) => {
-    if (["quotation", "nda", "partner", "distributor"].includes(cat.id)) {
-      alert(t('categoryManager.protectedAlert') || "System default categories cannot be deleted");
-      return;
-    }
     setCategoryToDelete(cat);
   };
 
@@ -136,7 +132,7 @@ export default function CategoryManagerModal({
     setIsDeletingCategory(true);
     setErrorMsg("");
     try {
-      const res = await fetch(`/api/categories/${categoryToDelete.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/categories/${categoryToDelete.id}?cascade=true`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete category");
 
@@ -313,9 +309,7 @@ export default function CategoryManagerModal({
               const IconData = EXTENDED_ICON_MAP[cat.icon];
               const IconComp = IconData ? IconData.icon : (ICON_MAP[cat.icon] || FileText);
               const colorStyle = COLOR_MAP[cat.color] || COLOR_MAP.purple;
-              const isDefaultSystemCategory = ["quotation", "nda", "partner", "distributor", "notification"].includes(cat.id);
-              const isProtected = isDefaultSystemCategory || Boolean(cat.isSystem);
-              const isStandard = cat.badge === "Standard" || cat.badge === "มาตรฐาน" || (isDefaultSystemCategory && !cat.badge);
+              const isStandard = cat.badge === "Standard" || cat.badge === "มาตรฐาน" || Boolean(cat.isSystem);
 
               return (
                 <div
@@ -354,16 +348,14 @@ export default function CategoryManagerModal({
                     >
                       <Edit2 size={14} />
                     </button>
-                    {!isProtected && (
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(cat)}
-                        className="w-8 h-8 rounded-[6px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition-colors cursor-pointer"
-                        title={t('categoryManager.deleteTooltip') || "Delete"}
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(cat)}
+                      className="w-8 h-8 rounded-[6px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition-colors cursor-pointer"
+                      title={t('categoryManager.deleteTooltip') || "Delete"}
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
               );
@@ -393,8 +385,10 @@ export default function CategoryManagerModal({
         isLoading={isDeletingCategory}
         title={t('categoryManager.deleteConfirmTitle') || "ลบประเภทเอกสาร?"}
         description={
-          t('categoryManager.deleteConfirmMessage', { name: categoryToDelete?.name || "" }) ||
-          `คุณแน่ใจหรือไม่ว่าต้องการลบประเภทเอกสาร "${categoryToDelete?.name || ""}"? การกระทำนี้ไม่สามารถย้อนกลับได้`
+          (categoryToDelete?.templateCount || 0) > 0
+            ? `หมวดหมู่ "${categoryToDelete?.name || ""}" มีเทมเพลตอยู่ ${categoryToDelete.templateCount} รายการ การลบหมวดหมู่นี้จะลบเทมเพลตภายในหมวดหมู่นี้ทั้งหมดด้วย คุณแน่ใจหรือไม่ว่าต้องการลบ?`
+            : t('categoryManager.deleteConfirmMessage', { name: categoryToDelete?.name || "" }) ||
+              `คุณแน่ใจหรือไม่ว่าต้องการลบประเภทเอกสาร "${categoryToDelete?.name || ""}"? การกระทำนี้ไม่สามารถย้อนกลับได้`
         }
         cancelText={t('categoryManager.cancelButton') || t('actions.cancel') || "ยกเลิก"}
         confirmText={t('categoryManager.deleteButton') || t('actions.delete') || "ลบประเภทเอกสาร"}
