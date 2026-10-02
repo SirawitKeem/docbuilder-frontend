@@ -75,11 +75,11 @@
   },
   "newTemplate": {
     "title": "Select template format",
-    "docs": "Docs (A4 Document)",
+    "docs": "Document (Word)",
     "docsDesc": "Create portrait documents like contracts, receipts, government letters",
     "slides": "Slides (16:9 Presentation)",
     "slidesDesc": "Create pitch deck slides, company introductions, or reports",
-    "sheets": "Sheets (Spreadsheet .xlsx)"
+    "sheets": "Spread Sheet (Excel)"
   },
   "templateDetail": {
     "previewTitle": "Document page preview",

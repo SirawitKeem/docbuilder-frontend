@@ -47,3 +47,7 @@ data/db.snapshot.*
 storage/
 scratch/
 
+# Audit & inspection scratch scripts
+audit_*.cjs
+inspect_*.cjs
+inspect_db.mjs

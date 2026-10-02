@@ -26,6 +26,7 @@ import {
   Copy,
   ClipboardPaste,
   Share2,
+  Eye,
 } from "lucide-react";
 import { getCanvasPreset } from "@/lib/editor/canvasPresets";
 
@@ -35,6 +36,7 @@ export default function TopToolbar({
   categoryName,
   editorType = "document",
   onOpenShare = null,
+  isReadOnly = false,
   zoom,
   onZoomIn,
   onZoomOut,
@@ -593,19 +595,26 @@ export default function TopToolbar({
           </button>
         )}
 
-        <button
-          onClick={onSave}
-          disabled={saving}
-          title="บันทึกเทมเพลต (Ctrl+S)"
-          className="primary-button flex items-center gap-2 h-9 px-4 rounded-[8px] text-white text-xs font-medium shadow-xs hover:opacity-95 transition-all disabled:opacity-50 cursor-pointer"
-        >
-          {saving ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
-          <span>{saving ? "กำลังบันทึก..." : "บันทึกเทมเพลต"}</span>
-        </button>
+        {isReadOnly ? (
+          <div className="flex items-center gap-1.5 h-9 px-3.5 bg-gray-100 border border-gray-200 text-gray-500 rounded-[8px] text-xs font-semibold">
+            <Eye className="w-3.5 h-3.5 text-gray-400" />
+            <span>ดูอย่างเดียว (View Only)</span>
+          </div>
+        ) : (
+          <button
+            onClick={onSave}
+            disabled={saving}
+            title="บันทึกเทมเพลต (Ctrl+S)"
+            className="primary-button flex items-center gap-2 h-9 px-4 rounded-[8px] text-white text-xs font-medium shadow-xs hover:opacity-95 transition-all disabled:opacity-50 cursor-pointer"
+          >
+            {saving ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            <span>{saving ? "กำลังบันทึก..." : "บันทึกเทมเพลต"}</span>
+          </button>
+        )}
       </div>
     </header>
   );

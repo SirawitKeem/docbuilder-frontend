@@ -22,7 +22,19 @@ const Workbook = dynamic(
   { ssr: false }
 );
 
-const DEFAULT_SHEET_DATA = [
+const BLANK_SHEET_DATA = [
+  {
+    name: "Sheet1",
+    id: "sheet_01",
+    status: 1,
+    order: 0,
+    row: 36,
+    column: 18,
+    celldata: [],
+  }
+];
+
+const SAMPLE_CALCULATION_SHEET_DATA = [
   {
     name: "Summary",
     id: "sheet_01",
@@ -103,7 +115,7 @@ export default function SheetEditor({
     if (Array.isArray(initialSheetData) && initialSheetData.length > 0) {
       return initialSheetData;
     }
-    return DEFAULT_SHEET_DATA;
+    return BLANK_SHEET_DATA;
   });
 
   const [isTokenDropdownOpen, setIsTokenDropdownOpen] = useState(false);
@@ -112,6 +124,22 @@ export default function SheetEditor({
   const [toastMessage, setToastMessage] = useState(null);
   const toastTimeoutRef = useRef(null);
   const hasUnsavedChangesRef = useRef(false);
+
+  const handleLoadSample = () => {
+    if (confirm("ต้องการโหลดตารางคำนวณตัวอย่างแทนที่เนื้อหาปัจจุบันหรือไม่?")) {
+      setSheetData(JSON.parse(JSON.stringify(SAMPLE_CALCULATION_SHEET_DATA)));
+      hasUnsavedChangesRef.current = true;
+      showToast("✨ โหลดตารางคำนวณตัวอย่างเรียบร้อยแล้ว");
+    }
+  };
+
+  const handleClearSheet = () => {
+    if (confirm("ต้องการล้างข้อมูลในชีตทั้งหมดเป็นตารางว่างเปล่าหรือไม่?")) {
+      setSheetData(JSON.parse(JSON.stringify(BLANK_SHEET_DATA)));
+      hasUnsavedChangesRef.current = true;
+      showToast("🧹 ล้างข้อมูลเป็นตารางว่างเปล่าเรียบร้อยแล้ว");
+    }
+  };
 
   const showToast = useCallback((msg) => {
     setToastMessage(msg);
@@ -374,6 +402,17 @@ export default function SheetEditor({
           >
             <Download size={14} className="text-emerald-600" />
             <span>{isExporting ? "Exporting..." : "Download .xlsx"}</span>
+          </button>
+
+          {/* Sample Template Button */}
+          <button
+            type="button"
+            onClick={handleLoadSample}
+            className="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="ใส่ตัวอย่างตารางคำนวณและสูตรยอดรวม"
+          >
+            <Sparkles size={13} className="text-amber-600" />
+            <span>ใส่ตัวอย่างคำนวณ</span>
           </button>
         </div>
 

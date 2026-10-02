@@ -19,7 +19,7 @@ export async function GET(request, { params }) {
     const asset = res.rows[0];
     const absolutePath = path.isAbsolute(asset.file_path)
       ? asset.file_path
-      : path.join(process.cwd(), asset.file_path);
+      : path.join(/*turbopackIgnore: true*/ process.cwd(), asset.file_path);
 
     if (!fs.existsSync(absolutePath)) {
       return new Response("File not found on storage", { status: 404 });

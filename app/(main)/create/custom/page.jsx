@@ -68,11 +68,11 @@ function UniversalDocumentContent() {
   const [profiles, setProfiles] = useState([]);
   const [selectedProfileId, setSelectedProfileId] = useState("");
   const [customTokens, setCustomTokens] = useState([]); // custom entity tokens for autofill
-
   // Dynamic DocTable state (Quotation / Pricing Table support)
   const [hasDocTable, setHasDocTable] = useState(false);
   const [tableItems, setTableItems] = useState([]);
   const [tableVatRate, setTableVatRate] = useState(7);
+
 
   const handleSelectProfile = (pId) => {
     setSelectedProfileId(pId);
@@ -757,6 +757,8 @@ function UniversalDocumentContent() {
                   Live Sync ⚡
                 </span>
               </div>
+
+
 
               {/* Data Preset Selector */}
               {profiles.length > 0 && (

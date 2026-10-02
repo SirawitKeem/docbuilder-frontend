@@ -35,6 +35,8 @@ import {
   Check,
   Tag,
   Bookmark,
+  PenTool,
+  FileSignature,
 } from "lucide-react";
 import {
   fetchCustomTokens,
@@ -43,6 +45,16 @@ import {
 } from "@/lib/tokens/tokenEngine";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import { VECTOR_ICONS, ICON_CATEGORIES } from "./utils/iconLibrary";
+
+const TAILWIND_COLOR_HEX = {
+  "bg-indigo-600": "#4F46E5",
+  "bg-purple-600": "#9333EA",
+  "bg-emerald-600": "#059669",
+  "bg-amber-600": "#D97706",
+  "bg-rose-600": "#E11D48",
+  "bg-blue-600": "#2563EB",
+  "bg-teal-600": "#0D9488",
+};
 
 export default function LeftSidebar({
   editorType = "document",
@@ -67,25 +79,34 @@ export default function LeftSidebar({
   // ── Recipients / Signatories State ──
   const [recipients, setRecipients] = useState([
     {
-      id: "rec-1",
-      name: "Yahyo Prayogo",
-      email: "yahyoprayogo@gmail.com",
-      role: "Signer 1",
+      id: "rec-owner",
+      name: "สิรวิทย์ เพชรจำรัส",
+      email: "keem@crestzendo.com",
+      role: "ผู้จัดทำ / เจ้าของ",
       color: "bg-indigo-600",
     },
-    {
-      id: "rec-2",
-      name: "ผู้มีอำนาจลงนาม (Authorized Signer)",
-      email: "authorized@company.com",
-      role: "Signer 2",
-      color: "bg-emerald-600",
-    },
   ]);
-  const [activeRecipientId, setActiveRecipientId] = useState("rec-1");
+  const [activeRecipientId, setActiveRecipientId] = useState("rec-owner");
   const [isRecipientMenuOpen, setIsRecipientMenuOpen] = useState(false);
   const [showAddRecipientModal, setShowAddRecipientModal] = useState(false);
   const [newRecName, setNewRecName] = useState("");
   const [newRecEmail, setNewRecEmail] = useState("");
+  const [newRecRole, setNewRecRole] = useState("signer");
+  const [recSuggestions, setRecSuggestions] = useState([]);
+  const [showRecSuggestions, setShowRecSuggestions] = useState(false);
+
+  // Auto-fetch suggestions when typing in add recipient modal
+  useEffect(() => {
+    if (!showAddRecipientModal) return;
+    const q = newRecName || newRecEmail;
+    const timer = setTimeout(() => {
+      fetch(`/api/recipients/suggest?q=${encodeURIComponent(q)}`)
+        .then((r) => (r.ok ? r.json() : []))
+        .then(setRecSuggestions)
+        .catch(() => {});
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [newRecName, newRecEmail, showAddRecipientModal]);
 
   const activeRecipient =
     recipients.find((r) => r.id === activeRecipientId) || recipients[0];
@@ -251,20 +272,54 @@ export default function LeftSidebar({
   };
 
   // Add new recipient
-  const handleAddRecipient = () => {
-    if (!newRecName.trim()) return;
+  const handleAddRecipient = async () => {
+    if (!newRecName.trim() && !newRecEmail.trim()) return;
     const newId = `rec-${Date.now()}`;
+    const name = newRecName.trim() || newRecEmail.trim().split("@")[0];
+    const email = newRecEmail.trim() || `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`;
+    const roleLabels = {
+      signer: "ผู้ลงนาม (Signer)",
+      editor: "ผู้ร่วมแก้ไข (Editor)",
+      approver: "ผู้อนุมัติ (Approver)",
+      viewer: "ผู้ดู (Viewer)",
+    };
+    const colors = ["bg-purple-600", "bg-emerald-600", "bg-blue-600", "bg-amber-600", "bg-rose-600"];
+    const chosenColor = colors[recipients.length % colors.length];
+
     const newRec = {
       id: newId,
-      name: newRecName.trim(),
-      email: newRecEmail.trim() || `${newRecName.trim().toLowerCase().replace(/\s+/g, ".")}@example.com`,
-      role: `Signer ${recipients.length + 1}`,
-      color: "bg-purple-600",
+      name,
+      email,
+      role: roleLabels[newRecRole] || "ผู้รับ",
+      color: chosenColor,
     };
     setRecipients((prev) => [...prev, newRec]);
     setActiveRecipientId(newId);
+
+    // If templateId is provided and email is valid, also save authorization & trigger notification
+    if (templateId && email && email.includes("@")) {
+      try {
+        await fetch("/api/authorizations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            entityId: templateId,
+            entityType: "template",
+            userEmail: email,
+            userName: name,
+            roleTitle: roleLabels[newRecRole] || "ผู้รับ",
+            permissionLevel: newRecRole,
+            grantedByEmail: "keem@crestzendo.com",
+          }),
+        });
+      } catch (err) {
+        console.warn("Could not save authorization for recipient:", err);
+      }
+    }
+
     setNewRecName("");
     setNewRecEmail("");
+    setNewRecRole("signer");
     setShowAddRecipientModal(false);
   };
 
@@ -335,10 +390,10 @@ export default function LeftSidebar({
                 type="button"
                 onClick={() => setShowAddRecipientModal(true)}
                 className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-0.5 cursor-pointer"
-                title="เพิ่มผู้ลงนาม"
+                title="เพิ่มผู้รับ"
               >
                 <Plus className="w-3 h-3" />
-                <span>เพิ่มผู้ลงนาม</span>
+                <span>เพิ่มผู้รับ</span>
               </button>
             </div>
 
@@ -390,10 +445,13 @@ export default function LeftSidebar({
                         >
                           {rec.name.slice(0, 2).toUpperCase()}
                         </div>
-                        <span className="truncate">{rec.name}</span>
+                        <div className="truncate">
+                          <span className="truncate block font-medium">{rec.name}</span>
+                          <span className="text-[10px] text-gray-400 block truncate">{rec.role || rec.email}</span>
+                        </div>
                       </div>
                       {rec.id === activeRecipientId && (
-                        <Check className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                        <Check className="w-3.5 h-3.5 text-indigo-600 shrink-0 ml-2" />
                       )}
                     </button>
                   ))}
@@ -407,11 +465,85 @@ export default function LeftSidebar({
                       className="w-full flex items-center gap-1.5 p-2 rounded-lg text-xs font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>+ เพิ่มผู้รับ/ผู้ลงนามใหม่</span>
+                      <span>+ เพิ่มผู้รับใหม่</span>
                     </button>
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Recipient Signing Fields (DocuSign Style) */}
+            <div className="pt-1.5 space-y-1.5">
+              <span className="text-[10px] font-semibold text-gray-500 block truncate">
+                ช่องลงนามสำหรับ: <span className="font-bold text-gray-800">{activeRecipient.name}</span>
+              </span>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onAddSignature) {
+                      const hex = TAILWIND_COLOR_HEX[activeRecipient.color] || "#4F46E5";
+                      onAddSignature("recipient", {
+                        fieldType: "signature",
+                        recipientId: activeRecipient.id,
+                        recipientName: activeRecipient.name,
+                        recipientRole: activeRecipient.role,
+                        recipientEmail: activeRecipient.email,
+                        recipientColor: hex,
+                      });
+                    }
+                  }}
+                  className="flex items-center gap-1.5 p-2 rounded-lg border border-gray-200 bg-white hover:border-indigo-400 hover:bg-indigo-50/40 text-gray-700 transition-all text-xs font-semibold shadow-2xs cursor-pointer group"
+                  title={`วางช่องลงลายมือชื่อสำหรับ ${activeRecipient.name}`}
+                >
+                  <PenTool className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <span className="truncate">ลายมือชื่อ</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onAddSignature) {
+                      const hex = TAILWIND_COLOR_HEX[activeRecipient.color] || "#4F46E5";
+                      onAddSignature("recipient", {
+                        fieldType: "initials",
+                        recipientId: activeRecipient.id,
+                        recipientName: activeRecipient.name,
+                        recipientRole: activeRecipient.role,
+                        recipientEmail: activeRecipient.email,
+                        recipientColor: hex,
+                      });
+                    }
+                  }}
+                  className="flex items-center gap-1.5 p-2 rounded-lg border border-gray-200 bg-white hover:border-purple-400 hover:bg-purple-50/40 text-gray-700 transition-all text-xs font-semibold shadow-2xs cursor-pointer group"
+                  title={`วางช่องเซ็นย่อกำกับสำหรับ ${activeRecipient.name}`}
+                >
+                  <FileSignature className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                  <span className="truncate">ลายเซ็นย่อ</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onAddSignature) {
+                      const hex = TAILWIND_COLOR_HEX[activeRecipient.color] || "#4F46E5";
+                      onAddSignature("recipient", {
+                        fieldType: "date_signed",
+                        recipientId: activeRecipient.id,
+                        recipientName: activeRecipient.name,
+                        recipientRole: activeRecipient.role,
+                        recipientEmail: activeRecipient.email,
+                        recipientColor: hex,
+                      });
+                    }
+                  }}
+                  className="col-span-2 flex items-center justify-center gap-1.5 p-2 rounded-lg border border-gray-200 bg-white hover:border-emerald-400 hover:bg-emerald-50/40 text-gray-700 transition-all text-xs font-semibold shadow-2xs cursor-pointer group"
+                  title={`วางช่องประทับวันที่เซ็นสำหรับ ${activeRecipient.name}`}
+                >
+                  <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="truncate">วันที่ลงนาม (Date Signed)</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1003,6 +1135,7 @@ export default function LeftSidebar({
       )}
 
       {/* ── MODAL: ADD RECIPIENT / SIGNATORY ── */}
+      {/* Add Recipient Modal (Enhanced with Suggestion & Role) */}
       {showAddRecipientModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4">
@@ -1012,12 +1145,15 @@ export default function LeftSidebar({
                   <User className="w-4 h-4" />
                 </div>
                 <h3 className="text-sm font-bold text-gray-900">
-                  เพิ่มผู้รับ / ผู้ลงนาม
+                  เพิ่มผู้รับ (Add Recipient)
                 </h3>
               </div>
               <button
                 type="button"
-                onClick={() => setShowAddRecipientModal(false)}
+                onClick={() => {
+                  setShowAddRecipientModal(false);
+                  setShowRecSuggestions(false);
+                }}
                 className="p-1 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -1025,47 +1161,99 @@ export default function LeftSidebar({
             </div>
 
             <div className="space-y-3">
-              <div>
+              {/* Name or Search */}
+              <div className="relative">
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  ชื่อ-นามสกุล / ตำแหน่ง
+                  ชื่อ-นามสกุล หรือ ค้นหา
                 </label>
                 <input
                   type="text"
                   value={newRecName}
-                  onChange={(e) => setNewRecName(e.target.value)}
+                  onChange={(e) => {
+                    setNewRecName(e.target.value);
+                    setShowRecSuggestions(true);
+                  }}
+                  onFocus={() => setShowRecSuggestions(true)}
                   placeholder="เช่น สมชาย ใจดี, กรรมการผู้จัดการ"
                   className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs text-gray-900 outline-none focus:border-indigo-500"
                 />
+
+                {/* Suggestions drop */}
+                {showRecSuggestions && recSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-40 overflow-y-auto p-1 divide-y divide-gray-50">
+                    {recSuggestions.map((item) => (
+                      <button
+                        key={item.id || item.email}
+                        type="button"
+                        onClick={() => {
+                          setNewRecName(item.name);
+                          setNewRecEmail(item.email || "");
+                          setShowRecSuggestions(false);
+                        }}
+                        className="w-full flex items-center justify-between p-1.5 rounded-lg hover:bg-gray-50 text-left text-xs transition-colors cursor-pointer"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-semibold text-gray-800 truncate">{item.name}</p>
+                          <p className="text-[10px] text-gray-500 truncate">{item.email}</p>
+                        </div>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 shrink-0">
+                          {item.role}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
+              {/* Email */}
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  อีเมล (สำหรับส่งเอกสารลงนาม)
+                  อีเมล (Gmail / Corporate Email)
                 </label>
                 <input
                   type="email"
                   value={newRecEmail}
                   onChange={(e) => setNewRecEmail(e.target.value)}
-                  placeholder="somchai@example.com"
+                  placeholder="somchai@gmail.com"
                   className="w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs text-gray-900 outline-none focus:border-indigo-500"
                 />
+              </div>
+
+              {/* Role selector */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  บทบาทและสิทธิ์ (Role & Permission)
+                </label>
+                <select
+                  value={newRecRole}
+                  onChange={(e) => setNewRecRole(e.target.value)}
+                  className="w-full border border-gray-300 bg-white rounded-lg px-2.5 py-1.5 text-xs text-gray-900 outline-none focus:border-indigo-500 cursor-pointer"
+                >
+                  <option value="signer">ผู้ลงนาม (Signer) - ลงลายเซ็นในเอกสาร</option>
+                  <option value="editor">ผู้ร่วมแก้ไข (Editor) - ช่วยตรวจและแก้ไขข้อความ</option>
+                  <option value="approver">ผู้อนุมัติ (Approver) - ตรวจสอบและกดอนุมัติ</option>
+                  <option value="viewer">ผู้ดู (Viewer) - ดูเอกสารได้อย่างเดียว</option>
+                </select>
               </div>
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
               <button
                 type="button"
-                onClick={() => setShowAddRecipientModal(false)}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                onClick={() => {
+                  setShowAddRecipientModal(false);
+                  setShowRecSuggestions(false);
+                }}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 ยกเลิก
               </button>
               <button
                 type="button"
                 onClick={handleAddRecipient}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-xs transition-colors"
+                className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-xs transition-colors cursor-pointer"
               >
-                เพิ่มผู้ลงนาม
+                เพิ่มผู้รับ
               </button>
             </div>
           </div>

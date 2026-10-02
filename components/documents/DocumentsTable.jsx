@@ -30,6 +30,7 @@ import {
   ShieldCheck,
   AlertCircle,
   MessageSquare,
+  Share2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -48,6 +49,7 @@ import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { getDocumentEditPath, LEGACY_TEMPLATE_ID_MAP } from "@/lib/templates/templateResolver";
 import FabricPrintRenderer from "@/components/document/FabricPrintRenderer";
 import UniversalTemplateRenderer from "@/components/document/UniversalTemplateRenderer";
+import ShareDialog from "@/components/share/ShareDialog";
 
 const getCounterpartyName = (doc) => {
   if (doc?.values) {
@@ -106,6 +108,7 @@ export default function DocumentsTable({
   const [previewDoc, setPreviewDoc] = useState(null);
   const [emailDoc, setEmailDoc] = useState(null);
   const [renameDoc, setRenameDoc] = useState(null);
+  const [shareDoc, setShareDoc] = useState(null);
   const [toast, setToast] = useState(null);
   
   // Custom Delete Confirmation Modal State (null | { type: 'single', id, docName } | { type: 'bulk', count })
@@ -113,6 +116,18 @@ export default function DocumentsTable({
   const [expandedExportDocId, setExpandedExportDocId] = useState(null);
 
   const menuRef = useRef(null);
+  const [currentUser, setCurrentUser] = useState("สิรวิทย์ เพชรจำรัส");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.account?.fullName) {
+          setCurrentUser(data.account.fullName);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -335,7 +350,7 @@ export default function DocumentsTable({
     fetch(`/api/documents/${doc.id}/actions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "export", format: "PRINT", performedBy: "ผู้ใช้งาน (Admin)" }),
+      body: JSON.stringify({ action: "export", format: "PRINT", performedBy: currentUser || "สิรวิทย์ เพชรจำรัส" }),
     }).then(() => {
       if (onRefresh) onRefresh();
     }).catch(() => {});
@@ -371,7 +386,7 @@ export default function DocumentsTable({
       fetch(`/api/documents/${doc.id}/actions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "export", format: format.toUpperCase(), performedBy: "ผู้ใช้งาน (Admin)" }),
+        body: JSON.stringify({ action: "export", format: format.toUpperCase(), performedBy: currentUser || "สิรวิทย์ เพชรจำรัส" }),
       }).then(() => {
         if (onRefresh) onRefresh();
       }).catch(() => {});
@@ -398,7 +413,7 @@ export default function DocumentsTable({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action,
-          performedBy: "ผู้ใช้งาน (Admin)",
+          performedBy: currentUser || "สิรวิทย์ เพชรจำรัส",
           comment,
           reason: comment,
         }),
@@ -727,6 +742,16 @@ export default function DocumentsTable({
                                 <Send size={14} className="text-muted-foreground" />
                                 <span>{t('actions.sendEmail') || "Send email"}</span>
                               </button>
+                              <button
+                                onClick={() => {
+                                  setOpenMenuId(null);
+                                  setShareDoc(doc);
+                                }}
+                                className="w-full text-left px-3.5 py-2 text-xs font-medium text-foreground hover:bg-muted flex items-center gap-2.5 transition-colors whitespace-nowrap cursor-pointer"
+                              >
+                                <Share2 size={14} className="text-muted-foreground" />
+                                <span>{t('actions.shareDocument') || "แชร์เอกสาร"}</span>
+                              </button>
                               {allowEdit && (
                                 <button
                                   onClick={() => {
@@ -986,6 +1011,17 @@ export default function DocumentsTable({
             if (onRefresh) onRefresh();
             else router.refresh();
           }}
+        />
+      )}
+
+      {/* Pop-Up Modal Share Document */}
+      {shareDoc && (
+        <ShareDialog
+          isOpen={Boolean(shareDoc)}
+          onClose={() => setShareDoc(null)}
+          entityId={shareDoc.id}
+          entityType="document"
+          entityTitle={extractDocumentMeta(shareDoc)?.name || shareDoc.name || "Untitled Document"}
         />
       )}
     </>
@@ -1273,6 +1309,24 @@ function PreviewModal({ doc, onClose }) {
 
               <button
                 type="button"
+                onClick={() => setActiveTab("values")}
+                className={`h-7 px-3 rounded-[6px] text-xs font-medium transition-all inline-flex items-center gap-1.5 select-none cursor-pointer ${
+                  activeTab === "values"
+                    ? "bg-surface text-foreground shadow-2xs font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <FileText size={13} />
+                <span>ข้อมูลเอกสาร (Values)</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-semibold tabular-nums ${
+                  activeTab === "values" ? "bg-muted text-foreground" : "bg-muted/70 text-muted-foreground"
+                }`}>
+                  {Object.keys(freshDoc.values || {}).length}
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveTab("timeline")}
                 className={`h-7 px-3 rounded-[6px] text-xs font-medium transition-all inline-flex items-center gap-1.5 select-none cursor-pointer ${
                   activeTab === "timeline"
@@ -1409,6 +1463,108 @@ function PreviewModal({ doc, onClose }) {
             )}
           </div>
         </ErrorBoundary>
+        ) : activeTab === "values" ? (
+          /* Unified Document Values View Tab */
+          <div className="flex-1 overflow-auto bg-surface p-6 sm:p-8 space-y-6">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <div>
+                <h4 className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <FileText className="text-primary size-5" />
+                  <span>ข้อมูลที่บันทึกในเอกสาร (Unified Values Payload)</span>
+                </h4>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  ชุดข้อมูล JSONB ทั้งหมดที่บันทึกไว้ในตาราง documents.values สำหรับเอกสารฉบับนี้
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(freshDoc.values || {}, null, 2));
+                  alert("คัดลอก JSON Values ไปยังคลิปบอร์ดแล้ว");
+                }}
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-[8px] bg-muted hover:bg-muted/80 text-xs font-medium text-foreground transition-colors border border-border/80 cursor-pointer"
+              >
+                <Copy size={13} />
+                <span>คัดลอก JSON</span>
+              </button>
+            </div>
+
+            {/* Quick Summary Cards if available */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {freshDoc.values?.issuer && (
+                <div className="p-4 rounded-xl border border-border/80 bg-muted/20 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-semibold text-foreground border-b border-border/60 pb-1.5">
+                    <span>🏢 ผู้ออกเอกสาร (Issuer)</span>
+                    <span className="text-[10px] text-muted-foreground font-normal">Snapshot</span>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <p className="font-medium text-foreground">{freshDoc.values.issuer.nameTh || freshDoc.values.issuer.name || "-"}</p>
+                    <p className="text-muted-foreground text-[11px] truncate">Tax ID: {freshDoc.values.issuer.taxId || "-"}</p>
+                    <p className="text-muted-foreground text-[11px] line-clamp-2">{freshDoc.values.issuer.address || "-"}</p>
+                  </div>
+                </div>
+              )}
+
+              {freshDoc.values?.counterparty && (
+                <div className="p-4 rounded-xl border border-border/80 bg-muted/20 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-semibold text-foreground border-b border-border/60 pb-1.5">
+                    <span>👥 คู่สัญญา / ลูกค้า (Counterparty)</span>
+                    <span className="text-[10px] text-muted-foreground font-normal">Snapshot</span>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <p className="font-medium text-foreground">{freshDoc.values.counterparty.name || freshDoc.values.counterparty.companyNameTh || "-"}</p>
+                    <p className="text-muted-foreground text-[11px] truncate">Tax ID: {freshDoc.values.counterparty.registrationNumber || "-"}</p>
+                    <p className="text-muted-foreground text-[11px] line-clamp-2">{freshDoc.values.counterparty.address || "-"}</p>
+                  </div>
+                </div>
+              )}
+
+              {freshDoc.values?.table_items && Array.isArray(freshDoc.values.table_items) && (
+                <div className="p-4 rounded-xl border border-border/80 bg-muted/20 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-semibold text-foreground border-b border-border/60 pb-1.5">
+                    <span>📦 รายการสินค้า/บริการ (Line Items)</span>
+                    <span className="text-[10px] text-muted-foreground font-normal">{freshDoc.values.table_items.length} รายการ</span>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <p className="text-muted-foreground text-[11px]">
+                      VAT: {freshDoc.values.table_vatRate !== undefined ? `${freshDoc.values.table_vatRate}%` : "7%"}
+                    </p>
+                    <p className="text-xs font-medium text-foreground truncate">
+                      ตัวอย่าง: {freshDoc.values.table_items[0]?.desc || freshDoc.values.table_items[0]?.title || "-"}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Structured Key-Value Table */}
+            <div className="border border-border rounded-xl overflow-hidden shadow-2xs">
+              <div className="bg-muted/40 px-4 py-2.5 border-b border-border flex items-center justify-between">
+                <span className="text-xs font-semibold text-foreground">ฟิลด์และค่าทั้งหมด (Key-Value Pairs)</span>
+                <span className="text-[11px] text-muted-foreground tabular-nums">
+                  {Object.keys(freshDoc.values || {}).length} ฟิลด์
+                </span>
+              </div>
+              <div className="divide-y divide-border/60 max-h-[380px] overflow-y-auto font-mono text-xs">
+                {Object.keys(freshDoc.values || {}).length === 0 ? (
+                  <div className="p-6 text-center text-muted-foreground font-sans">
+                    ไม่มีข้อมูลฟิลด์ใน values ของเอกสารฉบับนี้
+                  </div>
+                ) : (
+                  Object.entries(freshDoc.values || {}).map(([k, v]) => (
+                    <div key={k} className="flex flex-col sm:flex-row sm:items-center px-4 py-2 hover:bg-muted/30 transition-colors gap-1 sm:gap-4">
+                      <span className="text-primary font-medium w-full sm:w-1/3 truncate" title={k}>
+                        {k}
+                      </span>
+                      <span className="text-foreground flex-1 break-all font-sans text-xs">
+                        {typeof v === "object" && v !== null ? JSON.stringify(v) : String(v ?? "-")}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
         ) : (
           /* Timeline & Activity History Tab */
           <div className="flex-1 overflow-auto bg-surface p-6 sm:p-8 space-y-6">
@@ -1510,7 +1666,11 @@ function PreviewModal({ doc, onClose }) {
         {/* Modal Footer */}
         <div className="px-6 py-3.5 border-t border-border flex items-center justify-between bg-muted/30">
           <p className="text-xs text-muted-foreground">
-            {activeTab === "preview" ? "Document Preview Mode (Read-only)" : `Total ${timelineEvents.length} recorded events`}
+            {activeTab === "preview"
+              ? "Document Preview Mode (Read-only)"
+              : activeTab === "values"
+              ? `Unified Payload (${Object.keys(freshDoc.values || {}).length} fields recorded in documents.values)`
+              : `Total ${timelineEvents.length} recorded events`}
           </p>
           <div className="flex items-center gap-2">
             <button

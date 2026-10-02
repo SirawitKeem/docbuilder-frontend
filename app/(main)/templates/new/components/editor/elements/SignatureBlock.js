@@ -204,3 +204,109 @@ export function createSignatureBlock({
 
   return sigGroup;
 }
+
+/**
+ * Creates a Recipient-Bound Signature / Initials / Date placement box (DocuSign style)
+ */
+export function createRecipientSignatureField({
+  fieldType = "signature", // "signature" | "initials" | "date_signed"
+  recipientId = "rec-owner",
+  recipientName = "สิรวิทย์ เพชรจำรัส",
+  recipientRole = "ผู้ลงนาม (Signer)",
+  recipientEmail = "keem@crestzendo.com",
+  recipientColor = "#4F46E5",
+  left = 100,
+  top = 200,
+  width = 220,
+  height = 70,
+}) {
+  const elements = [];
+
+  // 1. Background card with rounded corners and dashed border
+  const cardBg = new fabric.Rect({
+    left: 0,
+    top: 0,
+    width,
+    height,
+    fill: "#FFFFFF",
+    stroke: recipientColor,
+    strokeWidth: 1.5,
+    strokeDashArray: [4, 4],
+    rx: 6,
+    ry: 6,
+  });
+  elements.push(cardBg);
+
+  // 2. Colored Header Tag (pill)
+  const headerHeight = 22;
+  const headerBg = new fabric.Rect({
+    left: 0,
+    top: 0,
+    width,
+    height: headerHeight,
+    fill: recipientColor,
+    rx: 5,
+    ry: 5,
+  });
+  elements.push(headerBg);
+
+  const headerSquare = new fabric.Rect({
+    left: 0,
+    top: headerHeight - 4,
+    width,
+    height: 4,
+    fill: recipientColor,
+  });
+  elements.push(headerSquare);
+
+  // Header Title Text
+  const iconEmoji = fieldType === "initials" ? "🔏" : fieldType === "date_signed" ? "📅" : "✍️";
+  const fieldLabel = fieldType === "initials" ? "ลายเซ็นย่อ (Initials)" : fieldType === "date_signed" ? "วันที่เซ็น (Date)" : "ลายมือชื่อ (Signature)";
+  const headerText = new fabric.Textbox(`${iconEmoji} ${recipientName} • ${fieldLabel}`, {
+    left: 6,
+    top: 3,
+    width: width - 12,
+    fontSize: 10,
+    fontWeight: "600",
+    fill: "#FFFFFF",
+    fontFamily: "'Noto Sans Thai', 'Noto Sans', sans-serif",
+    textAlign: "left",
+  });
+  elements.push(headerText);
+
+  // 3. Center Prompt / Placeholder
+  const centerPrompt = fieldType === "date_signed"
+    ? "วัน / เดือน / ปี (DD/MM/YYYY)"
+    : "คลิกเพื่อลงลายมือชื่อดิจิทัล";
+
+  const promptText = new fabric.Textbox(centerPrompt, {
+    left: 10,
+    top: 36,
+    width: width - 20,
+    fontSize: 11,
+    fill: recipientColor,
+    fontFamily: "'Noto Sans Thai', 'Noto Sans', sans-serif",
+    textAlign: "center",
+    fontWeight: "500",
+  });
+  elements.push(promptText);
+
+  const group = new fabric.Group(elements, {
+    left,
+    top,
+    subTargetCheck: false,
+    hasRotatingPoint: false,
+    lockScalingY: false,
+  });
+
+  // Attach metadata properties
+  group.isSignatureField = true;
+  group.fieldType = fieldType;
+  group.recipientId = recipientId;
+  group.recipientName = recipientName;
+  group.recipientRole = recipientRole;
+  group.recipientEmail = recipientEmail;
+  group.recipientColor = recipientColor;
+
+  return group;
+}

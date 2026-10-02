@@ -45,6 +45,7 @@ function TemplateBuilderContent() {
   const defaultPreset = editorTypeParam === "slide" ? "slide-16-9" : "a4-portrait";
   const canvasPresetParam = searchParams.get("canvasPreset") || defaultPreset;
   const customNameParam = searchParams.get("customName") ? decodeURIComponent(searchParams.get("customName")) : null;
+  const permissionParam = searchParams.get("permission") || (searchParams.get("mode") === "view" ? "viewer" : "editor");
   const editId = searchParams.get("edit");
   const [currentEditId, setCurrentEditId] = useState(editId);
 
@@ -58,7 +59,7 @@ function TemplateBuilderContent() {
     if (editorTypeParam === "slide") return "เทมเพลตสไลด์ใหม่ (16:9)";
     if (canvasPresetParam && canvasPresetParam.startsWith("custom_")) {
       const parts = canvasPresetParam.split("_");
-      return `เทมเพลตกำหนดขนาดเอง (${parts[1]} × ${parts[2]} ${parts[3] || "px"})`;
+      return `เทมเพลต Art Work (${parts[1]} × ${parts[2]} ${parts[3] || "px"})`;
     }
     return "เทมเพลตเอกสารใหม่ (A4)";
   });
@@ -92,7 +93,7 @@ function TemplateBuilderContent() {
         setTemplateName("New Spreadsheet Template");
       } else if (effectivePreset && effectivePreset.startsWith("custom_")) {
         const parts = effectivePreset.split("_");
-        setTemplateName(`เทมเพลตกำหนดขนาดเอง (${parts[1]} × ${parts[2]} ${parts[3] || "px"})`);
+        setTemplateName(`เทมเพลต Art Work (${parts[1]} × ${parts[2]} ${parts[3] || "px"})`);
       } else {
         setTemplateName("เทมเพลตเอกสารใหม่ (A4)");
       }
@@ -174,7 +175,7 @@ function TemplateBuilderContent() {
         : isPoster
         ? "เทมเพลตโปสเตอร์ใหม่"
         : isCustomCanvas
-        ? "เทมเพลตกำหนดขนาดเอง"
+        ? "เทมเพลต Art Work"
         : "เทมเพลตใหม่";
 
       const payload = {
@@ -189,10 +190,10 @@ function TemplateBuilderContent() {
           : isPoster
           ? `เทมเพลตโปสเตอร์ ${categoryName} ขนาด ${presetObj?.name || ""}`
           : isCustomCanvas
-          ? `เทมเพลตกำหนดขนาดเอง ${categoryName} (${presetObj?.width} × ${presetObj?.height} px)`
+          ? `เทมเพลต Art Work ${categoryName} (${presetObj?.width} × ${presetObj?.height} px)`
           : `เทมเพลต ${categoryName} จำนวน ${editorData?.pageCount || 1} หน้า`,
         icon: isSheet ? "Table" : isSlide ? "Presentation" : isPoster ? "Maximize2" : "FileText",
-        badge: isSlide ? "สไลด์" : isPoster ? "โปสเตอร์" : isCustomCanvas ? "กำหนดขนาดเอง" : "กำหนดเอง",
+        badge: isSlide ? "สไลด์" : isPoster ? "โปสเตอร์" : isCustomCanvas ? "Art Work" : "กำหนดเอง",
         status: "published",
         orientation: isLandscape ? "landscape" : "portrait",
         pageCount: isSheet ? 0 : editorData?.pageCount || 1,
@@ -210,6 +211,7 @@ function TemplateBuilderContent() {
           mm: editorData?.marginMm,
           px: editorData?.marginPx,
         },
+        customTokens: editorData?.customTokens || [],
       };
 
       const effectiveId = currentEditId || editId;
@@ -285,6 +287,7 @@ function TemplateBuilderContent() {
           initialMarginMm={initialMarginMm}
           initialMarginPx={initialMarginPx}
           initialShowPageNumbers={initialShowPageNumbers}
+          userPermission={permissionParam}
           onSave={handleDirectSave}
           saving={saving}
         />

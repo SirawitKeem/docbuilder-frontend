@@ -88,7 +88,7 @@ export default function NewTemplateTypeModal({
       width: w,
       height: h,
       unit,
-      name: customName.trim() || `กำหนดขนาดเอง (${w} × ${h} ${unit})`,
+      name: customName.trim() || `Art Work (${w} × ${h} ${unit})`,
     });
   };
 
@@ -155,7 +155,7 @@ export default function NewTemplateTypeModal({
                 </div>
 
                 <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {t('newTemplate.docs') || "Docs (เอกสาร A4)"}
+                  {t('newTemplate.docs') || "Document (Word)"}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
                   สัญญา ใบเสนอราคา ใบเสร็จ ประกาศทางการ พร้อมระบบตารางและฟิลด์อัตโนมัติ
@@ -217,7 +217,7 @@ export default function NewTemplateTypeModal({
                 </div>
 
                 <h3 className="text-sm font-semibold text-foreground group-hover:text-emerald-600 transition-colors">
-                  {t('newTemplate.sheets') || "Sheets (ตารางคำนวณ)"}
+                  {t('newTemplate.sheets') || "Spread Sheet (Excel)"}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
                   บัญชีสินค้า ใบแจกแจงราคา พร้อมสูตรคำนวณอัตโนมัติและส่งออก Excel แท้
@@ -232,7 +232,7 @@ export default function NewTemplateTypeModal({
               </div>
             </div>
 
-            {/* 4. Custom Size / Poster */}
+            {/* 4. Custom Size / Poster / Art Work */}
             <div
               onClick={() => setActiveMode(activeMode === "custom" ? "standard" : "custom")}
               className={`group rounded-xl border p-4.5 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all duration-150 cursor-pointer text-left relative ${
@@ -264,7 +264,7 @@ export default function NewTemplateTypeModal({
                 </div>
 
                 <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                  กำหนดขนาดเอง
+                  Art Work
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
                   สำหรับโปสเตอร์ (Poster), แบนเนอร์, ป้ายประกาศ หรือสัดส่วนอิสระตามต้องการ
@@ -272,7 +272,7 @@ export default function NewTemplateTypeModal({
               </div>
 
               <div className="mt-5 pt-3 border-t border-border/50 flex items-center justify-between">
-                <span className="text-[11px] text-muted-foreground font-mono">Poster / Custom</span>
+                <span className="text-[11px] text-muted-foreground font-mono">Art Work / Custom</span>
                 <span className="text-xs font-medium text-primary flex items-center gap-1">
                   {activeMode === "custom" ? "เปิดอยู่ ↓" : "ปรับขนาด →"}
                 </span>

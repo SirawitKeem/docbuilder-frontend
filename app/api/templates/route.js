@@ -1,13 +1,46 @@
 import { NextResponse } from "next/server";
-import { customTemplatesRepo } from "@/lib/db/repositories";
+import { customTemplatesRepo, categoriesRepo } from "@/lib/db/repositories";
 import { synthesizeCanvasPagesFromTemplate } from "@/lib/templates/blockToCanvas";
+
+function isUuid(str) {
+  return typeof str === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+}
+
+async function resolveCategoryId(raw) {
+  if (!raw || typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (isUuid(trimmed)) return trimmed;
+
+  try {
+    const categories = await categoriesRepo.getAll();
+    const lower = trimmed.toLowerCase();
+    const match = categories.find(
+      (c) =>
+        c.id === trimmed ||
+        c.name?.toLowerCase() === lower ||
+        c.fullName?.toLowerCase() === lower ||
+        (lower === "nda" && c.name?.toLowerCase().includes("nda")) ||
+        (lower === "quotation" && c.name?.toLowerCase().includes("quotation")) ||
+        (lower === "notification" && c.name?.toLowerCase().includes("notification")) ||
+        (lower === "partner" && c.name?.toLowerCase().includes("partner")) ||
+        (lower === "distributor" && c.name?.toLowerCase().includes("distributor"))
+    );
+    if (match) return match.id;
+    return categories[0]?.id || null;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const categoryId = searchParams.get("categoryId");
+    const rawCategoryId = searchParams.get("categoryId");
+    const categoryId = rawCategoryId && rawCategoryId !== "all"
+      ? (await resolveCategoryId(rawCategoryId)) || rawCategoryId
+      : null;
 
-    const templates = await customTemplatesRepo.getAll({ categoryId });
+    const templates = await customTemplatesRepo.getAll(categoryId ? { categoryId } : {});
     return NextResponse.json(templates);
   } catch (err) {
     console.error("Error fetching custom templates:", err);
@@ -34,21 +67,24 @@ export async function POST(req) {
       canvasPreset,
       sheetData,
       margin,
+      customTokens,
     } = body;
 
     if (!name?.trim()) {
       return NextResponse.json({ error: "กรุณาระบุชื่อเทมเพลต" }, { status: 400 });
     }
 
-    const validEditorTypes = ["document", "slide", "sheet"];
+    const resolvedCategoryId = await resolveCategoryId(categoryId);
+
+    const validEditorTypes = ["document", "slide", "sheet", "artwork"];
     const safeEditorType = editorType && validEditorTypes.includes(editorType) ? editorType : "document";
-    const safeCanvasPreset = canvasPreset || (safeEditorType === "slide" ? "slide-16-9" : "a4-portrait");
+    const safeCanvasPreset = canvasPreset || (safeEditorType === "slide" ? "slide-16-9" : (safeEditorType === "sheet" ? null : "a4-portrait"));
 
     let effectivePages = Array.isArray(pages) ? pages : [];
     if (effectivePages.length === 0 && safeEditorType !== "sheet") {
       const synthesized = synthesizeCanvasPagesFromTemplate({
         ...body,
-        categoryId: categoryId || "forms",
+        categoryId: resolvedCategoryId || categoryId,
         name: name.trim(),
       });
       if (synthesized && synthesized.length > 0) {
@@ -58,17 +94,17 @@ export async function POST(req) {
 
     const created = await customTemplatesRepo.create({
       name: name.trim(),
-      categoryId: categoryId || "forms",
+      categoryId: resolvedCategoryId,
       editorType: safeEditorType,
       canvasPreset: safeCanvasPreset,
       description: description || "",
       icon: icon || (safeEditorType === "sheet" ? "Table" : "FileText"),
-      badge: badge || "กำหนดเอง",
+      badge: badge || (safeEditorType === "sheet" ? "สเปรดชีต" : "กำหนดเอง"),
       status: status || "published",
       orientation: orientation || "portrait",
       margin: margin || null,
       theme: theme || {
-        primaryColor: "#5542F6",
+        primaryColor: safeEditorType === "sheet" ? "#059669" : "#5542F6",
         backgroundColor: "#FFFFFF",
         hasWatermark: false,
       },
@@ -76,11 +112,12 @@ export async function POST(req) {
       pages: effectivePages,
       sheetData: Array.isArray(sheetData) ? sheetData : [],
       blocks: Array.isArray(blocks) ? blocks : [],
+      customTokens: Array.isArray(customTokens) ? customTokens : [],
     });
 
     return NextResponse.json(created, { status: 201 });
   } catch (err) {
     console.error("Error creating custom template:", err);
-    return NextResponse.json({ error: "Failed to create custom template" }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Failed to create custom template" }, { status: 500 });
   }
 }

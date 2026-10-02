@@ -11,11 +11,11 @@ import { useHistory } from "./hooks/useHistory";
 import { A4_WIDTH, MARGIN_PX } from "./CanvasStage";
 import { createDocTable, CUSTOM_CANVAS_PROPS } from "./elements/DocTable";
 import { cloneFabricObject, saveToCrossTemplateStorage, loadFromCrossTemplateStorage } from "./utils/clipboard";
-import { createSignatureBlock } from "./elements/SignatureBlock";
+import { createSignatureBlock, createRecipientSignatureField } from "./elements/SignatureBlock";
 import { createCompanyHeaderBlock, createPartyInfoGrid, createTermsBox } from "./elements/HeaderBlock";
 import { applyTokensToCanvas, revertTokensInPageJson, initLiveTokens } from "@/lib/tokens/tokenEngine";
 import { getCanvasPreset, mmToPx, pxToMm } from "@/lib/editor/canvasPresets";
-import TemplateShareModal from "@/components/templates/TemplateShareModal";
+import ShareDialog from "@/components/share/ShareDialog";
 
 // Dynamically import CanvasStage with SSR disabled
 const CanvasStage = dynamic(() => import("./CanvasStage"), {
@@ -131,8 +131,10 @@ export default function DocumentEditor({
   initialShowPageNumbers = null,
   editorType = "document",
   canvasPreset = null,
+  userPermission = "editor",
 }) {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const isReadOnly = userPermission === "viewer";
   const effectivePresetKey = canvasPreset || (editorType === "slide" ? "slide-16-9" : "a4-portrait");
   const preset = getCanvasPreset(effectivePresetKey);
   const isMetric = Boolean(preset.mmWidth);
@@ -756,7 +758,7 @@ export default function DocumentEditor({
     }
 
     const currentJson = canvas.toJSON(CUSTOM_CANVAS_PROPS);
-    const newPageId = `page-${Date.now()}`;
+    const newPageId = `page-${crypto.randomUUID()}`;
     const blankJson = { version: "6.5.0", objects: [] };
 
     const updatedPages = [
@@ -792,7 +794,7 @@ export default function DocumentEditor({
     const sourceJson = indexToDuplicate === activePageIndex ? currentJson : sourcePage.json;
 
     const duplicatedPage = {
-      id: `page-${Date.now()}`,
+      id: `page-${crypto.randomUUID()}`,
       json: JSON.parse(JSON.stringify(sourceJson)),
     };
 
@@ -892,7 +894,7 @@ export default function DocumentEditor({
     }
 
     const currentJson = canvas.toJSON(CUSTOM_CANVAS_PROPS);
-    const newPageId = `page-${Date.now()}`;
+    const newPageId = `page-${crypto.randomUUID()}`;
     const blankJson = { version: "6.5.0", objects: [] };
 
     const updatedPages = [...pages];
@@ -1394,9 +1396,28 @@ export default function DocumentEditor({
   }, [handleHistoryPush, marginPx, preset.width, preset.marginPx]);
 
   // ✍️ Add Signature Block
-  const handleAddSignature = useCallback((type = "dual") => {
+  const handleAddSignature = useCallback((type = "dual", recipientOptions = null) => {
     const canvas = fabricCanvasRef.current;
     if (!canvas) return;
+
+    if (type === "recipient" && recipientOptions) {
+      const field = createRecipientSignatureField({
+        fieldType: recipientOptions.fieldType || "signature",
+        recipientId: recipientOptions.recipientId,
+        recipientName: recipientOptions.recipientName,
+        recipientRole: recipientOptions.recipientRole,
+        recipientEmail: recipientOptions.recipientEmail,
+        recipientColor: recipientOptions.recipientColor || "#4F46E5",
+        left: 80,
+        top: 240,
+      });
+
+      canvas.add(field);
+      canvas.setActiveObject(field);
+      canvas.renderAll();
+      handleHistoryPush(canvas);
+      return;
+    }
 
     const currentMargin = marginPx !== null && marginPx !== undefined ? marginPx : preset.marginPx;
     const currentWidth = Math.max(300, preset.width - currentMargin * 2);
@@ -2277,6 +2298,7 @@ export default function DocumentEditor({
         onSave={handleSaveAll}
         saving={saving}
         onOpenShare={templateId ? () => setIsShareModalOpen(true) : null}
+        isReadOnly={isReadOnly}
         showPageNumber={showPageNumber}
         onTogglePageNumber={handleTogglePageNumber}
         isPreviewTokens={isPreviewTokens}
@@ -2289,6 +2311,13 @@ export default function DocumentEditor({
         onCopy={handleCopy}
         onPaste={handlePaste}
       />
+
+      {/* 👁️ View-Only Mode Banner */}
+      {isReadOnly && (
+        <div className="bg-amber-500 text-white text-xs font-semibold px-4 py-1.5 flex items-center justify-center gap-2 shrink-0 shadow-xs">
+          <span>👁️ โหมดดูอย่างเดียว (View Only) — คุณได้รับสิทธิ์อ่านอย่างเดียว จึงไม่สามารถแก้ไขหรือบันทึกแม่แบบนี้ได้</span>
+        </div>
+      )}
 
       {/* ── MAIN STUDIO BODY: LEFT SIDEBAR + CANVAS + RIGHT SIDEBAR ── */}
       <div className="flex-1 flex overflow-hidden relative">
@@ -2551,12 +2580,14 @@ export default function DocumentEditor({
         </div>
       )}
 
-      {/* 🛡️ Template Share & Permissions Modal */}
+      {/* 🛡️ Unified Share & Permissions Modal (Figma-style) */}
       {isShareModalOpen && templateId && (
-        <TemplateShareModal
+        <ShareDialog
           isOpen={isShareModalOpen}
           onClose={() => setIsShareModalOpen(false)}
-          template={{ id: templateId, name: currentTitle }}
+          entityId={templateId}
+          entityType="template"
+          entityTitle={currentTitle}
         />
       )}
     </div>

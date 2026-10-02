@@ -208,7 +208,7 @@ export default function AccountSettingsPage() {
                       {account.fullName || "สิรวิทย์ เพชรจำรัส"}
                     </h3>
                     <span className="px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-950/50 text-primary text-[10px] font-bold border border-violet-100 dark:border-violet-900/40 shrink-0">
-                      {account.role || "Owner / Admin"}
+                      {account.roleDisplayNameTh || (account.role === "owner" ? "เจ้าของระบบ (Owner)" : account.role) || "เจ้าของระบบ (Owner)"}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground truncate">{account.email}</p>

@@ -45,6 +45,7 @@ export async function POST(request) {
       console.warn("Could not snapshot issuer:", e);
     }
   }
+
   body.values = values;
 
   const record = await documentsRepo.create(body);

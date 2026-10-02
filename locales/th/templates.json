@@ -75,11 +75,11 @@
   },
   "newTemplate": {
     "title": "เลือกรูปแบบการสร้างเทมเพลต",
-    "docs": "Docs (เอกสาร A4)",
+    "docs": "Document (Word)",
     "docsDesc": "สร้างเอกสารแนวตั้ง เช่น สัญญา ใบเสร็จ จดหมายราชการ",
     "slides": "Slides (งานนำเสนอ 16:9)",
     "slidesDesc": "สร้างสไลด์ Pitch deck แนะนำบริษัท หรือรายงาน",
-    "sheets": "Sheets (ตารางคำนวณ .xlsx)"
+    "sheets": "Spread Sheet (Excel)"
   },
   "templateDetail": {
     "previewTitle": "ตัวอย่างโครงสร้างหน้าเอกสารจริง",

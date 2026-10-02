@@ -31,7 +31,7 @@ import NewTemplateTypeModal from "@/components/templates/NewTemplateTypeModal";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import MoveCategoryModal from "@/components/templates/MoveCategoryModal";
 import EditTemplateModal from "@/components/templates/EditTemplateModal";
-import TemplateShareModal from "@/components/templates/TemplateShareModal";
+import ShareDialog from "@/components/share/ShareDialog";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 export default function TemplatesHubPage() {
@@ -538,6 +538,15 @@ export default function TemplatesHubPage() {
 
                         <button
                           type="button"
+                          onClick={() => setTemplateToShare(tmpl)}
+                          className="size-7 rounded-[6px] hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
+                          title="แชร์แม่แบบ (Share template)"
+                        >
+                          <Share2 size={13} />
+                        </button>
+
+                        <button
+                          type="button"
                           onClick={() => handleDuplicateTemplate(tmpl)}
                           className="size-7 rounded-[6px] hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
                           title="Duplicate template"
@@ -676,6 +685,17 @@ export default function TemplatesHubPage() {
         categories={categories}
         onSuccess={loadData}
       />
+
+      {/* Share Dialog */}
+      {templateToShare && (
+        <ShareDialog
+          isOpen={Boolean(templateToShare)}
+          onClose={() => setTemplateToShare(null)}
+          entityId={templateToShare.id}
+          entityType="template"
+          entityTitle={templateToShare.name}
+        />
+      )}
     </div>
   );
 }
